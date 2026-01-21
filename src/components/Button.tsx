@@ -6,6 +6,7 @@ import { Link, NavLink } from "react-router-dom";
 
 type ButtonProps = {
     href?: undefined
+    textOnly?: boolean
 }
     & ComponentPropsWithoutRef<"button"> |
     {
@@ -16,11 +17,13 @@ type ButtonProps = {
 const Button = ({ children, ...props }: ButtonProps) => {
 
     if (props.href !== undefined) {
-        return <NavLink to={props.href} >{children}</NavLink>
+        return <NavLink to={props.href} {...props}>{children}</NavLink>
     }
 
+    let cssClass = props.textOnly ? "button--text-only button" : "button";
+
     return (
-        <button>{children}</button>
+        <button className={cssClass} {...props}>{children}</button>
     )
 }
 

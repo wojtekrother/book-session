@@ -14,7 +14,7 @@ export default function SessionsPage() {
       <ul>
         
           {SESSIONS.map(s => {
-            return <li>{s.title}</li>})
+            return <li key={s.id}>{s.title}</li>})
           }
         
       </ul>
