@@ -11,6 +11,14 @@ export default function SessionsPage() {
           you!
         </p>
       </header>
+      <ul>
+        
+          {SESSIONS.map(s => {
+            return <li>{s.title}</li>})
+          }
+        
+      </ul>
+
       {/* Todo: Output list of sessions */}
     </main>
   );
