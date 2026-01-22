@@ -1,5 +1,5 @@
 export type BookSession = {
-    id: string,
+    id?: string,
     title: string,
     summary: string,
     description:string

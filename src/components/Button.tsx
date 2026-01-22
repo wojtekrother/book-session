@@ -5,7 +5,7 @@ import { Link, NavLink } from "react-router-dom";
 
 
 type ButtonProps = {
-    href?: undefined
+    href?: undefined,
     textOnly?: boolean
 }
     & ComponentPropsWithoutRef<"button"> |
