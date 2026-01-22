@@ -8,8 +8,9 @@ import dataFetching from './assets/sessions/data-fetching.jpg';
 import reactTs from './assets/sessions/react-ts.jpg';
 import performance from './assets/sessions/performance.jpg';
 import dataStore from './assets/sessions/data-store.jpg';
+import { BookSession } from './types/types';
 
-export const SESSIONS = [
+export const SESSIONS: BookSession[] = [
   {
     id: 'sess01',
     title: 'Kickstart with React: Personal Intro',
