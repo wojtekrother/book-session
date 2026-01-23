@@ -5,5 +5,6 @@ export type BookSession = {
     description:string
     duration: number,
     date: string,
-    image: string,
+    image?: string,
+    imageUrl?: String
 }
