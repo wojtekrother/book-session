@@ -28,7 +28,7 @@ export async function getSession(id: string): Promise<BookSession> {
 
 export async function getSessions(): Promise<BookSession[]> {
     const response = await fetch("/api/sessions" )
-    await delay(3000)
+    await delay(1000)
     if (!response.ok) {
         throw Error(`Wrong response status: ${response.statusText}`)
     }

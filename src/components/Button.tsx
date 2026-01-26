@@ -17,10 +17,10 @@ type ButtonProps = {
 const Button = ({ children, ...props }: ButtonProps) => {
 
     if (props.href !== undefined) {
-        return <NavLink to={props.href} {...props}>{children}</NavLink>
+        return <NavLink className={"m-2 p-4"} to={props.href} {...props}>{children}</NavLink>
     }
 
-    let cssClass = props.textOnly ? "button--text-only button" : "button";
+    let cssClass = props.textOnly ? "button--text-only button m-2 p-4" : "button m-2 p-4";
 
     return (
         <button className={cssClass} {...props}>{children}</button>
