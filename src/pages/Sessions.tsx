@@ -32,14 +32,14 @@ export default function SessionsPage() {
       <div id='content'>
         {sessions === null && <div>Loading...</div>}
         {sessions &&
-          <ul>
+          <div className='grid grid-cols-2 gap-2'>
 
             {sessions.map(s => {
-              return <li key={s.id}><SessionItem session={s}></SessionItem></li>
+              return <SessionItem session={s}></SessionItem>
             })
             }
 
-          </ul>
+          </div>
         }
       </div>
     </main>

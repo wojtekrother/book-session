@@ -116,11 +116,12 @@ const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) 
 
 
     return <>{modalRootElement ? createPortal(
-        <dialog ref={modal} className="modal">
+        <dialog ref={modal} className="modal mx-auto p-5">
             <form onSubmit={onSubmit}>
             {errors.length >0 && 
-                <div>
-                    {errors.map(e => <p>{e}</p>)}
+                <div className="border-2 border-red-500 bg-red-200 rounded-lg  text-amber-800 m-2 p-4">
+                    <h2 className="text-2xl">Errors: </h2>
+                    {errors.map(e => <p className="text-sm">{e}</p>)}
                 </div>
             }
                 <div>
