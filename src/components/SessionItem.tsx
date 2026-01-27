@@ -15,9 +15,9 @@ const SessionItem = ({ session }: SessionItemParams) => {
             <div className="flex">
                 {session.imageUrl && <img src={`${session.imageUrl}`} className="h-28 " />}
                 {session.image && <img src={`.${session.image}`} className="h-28  " />}
-                <h1 className="text-2xl ">{session.title}</h1>
+                <h1 className="text-xl p-2 ">{session.title}</h1>
             </div>
-            <div className="" >
+            <div  >
 
                 <p>{session.summary}</p>
                 <div className="actions">

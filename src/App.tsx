@@ -5,6 +5,8 @@ import SessionsPage from './pages/Sessions.tsx';
 import SessionPage from './pages/Session.tsx';
 import Root from './pages/Root.tsx';
 import BookSessionProvider from './context/SessionsContext.tsx';
+import AuthContextProvider from './context/AuthSession.tsx';
+import LoginPage from './pages/Login.tsx';
 
 const Router = createBrowserRouter([
   {
@@ -17,15 +19,18 @@ const Router = createBrowserRouter([
       },
       { path: 'sessions', element: <SessionsPage /> },
       { path: 'sessions/:id', element: <SessionPage /> },
+      { path: 'user/login', element: <LoginPage /> },
     ],
   },
 ]);
 
 function App() {
   return (
-    <BookSessionProvider >
-      <RouterProvider router={Router} />
-    </BookSessionProvider>
+    <AuthContextProvider>
+      <BookSessionProvider >
+        <RouterProvider router={Router} />
+      </BookSessionProvider>
+    </AuthContextProvider>
   );
 }
 
