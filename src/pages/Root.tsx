@@ -5,7 +5,9 @@ export default function Root() {
   return (
     <>
       <Header/>
-      <Outlet />
+      <div className='w-3xl mx-auto'>
+        <Outlet />
+      </div>
     </>
   );
 }

@@ -8,3 +8,10 @@ export type BookSession = {
     image?: string,
     imageUrl?: String
 }
+
+export type User = {
+    id?: string,
+    login: string,
+    password: string,
+    sessionsId: string[]
+}
