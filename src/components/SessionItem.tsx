@@ -1,3 +1,4 @@
+import { toast } from "react-toastify"
 import { useBookSesscionContext } from "../context/SessionsContext"
 import { BookSession } from "../types/types"
 import Button from "./Button"
@@ -8,7 +9,21 @@ type SessionItemParams = {
 
 
 const SessionItem = ({ session }: SessionItemParams) => {
-    const ctx = useBookSesscionContext()
+    const ctx = useBookSesscionContext();
+
+
+
+    async function handleAddToMySession(sessionId: string): Promise<void> {
+        try{
+            ctx.userAddSession(sessionId)
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                console.log(e.message)
+            }
+            toast.error("Error during adding session to my list. Please try again later.");
+        }
+    }
+
 
     return (
         <div className=" bg-amber-100 p-4 box-content flex flex-col">
@@ -22,7 +37,7 @@ const SessionItem = ({ session }: SessionItemParams) => {
                 <p>{session.summary}</p>
                 <div className="actions">
                     <Button href={`/sessions/${session.id}`} >Show</Button>
-                    <Button onClick={() => ctx.add(session)} >Add to my sessions</Button>
+                    <Button onClick={() => handleAddToMySession(session.id!)} >Add to my sessions</Button>
                 </div>
             </div>
 

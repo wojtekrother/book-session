@@ -7,6 +7,8 @@ import Root from './pages/Root.tsx';
 import BookSessionProvider from './context/SessionsContext.tsx';
 import AuthContextProvider from './context/AuthSession.tsx';
 import LoginPage from './pages/Login.tsx';
+import { logoutAction } from './actions/LogoutAction.ts';
+import Loggout from './components/Logout.tsx';
 
 const Router = createBrowserRouter([
   {
@@ -20,6 +22,7 @@ const Router = createBrowserRouter([
       { path: 'sessions', element: <SessionsPage /> },
       { path: 'sessions/:id', element: <SessionPage /> },
       { path: 'user/login', element: <LoginPage /> },
+      { path: 'user/logout', element : <Loggout/>},
     ],
   },
 ]);

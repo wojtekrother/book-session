@@ -2,7 +2,7 @@ import { ComponentProps, forwardRef, useImperativeHandle, useRef, useState } fro
 import Input from "../components/Input"
 import Button from "../components/Button"
 import { createPortal } from "react-dom"
-import { saveSession } from "../api/SessionApi"
+import { createSession, saveSession } from "../api/SessionApi"
 import { convertFileToString } from "../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../utils/string"
@@ -104,7 +104,7 @@ const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) 
 
         if (errors.length == 0) {
 
-            const sessionSaved = await saveSession({ title, description, duration :Number(durationRaw), summary, date, imageUrl })
+            const sessionSaved = await createSession({ title, description, duration :Number(durationRaw), summary, date, imageUrl })
             if (sessionSaved.id != null) {
                 toast.success("New session sucesfully created")
             } else {

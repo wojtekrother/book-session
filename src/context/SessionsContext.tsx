@@ -1,43 +1,73 @@
 import { Context, createContext, ReactNode, useContext, useReducer } from "react";
-import { BookSession } from "../types/types";
-import { userAddSession } from "../api/UserApi";
+import { BookSession, User } from "../types/types";
+import { userAddSession, userRemoveSession } from "../api/UserApi";
+import { createSession, getSession, removeSession } from "../api/SessionApi";
 
 type BookSessionContextValue = {
     sessions: BookSession[]
-    add: (session: BookSession) => Promise<void>,
-    remove: (id: string) => Promise<void>,
+    user?: User,
+    sessionAdd: (session: BookSession) => Promise<void>,
+    sessionRemove: (id: string) => Promise<void>,
+    userAddSession: (sessionId: string) => Promise<void>,
+    userRemoveSession: (sessionId: string) => Promise<void>,
 }
 
 const BookSessionContext = createContext<BookSessionContextValue | null>(null)
 
-type reducerState = {
+type ReducerState = {
     sessions: BookSession[]
+    user?: User
 }
 
-type AddSessionAction = {
-    type: "ADD_SESSION",
+type SessionAddAction = {
+    type: "SESSION_ADD",
     payload: {
         session: BookSession
     }
 }
 
-type RemoveSessionAction = {
-    type: "REMOVE_SESSION",
+type UserAddSessionAction = {
+    type: "USER_ADD_SESSION_BY_ID",
     payload: {
-        id: string
+        sessionId: string
+    }
+}
+
+type UserRemoveSessionAction = {
+    type: "USER_REMOVE_SESSION_BY_ID",
+    payload: {
+        sessionId: string
+    }
+}
+
+type SessionRemoveAction = {
+    type: "SESSION_REMOVE",
+    payload: {
+        sessionId: string
     }
 }
 
 
-function reducerFn(state: reducerState, action: AddSessionAction | RemoveSessionAction): reducerState {
-    if (action.type === "ADD_SESSION") {
-
-        return { sessions: [...state.sessions, action.payload.session] };
+function reducerFn(state: ReducerState, action: SessionAddAction | SessionRemoveAction | UserAddSessionAction | UserRemoveSessionAction): ReducerState {
+    if (action.type === "SESSION_ADD") {
+        return {...state, sessions: [...state.sessions, action.payload.session] };
     }
 
-    if (action.type === "REMOVE_SESSION") {
-        return { sessions: state.sessions.filter(value => value.id !== action.payload.id) };
+    if (action.type === "SESSION_REMOVE") {
+        return {...state, sessions: state.sessions.filter(value => value.id !== action.payload.sessionId) };
     }
+
+    if (action.type === "USER_ADD_SESSION_BY_ID") {
+        return {...state, user: {...state.user!, sessionsId:[...state.user!.sessionsId, action.payload.sessionId]}}
+    }
+
+    if (action.type === "USER_REMOVE_SESSION_BY_ID") {
+        return {...state, user: {...state.user!, sessionsId: state.user!.sessionsId.filter(sessionId => sessionId !== action.payload.sessionId)}}
+    }
+
+
+
+
     return state;
 }
 
@@ -57,19 +87,36 @@ const BookSessionProvider = ({ children }: { children: ReactNode }) => {
 
     let ctx: BookSessionContextValue = {
         sessions: state.sessions,
-        async add(session) {
+        async sessionAdd(session) {
             try {
-                await userAddSession("ddds")
-                dispatch({ type: "ADD_SESSION", payload: { session } })
-                console.log("Add session")
+                await createSession(session);
+                dispatch({ type: "SESSION_ADD", payload: { session } })
             } catch (err) {
                 throw err;
             }
 
         },
-        async remove(id) {
-            dispatch({ type: "REMOVE_SESSION", payload: { id } })
+        async sessionRemove(sessionId) {
+            await removeSession(sessionId);
+            dispatch({ type: "SESSION_REMOVE", payload: {sessionId } })
         },
+        async userAddSession(sessionId) {
+            try {
+                await userAddSession(sessionId, userId)
+                dispatch({ type: "USER_ADD_SESSION_BY_ID", payload: { sessionId } })
+            } catch (err) {
+                throw err;
+            }
+        },
+        async userRemoveSession(sessionId) {
+            try {
+                await userRemoveSession(sessionId)
+                dispatch({ type: "USER_REMOVE_SESSION_BY_ID", payload: { sessionId } })
+            } catch (err) {
+                throw err;
+            }
+        },
+        
     }
 
     return (
