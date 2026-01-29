@@ -1,7 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react"
+import { createContext, ReactNode, useCallback, useContext, useState } from "react"
 import { toast } from "react-toastify";
-import { getUser } from "../api/UserApi";
+
 import { User } from "../types/types";
+import { StringUtils } from "../utils/string";
+import { getUserByLogin } from "../api/UserApi";
+import { useBookSesscionContext } from "./SessionsContext";
 
 
 type AuthContextValue = {
@@ -25,43 +28,44 @@ type AuthContextProviderProps = {
 }
 
 type LoginProps = ({ login, password }: { login: string, password: string }) => Promise<User>;
-type LogoutProps = () => void;
+type LogoutProps = () => boolean;
 type IsLoggedInProps = () => boolean;
 
 const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
-    const [userLogin, setUserLogin] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
+
+   
+    
     const login: LoginProps = async ({ login, password }) => {
-        //TODO check password
-        if (userLogin != null) {
+    
+        if (user != null) {
             throw new Error("User is allready loggied in. Loggout user before login.");
         }
-        if (login === null || password == null) {
+        if (StringUtils.isBlank(login) || StringUtils.isBlank(password)) {
             throw new Error("Login and password is reqiured");
         }
 
-        const user = await getUser(login)
+        const newUser = await getUserByLogin(login);
 
-        if (user == null) {
-            throw new Error("Login error try again.")
-        } else {
-            toast.success("User loged in successfuly.")
-            setUserLogin(login);
-        }
-        return user;
+        if (newUser == null || newUser.password !== password) {
+            throw new Error("Invalid login or password")
+        } 
+
+        setUser(newUser);
+        return newUser;
     }
 
     const logout: LogoutProps = () => {
-        if (userLogin == null) {
-            toast.error("User is allredy logged out.");
-            return;
+        if (user == null) {
+            throw new Error("User is allredy logged out.");
         }
-        toast.success("Loggout successful")
-        setUserLogin(null);
+        setUser(null);
+        return true
     }
 
     const isLoggedIn: IsLoggedInProps = () => {
-        return userLogin != null;
+        return user != null;
     }
 
 
