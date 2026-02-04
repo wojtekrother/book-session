@@ -1,7 +1,8 @@
 import { toast } from "react-toastify"
-import { useBookSesscionContext } from "../context/SessionsContext"
+import { useBookSessionContext } from "../context/SessionsContext"
 import { BookSession } from "../types/types"
 import Button from "./Button"
+import { useUserContext } from "../context/UserSession"
 
 type SessionItemParams = {
     session: BookSession
@@ -9,12 +10,12 @@ type SessionItemParams = {
 
 
 const SessionItem = ({ session }: SessionItemParams) => {
-    const ctx = useBookSesscionContext();
+    const ctx = useUserContext();
 
 
 
     async function handleAddToMySession(sessionId: string): Promise<void> {
-        try{
+        try {
             ctx.userAddSession(sessionId)
         } catch (e: unknown) {
             if (e instanceof Error) {
@@ -26,7 +27,7 @@ const SessionItem = ({ session }: SessionItemParams) => {
 
 
     return (
-        <div className=" bg-amber-100 p-4 box-content flex flex-col">
+        <div className=" bg-amber-50 p-4 box-content flex flex-col">
             <div className="flex">
                 {session.imageUrl && <img src={`${session.imageUrl}`} className="h-28 " />}
                 {session.image && <img src={`.${session.image}`} className="h-28  " />}
@@ -35,7 +36,7 @@ const SessionItem = ({ session }: SessionItemParams) => {
             <div  >
 
                 <p>{session.summary}</p>
-                <div className="actions">
+                <div className="action">
                     <Button href={`/sessions/${session.id}`} >Show</Button>
                     <Button onClick={() => handleAddToMySession(session.id!)} >Add to my sessions</Button>
                 </div>

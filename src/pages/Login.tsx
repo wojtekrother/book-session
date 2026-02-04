@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { useAuthContext } from "../context/AuthSession";
+import { useUserContext } from "../context/UserSession";
 import { useNavigate } from "react-router-dom";
 import { StringUtils } from "../utils/string";
 import ErrorField from "../components/ErrorField";
@@ -14,7 +14,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState<string>("");
     const [passwordError, setPasswordError] = useState<string>("");
     const [globalError, setGlobalError] = useState<string[]>([]);
-    const authContext = useAuthContext();
+    const authContext = useUserContext();
     const navigation = useNavigate()
 
 
@@ -24,13 +24,13 @@ const LoginPage = () => {
         setUserLogin(login.trim());
     }
 
-    const handlePasswordChange : React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         let password = e.target.value;
         validatePassword(password)
         setPassword(password.trim())
     }
 
-    const validateLogin = (login: string) : boolean => {
+    const validateLogin = (login: string): boolean => {
         setGlobalError([]);
         setUserLoginError("")
         if (StringUtils.isBlank(login)) {
@@ -40,7 +40,7 @@ const LoginPage = () => {
         return true
     }
 
-    const validatePassword= (password: string) :boolean => {
+    const validatePassword = (password: string): boolean => {
         setGlobalError([]);
         setPasswordError("")
         if (StringUtils.isBlank(password)) {
@@ -54,35 +54,37 @@ const LoginPage = () => {
     async function submitForm(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setGlobalError([]);
-        if (!validateLogin(userLogin) || !validatePassword(password) ) {
+        if (!validateLogin(userLogin) || !validatePassword(password)) {
             setGlobalError(["Login and password is reqired."]);
             return;
         }
 
         try {
-            await authContext.login({login: userLogin, password});
+            await authContext.login({ login: userLogin, password });
             navigation("/")
-        } catch(e: unknown) {
+        } catch (e: unknown) {
             if (e instanceof Error) {
                 setGlobalError([e.message]);
                 return;
             }
         }
-        
+
     }
 
     return (
-        <div>
+        <div className="bg-amber-50 p-2 max-w-2xl min-w-xl mx-auto">
             <form onSubmit={submitForm}>
-                <ErrorField errors={globalError}/>
-                <Input name="userLogin" label="Login" value={userLogin} error={userLoginError} onChange={handleUserLoginChange}></Input>
-                <Input name="password" label="Password" value={password} error={passwordError} onChange={handlePasswordChange}></Input>
-                <div className="actions">
+                <ErrorField errors={globalError} />
+                <div className="control">
+                    <Input name="userLogin" label="Login" value={userLogin} error={userLoginError} onChange={handleUserLoginChange}></Input>
+                    <Input name="password" label="Password" value={password} error={passwordError} onChange={handlePasswordChange}></Input>
+                </div>
+                <div className="action">
                     <Button textOnly>Cancel</Button>
                     <Button disabled={!(userLogin && password)} >Login</Button>
                 </div>
             </form>
-        
+
         </div>
     )
 

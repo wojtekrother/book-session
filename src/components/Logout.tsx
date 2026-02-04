@@ -1,11 +1,11 @@
 import { toast } from "react-toastify";
 import { logoutAction } from "../actions/LogoutAction";
-import { useAuthContext } from "../context/AuthSession";
+import { useUserContext } from "../context/UserSession";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Loggout = () => {
-    const ctx = useAuthContext();
+    const ctx = useUserContext();
     const navigate = useNavigate()
 
     useEffect(() => {
