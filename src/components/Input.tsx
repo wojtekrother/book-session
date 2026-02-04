@@ -9,11 +9,11 @@ type InputProps = {
 
 const Input = ({ label, name, error, ...props }: InputProps) => {
     return (
-        <p className="control">
-            <label htmlFor={name}>
-                {label}&nbsp;{error && <span className="text-xs text-red-600">({error})</span>}
+        <p className="text-gray-600 flex flex-col ">
+            <label htmlFor={name} className="p-1">
+                {label}&nbsp;{error && <span className=" text-xs text-red-600">({error})</span>}
             </label>
-            <input name={name} {...props} >
+            <input name={name} {...props} className="py-1 px-2 text-gray-700 border border-blue-600 rounded-xl " >
             </input>
         </p>
     )

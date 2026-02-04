@@ -1,22 +1,17 @@
-import { useEffect, useState } from 'react';
-import { getSessions, saveSession } from '../api/SessionApi.ts';
+import React, { useEffect, useRef, useState } from 'react';
 import SessionItem from '../components/SessionItem.tsx';
 import { SESSIONS } from '../dummy-sessions.ts'; // normally, we would probably load that from a server
 import { BookSession } from '../types/types.ts';
+import { SessionApi } from '../api/SessionApi.ts';
+import { BookSessionContextValue, useBookSessionContext } from '../context/SessionsContext.tsx';
 
 export default function SessionsPage() {
 
-  //SESSIONS.forEach(s => {delete s.id; saveSession(s)})
-
+  console.log('React działa', React.version);
   //saveSession(SESSIONS[1]);
   const [sessions, setSessions] = useState<BookSession[] | null>(null)
-
-  useEffect(() => {
-    async function loadSessions() {
-      setSessions(await getSessions())
-    }
-    loadSessions();
-  })
+  const bookSessionContext = useBookSessionContext();
+  
 
   return (
     <main id="sessions-page">
@@ -30,11 +25,11 @@ export default function SessionsPage() {
       </header>
 
       <div id='content'>
-        {sessions === null && <div>Loading...</div>}
-        {sessions &&
+        {bookSessionContext.sessions === null && <div>Loading...</div>}
+        {bookSessionContext.sessions &&
           <div className='grid grid-cols-2 gap-2'>
 
-            {sessions.map(s => {
+            {bookSessionContext.sessions.map(s => {
               return <SessionItem session={s}></SessionItem>
             })
             }

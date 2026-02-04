@@ -1,42 +1,25 @@
-import { Context, createContext, ReactNode, useContext, useReducer } from "react";
-import { BookSession, User } from "../types/types";
-import { userAddSession, userRemoveSession } from "../api/UserApi";
-import { createSession, getSession, removeSession } from "../api/SessionApi";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import { BookSession } from "../types/types";
+import { SessionApi } from "../api/SessionApi";
 
-type BookSessionContextValue = {
-    sessions: BookSession[]
-    user?: User,
-    sessionAdd: (session: BookSession) => Promise<void>,
-    sessionRemove: (id: string) => Promise<void>,
-    userAddSession: (sessionId: string) => Promise<void>,
-    userRemoveSession: (sessionId: string) => Promise<void>,
+export type BookSessionContextValue = {
+    setSessions: (sessions: BookSession[]) => Promise<void>,
+    addSsession: (session: BookSession) => Promise<void>,
+    removeSession: (id: string) => Promise<void>,
+    //   updateSession: (sesion: BookSession) => Promise<void>
+    sessions: BookSession[] | undefined
 }
 
 const BookSessionContext = createContext<BookSessionContextValue | null>(null)
 
 type ReducerState = {
-    sessions: BookSession[]
-    user?: User
+    sessions?: BookSession[]
 }
 
 type SessionAddAction = {
     type: "SESSION_ADD",
     payload: {
         session: BookSession
-    }
-}
-
-type UserAddSessionAction = {
-    type: "USER_ADD_SESSION_BY_ID",
-    payload: {
-        sessionId: string
-    }
-}
-
-type UserRemoveSessionAction = {
-    type: "USER_REMOVE_SESSION_BY_ID",
-    payload: {
-        sessionId: string
     }
 }
 
@@ -47,31 +30,31 @@ type SessionRemoveAction = {
     }
 }
 
+type SessionSetAction = {
+    type: "SESSION_SET",
+    payload: {
+        sessions: BookSession[]
+    }
+}
 
-function reducerFn(state: ReducerState, action: SessionAddAction | SessionRemoveAction | UserAddSessionAction | UserRemoveSessionAction): ReducerState {
+
+function reducerFn(state: ReducerState, action: SessionAddAction | SessionRemoveAction | SessionSetAction): ReducerState {
     if (action.type === "SESSION_ADD") {
-        return {...state, sessions: [...state.sessions, action.payload.session] };
+
+        return { ...state, sessions: [...state.sessions!, action.payload.session] };
     }
 
     if (action.type === "SESSION_REMOVE") {
-        return {...state, sessions: state.sessions.filter(value => value.id !== action.payload.sessionId) };
+
+        return { ...state, sessions: state.sessions!.filter(value => value.id !== action.payload.sessionId) };
     }
-
-    if (action.type === "USER_ADD_SESSION_BY_ID") {
-        return {...state, user: {...state.user!, sessionsId:[...state.user!.sessionsId, action.payload.sessionId]}}
+    if (action.type === "SESSION_SET") {
+        return { sessions: action.payload.sessions }
     }
-
-    if (action.type === "USER_REMOVE_SESSION_BY_ID") {
-        return {...state, user: {...state.user!, sessionsId: state.user!.sessionsId.filter(sessionId => sessionId !== action.payload.sessionId)}}
-    }
-
-
-
-
     return state;
 }
 
-export function useBookSesscionContext() {
+export function useBookSessionContext() {
     const context = useContext(BookSessionContext);
     if (context === null) {
         throw Error("Book session context is null.");
@@ -82,42 +65,55 @@ export function useBookSesscionContext() {
 
 
 const BookSessionProvider = ({ children }: { children: ReactNode }) => {
-    const [state, dispatch] = useReducer(reducerFn, { sessions: [] })
+    const [state, dispatch] = useReducer(reducerFn, { sessions: undefined })
+
+    useEffect(() => {
+        const loadSessions = async () => {
+            console.log("Ładowanie sesji 1")
+            dispatch({ type: "SESSION_SET", payload: { sessions: await SessionApi.getSessions() } })
+            console.log("Ładowanie sesji 2")
+        }
+        loadSessions()
+    },[])
+
+    const addSsession: BookSessionContextValue["addSsession"] = useCallback(async (session) => {
+        try {
+            if (state.sessions === undefined) {
+                throw new Error("Sessions not loaded. Please wait.");
+            }
+            await SessionApi.createSession(session);
+            dispatch({ type: "SESSION_ADD", payload: { session } })
+        } catch (err) {
+            throw err;
+        }
+
+    }, []);
+    const removeSession: BookSessionContextValue["removeSession"] = useCallback(async (sessionId) => {
+        if (state.sessions === undefined) {
+            throw new Error("Sessions not loaded. Please wait.");
+        }
+        await SessionApi.removeSession(sessionId);
+        dispatch({ type: "SESSION_REMOVE", payload: { sessionId } })
+    }, []);
+    const setSessions: BookSessionContextValue["setSessions"] = useCallback(async (sessions: BookSession[]) => {
+        if (state.sessions !== null) {
+            throw new Error("Sessions not loaded. Please wait.");
+        }
+
+        dispatch({ type: "SESSION_SET", payload: { sessions } })
+        return
 
 
-    let ctx: BookSessionContextValue = {
-        sessions: state.sessions,
-        async sessionAdd(session) {
-            try {
-                await createSession(session);
-                dispatch({ type: "SESSION_ADD", payload: { session } })
-            } catch (err) {
-                throw err;
-            }
+    }, []);
 
-        },
-        async sessionRemove(sessionId) {
-            await removeSession(sessionId);
-            dispatch({ type: "SESSION_REMOVE", payload: {sessionId } })
-        },
-        async userAddSession(sessionId) {
-            try {
-                await userAddSession(sessionId, userId)
-                dispatch({ type: "USER_ADD_SESSION_BY_ID", payload: { sessionId } })
-            } catch (err) {
-                throw err;
-            }
-        },
-        async userRemoveSession(sessionId) {
-            try {
-                await userRemoveSession(sessionId)
-                dispatch({ type: "USER_REMOVE_SESSION_BY_ID", payload: { sessionId } })
-            } catch (err) {
-                throw err;
-            }
-        },
-        
-    }
+    const ctx: BookSessionContextValue = useMemo<BookSessionContextValue>(() => {
+        return {
+            addSsession, removeSession, setSessions,
+
+            sessions: state.sessions
+
+        }
+    }, [state.sessions, addSsession, removeSession, setSessions])
 
     return (
         <BookSessionContext.Provider value={ctx}>

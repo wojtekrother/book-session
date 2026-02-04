@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
-import { useAuthContext } from "../context/AuthSession";
+import { useUserContext } from "../context/UserSession";
 
 export function logoutAction() {
+    const ctx = useUserContext();
     
 }

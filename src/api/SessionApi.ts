@@ -1,7 +1,7 @@
 import { BookSession } from "../types/types";
 import { delay } from "../utils/dalay";
 
-export async function createSession(session: BookSession): Promise<BookSession> {
+async function createSession(session: BookSession): Promise<BookSession> {
     const response = await fetch("/api/sessions", {
         method: 'POST',
         body: JSON.stringify({ ...session, createdAt: new Date() })
@@ -14,7 +14,7 @@ export async function createSession(session: BookSession): Promise<BookSession> 
     return response.json()
 }
 
-export async function removeSession(sessionId: string): Promise<BookSession> {
+async function removeSession(sessionId: string): Promise<BookSession> {
     const response = await fetch(`/api/sessions/${sessionId}`, {
         method: 'PUT',
         body: JSON.stringify({ deleteAt: new Date() })
@@ -27,7 +27,7 @@ export async function removeSession(sessionId: string): Promise<BookSession> {
     return response.json()
 }
 
-export async function updateSession(session: BookSession): Promise<BookSession> {
+async function updateSession(session: BookSession): Promise<BookSession> {
     const response = await fetch(`/api/sessions/${session.id}`, {
         method: 'PUT',
         body: JSON.stringify({ ...session, updatedAt: new Date() })
@@ -42,7 +42,7 @@ export async function updateSession(session: BookSession): Promise<BookSession> 
 }
 
 
-export async function getSession(id: string): Promise<BookSession> {
+async function getSession(id: string): Promise<BookSession> {
     const response = await fetch("/api/sessions/" + id)
 
     if (!response.ok) {
@@ -53,9 +53,9 @@ export async function getSession(id: string): Promise<BookSession> {
     return response.json()
 }
 
-export async function getSessions(): Promise<BookSession[]> {
+async function getSessions(): Promise<BookSession[]> {
     const response = await fetch("/api/sessions")
-    await delay(1000)
+    await delay(500)
     if (!response.ok) {
         throw Error(`Wrong response status: ${response.statusText}`)
     }
@@ -63,3 +63,4 @@ export async function getSessions(): Promise<BookSession[]> {
     return response.json()
 }
 
+export const SessionApi = { createSession, removeSession, updateSession, getSession, getSessions }

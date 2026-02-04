@@ -1,9 +1,10 @@
 import { User } from "../types/types";
-import { getSession } from "./SessionApi";
+import { SessionApi } from "./SessionApi";
 
 
-export async function getUserById(id: string): Promise<User> {
 
+
+async function getUserById(id: string): Promise<User> {
     const response = await fetch(`/api/users/${id}`)
     if (!response.ok) {
         const message = await response.text()
@@ -13,8 +14,7 @@ export async function getUserById(id: string): Promise<User> {
     return (await response.json()) as User;
 }
 
-export async function getUserByLogin(login: string): Promise<User> {
-
+async function getUserByLogin(login: string): Promise<User> {
     const response = await fetch(`/api/users?login=${login}`)
     if (!response.ok) {
         const message = await response.text()
@@ -32,9 +32,8 @@ export async function getUserByLogin(login: string): Promise<User> {
     return users[0];
 }
 
-export async function userAddSession(sessionId: string, userId: string): Promise<void> {
-
-    const session = await getSession(sessionId);
+async function userAddSession(sessionId: string, userId: string): Promise<void> {
+    const session = await SessionApi.getSession(sessionId);
     if (session == null) {
         throw new Error(`Session with id:${sessionId} not exist`)
     }
@@ -49,7 +48,10 @@ export async function userAddSession(sessionId: string, userId: string): Promise
 
     const response = await fetch(`/api/users/${userId}`, {
         method: 'PUT',
-        body: JSON.stringify({ modifiedAt: new Date(), sessionsId: [...user.sessionsId, sessionId] })
+        body: JSON.stringify({
+            modifiedAt: new Date(),
+            sessionsId: [...user.sessionsId, sessionId]
+        })
     })
 
     if (!response.ok) {
@@ -57,20 +59,33 @@ export async function userAddSession(sessionId: string, userId: string): Promise
     }
     return
 }
-
-export async function userRemoveSession(sessionId: string): Promise<void> {
-
-    const session = await getSession(sessionId);
+async function userRemoveSession(sessionId: string, userId: string): Promise<void> {
+    const session = await SessionApi.getSession(sessionId);
     if (session == null) {
         throw new Error(`Session with id:${sessionId} not exist`)
     }
-    //await fetch(`/api/users/${id}`)
+    const user = await UserApi.getUserById(userId);
+
+    const response = await fetch(`/api/users/${userId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            modifiedAt: new Date(),
+            sessionsId: [...user.sessionsId.filter(sesId => sesId != sessionId)]
+        })
+    })
+
+    if (!response.ok) {
+        throw Error(`Error during removing session from user. Status ${response.statusText}`)
+    }
     return
 }
 
 
 
 //TODO verify and write correct
-export async function checkLoginAndPassword(login: string, password: string) {
+async function checkLoginAndPassword(login: string, password: string) {
     const response = await fetch(`/api/users?login=${login}`)
-} 
+}
+
+
+export const UserApi = { getUserById, getUserByLogin, userAddSession, userRemoveSession, checkLoginAndPassword }

@@ -2,10 +2,11 @@ import { ComponentProps, forwardRef, useImperativeHandle, useRef, useState } fro
 import Input from "../components/Input"
 import Button from "../components/Button"
 import { createPortal } from "react-dom"
-import { createSession, saveSession } from "../api/SessionApi"
+
 import { convertFileToString } from "../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../utils/string"
+import { useBookSessionContext } from "../context/SessionsContext"
 
 
 type AddModalProps = {
@@ -21,6 +22,7 @@ export type AddModalHandler = {
 const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) => {
     const modal = useRef<HTMLDialogElement>(null);
     const [errors, setErrors] = useState<string[]>([]);
+    const sessionContext = useBookSessionContext();
 
     const modalRootElement = document.getElementById("modal-root")
 
@@ -103,12 +105,15 @@ const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) 
 
 
         if (errors.length == 0) {
-
-            const sessionSaved = await createSession({ title, description, duration :Number(durationRaw), summary, date, imageUrl })
-            if (sessionSaved.id != null) {
+            try {
+                await sessionContext.addSsession({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
                 toast.success("New session sucesfully created")
-            } else {
-                toast.error("Error during saving session!")
+            } catch (e: unknown) {
+                if (e instanceof Error) {
+                    toast.error(`Error during saving sessino ${e.message}`)
+                } else {
+                    toast.error("Error during saving session!")
+                }
             }
         }
 
@@ -118,12 +123,12 @@ const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) 
     return <>{modalRootElement ? createPortal(
         <dialog ref={modal} className="modal mx-auto p-5">
             <form onSubmit={onSubmit}>
-            {errors.length >0 && 
-                <div className="border-2 border-red-500 bg-red-200 rounded-lg  text-amber-800 m-2 p-4">
-                    <h2 className="text-2xl">Errors: </h2>
-                    {errors.map(e => <p className="text-sm">{e}</p>)}
-                </div>
-            }
+                {errors.length > 0 &&
+                    <div className="border-2 border-red-500 bg-red-200 rounded-lg  text-amber-800 m-2 p-4">
+                        <h2 className="text-2xl">Errors: </h2>
+                        {errors.map(e => <p className="text-sm">{e}</p>)}
+                    </div>
+                }
                 <div>
                     <Input label="Title" name="title" />
                     <Input label="Description" name="description" />
