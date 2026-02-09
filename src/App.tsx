@@ -8,6 +8,7 @@ import BookSessionProvider from './context/SessionsContext.tsx';
 import UserContextProvider from './context/UserSession.tsx';
 import LoginPage from './pages/Login.tsx';
 import Loggout from './components/Logout.tsx';
+import MySessionsPage from './pages/MySessions.tsx';
 
 const Router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ const Router = createBrowserRouter([
       },
       { path: 'sessions', element: <SessionsPage /> },
       { path: 'sessions/:id', element: <SessionPage /> },
-      { path: 'mySessions', element: <SessionPage /> },
+      { path: 'mySessions', element: <MySessionsPage /> },
       { path: 'user/login', element: <LoginPage /> },
       { path: 'user/logout', element : <Loggout/>},
     ],

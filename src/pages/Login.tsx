@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { useUserContext } from "../context/UserSession";
@@ -17,6 +17,12 @@ const LoginPage = () => {
     const authContext = useUserContext();
     const navigation = useNavigate()
 
+
+    useEffect(() => {
+        if (authContext.isLoggedIn) {
+            navigation("/mySessions")
+        }
+    },[authContext.isLoggedIn])
 
     function handleUserLoginChange(e: React.ChangeEvent<HTMLInputElement>) {
         let login = e.target.value;
@@ -61,7 +67,6 @@ const LoginPage = () => {
 
         try {
             await authContext.login({ login: userLogin, password });
-            navigation("/")
         } catch (e: unknown) {
             if (e instanceof Error) {
                 setGlobalError([e.message]);
@@ -79,7 +84,7 @@ const LoginPage = () => {
                     <Input name="userLogin" label="Login" value={userLogin} error={userLoginError} onChange={handleUserLoginChange}></Input>
                     <Input name="password" label="Password" value={password} error={passwordError} onChange={handlePasswordChange}></Input>
                 </div>
-                <div className="action">
+                <div className="actions">
                     <Button textOnly>Cancel</Button>
                     <Button disabled={!(userLogin && password)} >Login</Button>
                 </div>
