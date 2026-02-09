@@ -1,22 +1,22 @@
-import kickstartReact from './assets/sessions/kickstart-react.jpg';
-import debugCode from './assets/sessions/debug-code.jpg';
-import blueprintComponent from './assets/sessions/blueprint-component.jpg';
-import stateMgmtFlow from './assets/sessions/state-mgmt-flow.jpg';
-import hooks from './assets/sessions/hooks.jpg';
-import styling from './assets/sessions/styling.jpg';
-import dataFetching from './assets/sessions/data-fetching.jpg';
-import reactTs from './assets/sessions/react-ts.jpg';
-import performance from './assets/sessions/performance.jpg';
-import dataStore from './assets/sessions/data-store.jpg';
-import { BookSession } from './types/types';
+import kickstartReact from './assets/events/kickstart-react.jpg';
+import debugCode from './assets/events/debug-code.jpg';
+import blueprintComponent from './assets/events/blueprint-component.jpg';
+import stateMgmtFlow from './assets/events/state-mgmt-flow.jpg';
+import hooks from './assets/events/hooks.jpg';
+import styling from './assets/events/styling.jpg';
+import dataFetching from './assets/events/data-fetching.jpg';
+import reactTs from './assets/events/react-ts.jpg';
+import performance from './assets/events/performance.jpg';
+import dataStore from './assets/events/data-store.jpg';
+import { Event } from './types/types';
 
-export const SESSIONS: BookSession[] = [
+export const EVENTS: Event[] = [
   {
     id: 'sess01',
     title: 'Kickstart with React: Personal Intro',
     summary: 'Tailored guidance for total beginners in React.',
     description:
-      "Starting with React can be daunting.\n\nYet, with the right guidance, it can be an exhilarating journey.\n\nIn this session, we will begin by demystifying React's core philosophy.\n\nWhy was React created?\n\nWhat problems does it solve in the world of web development?\n\nTogether, we'll delve into the virtual DOM, JSX, and component-based architecture.\n\nNo need to worry about the jargon; I'll break everything down step by step.\n\nWe'll touch on the importance of unidirectional data flow and the component lifecycle.\n\nWe'll set up a new React project together.\n\nBy the end of our session, you will have a clear understanding and a roadmap tailored just for you, to aid your React journey.",
+      "Starting with React can be daunting.\n\nYet, with the right guidance, it can be an exhilarating journey.\n\nIn this event, we will begin by demystifying React's core philosophy.\n\nWhy was React created?\n\nWhat problems does it solve in the world of web development?\n\nTogether, we'll delve into the virtual DOM, JSX, and component-based architecture.\n\nNo need to worry about the jargon; I'll break everything down step by step.\n\nWe'll touch on the importance of unidirectional data flow and the component lifecycle.\n\nWe'll set up a new React project together.\n\nBy the end of our event, you will have a clear understanding and a roadmap tailored just for you, to aid your React journey.",
     duration: 1,
     date: '2023-11-01',
     image: kickstartReact,
@@ -26,7 +26,7 @@ export const SESSIONS: BookSession[] = [
     title: 'Debugging Your React Code',
     summary: "Stuck with a React bug? Let's squash it together.",
     description:
-      "Every developer, regardless of experience, encounters bugs.\n\nBut, the power lies in knowing how to squash them effectively.\n\nIn our focused session, you'll learn the art of debugging in React.\n\nWe'll start by understanding the common pitfalls and errors that many developers face.\n\nUsing tools like React DevTools, we'll inspect components, props, and state.\n\nTogether, we'll simulate a few bugs and then debug them in real-time.\n\nYou'll learn about error boundaries and their significance in preventing app crashes.\n\nBy the end, not only will we have tackled your current bug(s), but you'll also be equipped with a toolkit of debugging strategies for future challenges.\n\nRemember, in the world of development, debugging is a superpower.",
+      "Every developer, regardless of experience, encounters bugs.\n\nBut, the power lies in knowing how to squash them effectively.\n\nIn our focused event, you'll learn the art of debugging in React.\n\nWe'll start by understanding the common pitfalls and errors that many developers face.\n\nUsing tools like React DevTools, we'll inspect components, props, and state.\n\nTogether, we'll simulate a few bugs and then debug them in real-time.\n\nYou'll learn about error boundaries and their significance in preventing app crashes.\n\nBy the end, not only will we have tackled your current bug(s), but you'll also be equipped with a toolkit of debugging strategies for future challenges.\n\nRemember, in the world of development, debugging is a superpower.",
     duration: 1.5,
     date: '2023-11-03',
     image: debugCode,

@@ -20,12 +20,12 @@ export default function HomePage() {
       </section>
 
       <section>
-        <img src={listImg} alt="A list of sessions" />
+        <img src={listImg} alt="A list of events" />
         <div>
           <h3>What we offer</h3>
           <p>
-            We offer a variety of mentoring sessions, from one-on-one mentoring
-            to group mentoring sessions. Browse our available sessions to find
+            We offer a variety of mentoring events, from one-on-one mentoring
+            to group mentoring events. Browse our available events to find
             the one that best fits your needs.
           </p>
         </div>

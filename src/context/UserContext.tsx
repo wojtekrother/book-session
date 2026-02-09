@@ -3,7 +3,7 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useReducer,
 
 import {  User } from "../types/types";
 import { StringUtils } from "../utils/string";
-import { UserApi } from "../api/UserApi";
+import { UserApi } from "../services/api/UserApi";
 
 
 
@@ -11,9 +11,9 @@ type UserContextValue = {
     login: ({ login, password }: { login: string, password: string }) => Promise<void>;
     logout: () => void;
     isLoggedIn: boolean;
-    userAddSession: (sessionId: string) => Promise<void>,
-    userRemoveSession: (sessionId: string) => Promise<void>,
-    userSessionsIds: string[] | undefined
+    userAddEvent: (eventId: string) => Promise<void>,
+    userRemoveEvent: (eventId: string) => Promise<void>,
+    userEventsIds: string[] | undefined
 }
 
 export const UserContext = createContext<UserContextValue | null>(null)
@@ -46,17 +46,17 @@ type UserIdleAction = {
 }
 
 
-type UserAddSessionAction = {
-    type: "USER_ADD_SESSION_BY_ID",
+type UserAddEventAction = {
+    type: "USER_ADD_EVENT_BY_ID",
     payload: {
-        sessionId: string
+        eventId: string
     }
 }
 
-type UserRemoveSessionAction = {
-    type: "USER_REMOVE_SESSION_BY_ID",
+type UserRemoveEventAction = {
+    type: "USER_REMOVE_EVENT_BY_ID",
     payload: {
-        sessionId: string
+        eventId: string
     }
 }
 
@@ -78,7 +78,7 @@ type UserReducerState = {
     message: string | null
 }
 
-type UserActions = UserAddSessionAction | UserRemoveSessionAction | UserLoginAction | UserLogoutinAction |
+type UserActions = UserAddEventAction | UserRemoveEventAction | UserLoginAction | UserLogoutinAction |
     UserErrorAction | UserPendingAction | UserIdleAction
 
 function reducerFn(state: UserReducerState, action: UserActions): UserReducerState {
@@ -92,12 +92,12 @@ function reducerFn(state: UserReducerState, action: UserActions): UserReducerSta
         return { ...state, message: null, status: "idle" }
     }
 
-    if (action.type === "USER_ADD_SESSION_BY_ID") {
-        return { ...state, user: { ...state.user!, sessionsId: [...state.user!.sessionsId, action.payload.sessionId] } }
+    if (action.type === "USER_ADD_EVENT_BY_ID") {
+        return { ...state, user: { ...state.user!, eventsId: [...state.user!.eventsId, action.payload.eventId] } }
     }
 
-    if (action.type === "USER_REMOVE_SESSION_BY_ID") {
-        return { ...state, user: { ...state.user!, sessionsId: state.user!.sessionsId.filter(sessionId => sessionId !== action.payload.sessionId) } }
+    if (action.type === "USER_REMOVE_EVENT_BY_ID") {
+        return { ...state, user: { ...state.user!, eventsId: state.user!.eventsId.filter(eventId => eventId !== action.payload.eventId) } }
     }
     if (action.type === "USER_LOGIN") {
         return { ...state, user: action.payload.user }
@@ -164,15 +164,15 @@ const UserContextProvider = ({ children }: UserContextProviderProps) => {
 
     const isLoggedIn: UserContextValue["isLoggedIn"] = state.user != null;
 
-    const userAddSession: UserContextValue["userAddSession"] = useCallback(async (sessionId) => {
+    const userAddEvent: UserContextValue["userAddEvent"] = useCallback(async (eventId) => {
         if (!isLoggedIn) {
             throw new Error("User is ont logged in.")
         } else {
 
             setPendingUserStatus();
             try {
-                await UserApi.userAddSession(sessionId, state.user?.id!)
-                dispatch({ type: "USER_ADD_SESSION_BY_ID", payload: { sessionId } })
+                await UserApi.userAddEvent(eventId, state.user?.id!)
+                dispatch({ type: "USER_ADD_EVENT_BY_ID", payload: { eventId: eventId } })
             } catch (err) {
                 dispatch({ type: "USER_ERROR", payload: { message: "Error during adding sassion to user." } });
                 throw err;
@@ -182,22 +182,22 @@ const UserContextProvider = ({ children }: UserContextProviderProps) => {
     }, [isLoggedIn, state.user]);
 
 
-    const userRemoveSession: UserContextValue["userRemoveSession"] = useCallback(async (sessionId) => {
+    const userRemoveEvent: UserContextValue["userRemoveEvent"] = useCallback(async (eventId) => {
         if (!isLoggedIn) {
             throw new Error("User is ont logged in.")
         } else {
             setPendingUserStatus();
             try {
-                await UserApi.userRemoveSession(sessionId, state.user?.id!)
-                dispatch({ type: "USER_REMOVE_SESSION_BY_ID", payload: { sessionId } })
+                await UserApi.userRemoveEvent(eventId, state.user?.id!)
+                dispatch({ type: "USER_REMOVE_EVENT_BY_ID", payload: { eventId } })
             } catch (err) {
-                dispatch({ type: "USER_ERROR", payload: { message: "Error during removing sassion to user." } });
+                dispatch({ type: "USER_ERROR", payload: { message: "Error during removing event from user." } });
                 throw err;
             }
             setIdleUserStatus();
         }
     }, [isLoggedIn, state.user]);
-    const userSessionsIds = state.user != null ? state.user.sessionsId : undefined;
+    const userEventsIds = state.user != null ? state.user.eventsIds : undefined;
 
 
     const ctx: UserContextValue = useMemo<UserContextValue>(() => {
@@ -205,12 +205,12 @@ const UserContextProvider = ({ children }: UserContextProviderProps) => {
             login,
             logout,
             isLoggedIn,
-            userAddSession,
-            userRemoveSession,
-            userSessionsIds
+            userAddEvent: userAddEvent,
+            userRemoveEvent: userRemoveEvent,
+            userEventsIds: userEventsIds
         }
     }
-        , [isLoggedIn, login, logout, userAddSession, userRemoveSession, userSessionsIds]);
+        , [isLoggedIn, login, logout, userAddEvent, userRemoveEvent, userEventsIds]);
 
     return (
         <UserContext.Provider value={ctx}>

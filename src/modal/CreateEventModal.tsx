@@ -1,32 +1,35 @@
-import { ComponentProps, forwardRef, useImperativeHandle, useRef, useState } from "react"
-import Input from "../components/Input"
-import Button from "../components/Button"
+import { ComponentProps, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
+import Input from "../components/ui/Input"
+import Button from "../components/ui/Button"
 import { createPortal } from "react-dom"
 
 import { convertFileToString } from "../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../utils/string"
-import { useBookSessionContext } from "../context/SessionsContext"
+import { useEventContext } from "../context/EventContext"
 
 
-type CreateSessionModalProps = {
+type CreateEventModalProps = {
 
 }
 
-export type CreateSessionModalHandler = {
+export type CreateEventModalHandler = {
     open: () => void,
     close: () => void
 }
 
 
-const CreateSessionModal = forwardRef<CreateSessionModalHandler>(({ ...props }: CreateSessionModalProps, ref) => {
+const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: CreateEventModalProps, ref) => {
     const modal = useRef<HTMLDialogElement>(null);
     const [errors, setErrors] = useState<string[]>([]);
-    const sessionContext = useBookSessionContext();
+    const eventCtx = useEventContext();
+    const [modalRootElement, setModalRootElement] = useState<HTMLElement | null>(null)
+    const abortControler = new AbortController();
 
-    const modalRootElement = document.getElementById("modal-root")
-
-    console.log(`modalRootElement ${modalRootElement}`)
+    useEffect(() => {
+        setModalRootElement(document.getElementById("modal-root"))
+    }, [])
+    
     useImperativeHandle(ref, () => {
         return {
             open: () => {
@@ -106,16 +109,16 @@ const CreateSessionModal = forwardRef<CreateSessionModalHandler>(({ ...props }: 
 
         if (errors.length == 0) {
             try {
-                await sessionContext.addSession({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
+                await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
                 event.currentTarget.reset()
-                
-                toast.success("New session sucesfully created")
+
+                toast.success("New event sucesfully created")
 
             } catch (e: unknown) {
                 if (e instanceof Error) {
-                    toast.error(`Error during saving sessino ${e.message}`)
+                    toast.error(`Error during saving event ${e.message}`)
                 } else {
-                    toast.error("Error during saving session!")
+                    toast.error("Error during saving event!")
                 }
             }
         }
@@ -133,20 +136,20 @@ const CreateSessionModal = forwardRef<CreateSessionModalHandler>(({ ...props }: 
                     </div>
                 }
                 <div>
-                    <Input disabled={sessionContext.status === "pending"} label="Title" name="title"  />
-                    <Input disabled={sessionContext.status === "pending"} label="Description" name="description" />
-                    <Input disabled={sessionContext.status === "pending"} label="Summary" name="summary" />
-                    <Input disabled={sessionContext.status === "pending"} label="Duration in days" name="duration" type="number" />
-                    <Input disabled={sessionContext.status === "pending"} label="Start date" name="date" type="date" />
-                    <Input disabled={sessionContext.status === "pending"} label="Image" name="image" type="file" />
+                    <Input disabled={eventCtx.status === "pending"} label="Title" name="title" />
+                    <Input disabled={eventCtx.status === "pending"} label="Description" name="description" />
+                    <Input disabled={eventCtx.status === "pending"} label="Summary" name="summary" />
+                    <Input disabled={eventCtx.status === "pending"} label="Duration in days" name="duration" type="number" />
+                    <Input disabled={eventCtx.status === "pending"} label="Start date" name="date" type="date" />
+                    <Input disabled={eventCtx.status === "pending"} label="Image" name="image" type="file" />
                 </div>
                 <div className="actions">
                     <Button textOnly onClick={closeModal}>Cancel</Button>
-                    <Button disabled={sessionContext.status === "pending"}>Create</Button>
+                    <Button disabled={eventCtx.status === "pending"}>Create</Button>
                 </div>
             </form>
         </dialog>, modalRootElement) : null}</>
 
 })
 
-export default CreateSessionModal
+export default CreateEventModal

@@ -1,4 +1,4 @@
-export type BookSession = {
+export type Event = {
     id?: string,
     title: string,
     summary: string,
@@ -12,11 +12,13 @@ export type BookSession = {
     modifiedAt?: string
 }
 
+
+
 export type User = {
     id?: string,
     login: string,
     password: string,
-    sessionsId: string[],
+    eventsIds: string[],
     deleteAt?: string,
     createdAt?: string,
     modifiedAt?: string

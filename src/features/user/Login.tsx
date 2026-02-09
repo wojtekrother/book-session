@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import { useUserContext } from "../context/UserSession";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+import { useUserContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { StringUtils } from "../utils/string";
-import ErrorField from "../components/ErrorField";
-import { toast } from "react-toastify";
+import { StringUtils } from "../../utils/string";
+import ErrorField from "../../components/ui/ErrorField";
 
 
 const LoginPage = () => {
@@ -20,7 +19,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (authContext.isLoggedIn) {
-            navigation("/mySessions")
+            navigation("/myEvents")
         }
     },[authContext.isLoggedIn])
 
