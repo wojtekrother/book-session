@@ -1,5 +1,5 @@
-import { User } from "../types/types";
-import { SessionApi } from "./SessionApi";
+import { User } from "../../types/types";
+import { EventApi } from "./EventApi";
 
 
 
@@ -32,37 +32,37 @@ async function getUserByLogin(login: string): Promise<User> {
     return users[0];
 }
 
-async function userAddSession(sessionId: string, userId: string): Promise<void> {
-    const session = await SessionApi.getSession(sessionId);
-    if (session == null) {
-        throw new Error(`Session with id:${sessionId} not exist`)
+async function userAddEvent(eventId: string, userId: string): Promise<void> {
+    const event = await EventApi.getEvent(eventId);
+    if (event == null) {
+        throw new Error(`Event with id:${eventId} not exist`)
     }
     const user = await getUserById(userId);
     if (user == null) {
         throw new Error(`User with id:${userId} not exist`)
     }
 
-    if (user.sessionsId.indexOf(sessionId) > 0) {
-        throw new Error(`User already have session with id:${sessionId}`)
+    if (user.eventsIds.indexOf(eventId) > 0) {
+        throw new Error(`User already have event with id:${eventId}`)
     }
 
     const response = await fetch(`/api/users/${userId}`, {
         method: 'PATCH',
         body: JSON.stringify({
             modifiedAt: new Date(),
-            sessionsId: [...user.sessionsId, sessionId]
+            eventsIds: [...user.eventsIds, eventId]
         })
     })
 
     if (!response.ok) {
-        throw Error(`Error during adding session to user. Status ${response.statusText}`)
+        throw Error(`Error during adding event to user. Status ${response.statusText}`)
     }
     return
 }
-async function userRemoveSession(sessionId: string, userId: string): Promise<void> {
-    const session = await SessionApi.getSession(sessionId);
-    if (session == null) {
-        throw new Error(`Session with id:${sessionId} not exist`)
+async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
+    const event = await EventApi.getEvent(eventId);
+    if (event == null) {
+        throw new Error(`Event with id:${eventId} not exist`)
     }
     const user = await UserApi.getUserById(userId);
 
@@ -70,12 +70,12 @@ async function userRemoveSession(sessionId: string, userId: string): Promise<voi
         method: 'PATCH',
         body: JSON.stringify({
             modifiedAt: new Date(),
-            sessionsId: [...user.sessionsId.filter(sesId => sesId != sessionId)]
+            eventsIds: [...user.eventsIds.filter(evId => evId != eventId)]
         })
     })
 
     if (!response.ok) {
-        throw Error(`Error during removing session from user. Status ${response.statusText}`)
+        throw Error(`Error during removing event from user. Status ${response.statusText}`)
     }
     return
 }
@@ -88,4 +88,4 @@ async function checkLoginAndPassword(login: string, password: string) {
 }
 
 
-export const UserApi = { getUserById, getUserByLogin, userAddSession, userRemoveSession, checkLoginAndPassword }
+export const UserApi = { getUserById, getUserByLogin, userAddEvent, userRemoveEvent, checkLoginAndPassword }

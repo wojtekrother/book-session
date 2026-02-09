@@ -1,14 +1,13 @@
 import { useEffect, useRef } from "react"
-import CreateSessionModal, { CreateSessionModalHandler } from "../modal/CreateSessionModal"
+import CreateEventModal, { CreateEventModalHandler } from "../../modal/CreateEventModal"
 import Button from "./Button"
-import { useUserContext } from "../context/UserSession";
-import { logoutAction } from "../actions/LogoutAction";
+import { useUserContext } from "../../context/UserContext";
 import { toast } from "react-toastify";
 
 
 
 const Header = () => {
-    const modal = useRef<CreateSessionModalHandler>(null);
+    const modal = useRef<CreateEventModalHandler>(null);
     const authContext = useUserContext();
 
     useEffect(() => {
@@ -31,8 +30,8 @@ const Header = () => {
 
     return (
         <header id="main-header" className="from-blue-50 to-blue-300 bg-linear-to-t p-3">
-            <CreateSessionModal ref={modal} />
-            <h1 className="text-2xl ">Booking session</h1>
+            <CreateEventModal ref={modal} />
+            <h1 className="text-2xl ">Booking event</h1>
             <nav >
                 <ul className="flex items-center gap-2">
                     <li className="mr-auto"><Button href="/" >Home</Button></li>
@@ -40,10 +39,10 @@ const Header = () => {
                         <li><Button onClick={handleLogoutClik} textOnly>Logout</Button></li>}
                     {!authContext.isLoggedIn &&
                         <li><Button href="/user/login">Login</Button></li>}
-                    <li><Button href="/sessions">Sessions</Button></li>
+                    <li><Button href="/events">Events</Button></li>
                     {authContext.isLoggedIn &&
-                        <li><Button href="/mySessions">My sessions</Button></li>}
-                    <li><Button textOnly onClick={() => modal.current?.open()} >Create new session</Button></li>
+                        <li><Button href="/myEventss">My events</Button></li>}
+                    <li><Button textOnly onClick={() => modal.current?.open()} >Create new event</Button></li>
                 </ul>
             </nav>
         </header>
