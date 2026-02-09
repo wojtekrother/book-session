@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import AddModal, { AddModalHandler } from "../modal/AddModal"
+import CreateSessionModal, { CreateSessionModalHandler } from "../modal/CreateSessionModal"
 import Button from "./Button"
 import { useUserContext } from "../context/UserSession";
 import { logoutAction } from "../actions/LogoutAction";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 
 const Header = () => {
-    const modal = useRef<AddModalHandler>(null);
+    const modal = useRef<CreateSessionModalHandler>(null);
     const authContext = useUserContext();
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const Header = () => {
 
     return (
         <header id="main-header" className="from-blue-50 to-blue-300 bg-linear-to-t p-3">
-            <AddModal ref={modal} />
+            <CreateSessionModal ref={modal} />
             <h1 className="text-2xl ">Booking session</h1>
             <nav >
                 <ul className="flex items-center gap-2">

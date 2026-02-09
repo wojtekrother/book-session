@@ -10,7 +10,7 @@
 @layer components {
  
 
-  .action {
+  .actions {
     @apply flex mt-4 justify-end;
   }
 }

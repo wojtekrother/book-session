@@ -47,7 +47,7 @@ async function userAddSession(sessionId: string, userId: string): Promise<void> 
     }
 
     const response = await fetch(`/api/users/${userId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify({
             modifiedAt: new Date(),
             sessionsId: [...user.sessionsId, sessionId]
@@ -67,7 +67,7 @@ async function userRemoveSession(sessionId: string, userId: string): Promise<voi
     const user = await UserApi.getUserById(userId);
 
     const response = await fetch(`/api/users/${userId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify({
             modifiedAt: new Date(),
             sessionsId: [...user.sessionsId.filter(sesId => sesId != sessionId)]

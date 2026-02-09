@@ -6,7 +6,7 @@ async function createSession(session: BookSession): Promise<BookSession> {
         method: 'POST',
         body: JSON.stringify({ ...session, createdAt: new Date() })
     })
-
+    delay(1000)
     if (!response.ok) {
         throw Error(`Wrong response status: ${response.statusText}`)
     }
@@ -19,6 +19,7 @@ async function removeSession(sessionId: string): Promise<BookSession> {
         method: 'PUT',
         body: JSON.stringify({ deleteAt: new Date() })
     })
+    delay(1000)
 
     if (!response.ok) {
         throw Error(`Wrong response status: ${response.statusText}`)

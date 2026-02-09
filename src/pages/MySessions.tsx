@@ -1,8 +1,9 @@
+import SessionItem from "../components/SessionItem";
 import { useBookSessionContext } from "../context/SessionsContext";
 import { useUserContext } from "../context/UserSession";
 
 
-const MySessions = () => {
+const MySessionsPage = () => {
     const userCtx = useUserContext();
     const sessionCtx = useBookSessionContext()
 
@@ -12,13 +13,16 @@ const MySessions = () => {
             My sessions
         </header>
         <article>
-            List of my sessions
-            <ul>
-                {userCtx.userSessionsIds && }
-            </ul>
+            List of my sessions id: {userCtx.userSessionsIds}
+            <div className='grid grid-cols-2 gap-2'>
+                {userCtx.userSessionsIds && 
+                    userCtx.userSessionsIds.map(id => {
+                        const session = sessionCtx.getSession(id)
+                        return <SessionItem mode="assigned" session={session!} key={id}></SessionItem>})}
+            </div>
         </article>
     </main>
     )
 }
 
-export default MySessions;
+export default MySessionsPage;

@@ -9,17 +9,17 @@ import { StringUtils } from "../utils/string"
 import { useBookSessionContext } from "../context/SessionsContext"
 
 
-type AddModalProps = {
+type CreateSessionModalProps = {
 
 }
 
-export type AddModalHandler = {
+export type CreateSessionModalHandler = {
     open: () => void,
     close: () => void
 }
 
 
-const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) => {
+const CreateSessionModal = forwardRef<CreateSessionModalHandler>(({ ...props }: CreateSessionModalProps, ref) => {
     const modal = useRef<HTMLDialogElement>(null);
     const [errors, setErrors] = useState<string[]>([]);
     const sessionContext = useBookSessionContext();
@@ -106,8 +106,11 @@ const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) 
 
         if (errors.length == 0) {
             try {
-                await sessionContext.addSsession({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
+                await sessionContext.addSession({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
+                event.currentTarget.reset()
+                
                 toast.success("New session sucesfully created")
+
             } catch (e: unknown) {
                 if (e instanceof Error) {
                     toast.error(`Error during saving sessino ${e.message}`)
@@ -130,20 +133,20 @@ const AddModal = forwardRef<AddModalHandler>(({ ...props }: AddModalProps, ref) 
                     </div>
                 }
                 <div>
-                    <Input label="Title" name="title" />
-                    <Input label="Description" name="description" />
-                    <Input label="Description" name="summary" />
-                    <Input label="Duration in days" name="duration" type="number" />
-                    <Input label="Start date" name="date" type="date" />
-                    <Input label="Image" name="image" type="file" />
+                    <Input disabled={sessionContext.status === "pending"} label="Title" name="title"  />
+                    <Input disabled={sessionContext.status === "pending"} label="Description" name="description" />
+                    <Input disabled={sessionContext.status === "pending"} label="Summary" name="summary" />
+                    <Input disabled={sessionContext.status === "pending"} label="Duration in days" name="duration" type="number" />
+                    <Input disabled={sessionContext.status === "pending"} label="Start date" name="date" type="date" />
+                    <Input disabled={sessionContext.status === "pending"} label="Image" name="image" type="file" />
                 </div>
                 <div className="actions">
                     <Button textOnly onClick={closeModal}>Cancel</Button>
-                    <Button >Create</Button>
+                    <Button disabled={sessionContext.status === "pending"}>Create</Button>
                 </div>
             </form>
         </dialog>, modalRootElement) : null}</>
 
 })
 
-export default AddModal
+export default CreateSessionModal

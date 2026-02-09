@@ -7,7 +7,7 @@ export default function Root() {
 
       <div className='w-3xl mx-auto bg-blue-50'>
         <Header />
-        <div className="m-1">
+        <div className="m-1 pb-20">
           <Outlet />
         </div>
       </div>

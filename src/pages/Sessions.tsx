@@ -9,7 +9,7 @@ export default function SessionsPage() {
 
   console.log('React działa', React.version);
   //saveSession(SESSIONS[1]);
-  const [sessions, setSessions] = useState<BookSession[] | null>(null)
+  //const [sessions, setSessions] = useState<BookSession[] | null>(null)
   const bookSessionContext = useBookSessionContext();
   
 
@@ -30,7 +30,7 @@ export default function SessionsPage() {
           <div className='grid grid-cols-2 gap-2'>
 
             {bookSessionContext.sessions.map(s => {
-              return <SessionItem session={s}></SessionItem>
+              return <SessionItem mode='public' session={s}></SessionItem>
             })
             }
 

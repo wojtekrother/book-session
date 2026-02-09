@@ -1,12 +1,14 @@
 import { useParams } from 'react-router-dom';
 
 import { SESSIONS } from '../dummy-sessions.ts';
+import { useBookSessionContext } from '../context/SessionsContext.tsx';
 
 export default function SessionPage() {
   const params = useParams<{ id: string }>();
+  const sessionContext = useBookSessionContext();
 
   const sessionId = params.id;
-  const loadedSession = SESSIONS.find((session) => session.id === sessionId);
+  const loadedSession = sessionContext.getSession(sessionId!)
 
   if (!loadedSession) {
     return (
