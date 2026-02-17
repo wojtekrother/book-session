@@ -93,11 +93,11 @@ function reducerFn(state: UserReducerState, action: UserActions): UserReducerSta
     }
 
     if (action.type === "USER_ADD_EVENT_BY_ID") {
-        return { ...state, user: { ...state.user!, eventsId: [...state.user!.eventsId, action.payload.eventId] } }
+        return { ...state, user: { ...state.user!, eventsIds: [...state.user!.eventsIds, action.payload.eventId] } }
     }
 
     if (action.type === "USER_REMOVE_EVENT_BY_ID") {
-        return { ...state, user: { ...state.user!, eventsId: state.user!.eventsId.filter(eventId => eventId !== action.payload.eventId) } }
+        return { ...state, user: { ...state.user!, eventsIds: state.user!.eventsIds.filter(eventId => eventId !== action.payload.eventId) } }
     }
     if (action.type === "USER_LOGIN") {
         return { ...state, user: action.payload.user }

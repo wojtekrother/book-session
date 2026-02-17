@@ -5,6 +5,10 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(),],
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts'
+  },
   server: {
     proxy: {
       // Target is your backend API

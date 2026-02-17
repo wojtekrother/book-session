@@ -1,67 +1,27 @@
 import { Event } from "../../types/types";
 import { delay } from "../../utils/dalay";
+import { HttpClientApi } from "./HttpClient";
 
 async function createEvent(event: Event): Promise<Event> {
-    const response = await fetch("/api/events", {
-        method: 'POST',
-        body: JSON.stringify({ ...event, createdAt: new Date() })
-    })
-    delay(1000)
-    if (!response.ok) {
-        throw Error(`Wrong response status: ${response.statusText}`)
-    }
-
-    return response.json()
+    return HttpClientApi.post<Event>("/api/events", { ...event, createdAt: new Date() });
 }
 
 async function removeEvent(eventId: string): Promise<Event> {
-    const response = await fetch(`/api/events/${eventId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ deleteAt: new Date() })
-    })
-    delay(1000)
-
-    if (!response.ok) {
-        throw Error(`Wrong response status: ${response.statusText}`)
-    }
-
-    return response.json()
+    return HttpClientApi.patch<Event>(`/api/events/${eventId}`,{ deleteAt: new Date() });
 }
 
 async function updateEvent(event: Event): Promise<Event> {
-    const response = await fetch(`/api/events/${event.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ ...event, updatedAt: new Date() })
-    })
-
-    if (!response.ok) {
-        const errorMessage = await response.text()
-        throw Error(`Wrong response status: ${response.statusText} message: ${errorMessage}`)
-    }
-
-    return response.json()
+    return HttpClientApi.patch<Event>(`/api/events/${event.id}`, { ...event, updatedAt: new Date() })
 }
 
 
 async function getEvent(id: string): Promise<Event> {
-    const response = await fetch("/api/events/" + id)
-
-    if (!response.ok) {
-        const errorMessage = await response.text()
-        throw Error(`Wrong response status: ${response.statusText} message: ${errorMessage}`)
-    }
-
-    return response.json()
+    return HttpClientApi.get<Event>("/api/events/" + id);
 }
 
 async function getEvents(): Promise<Event[]> {
-    const response = await fetch("/api/events")
     await delay(500)
-    if (!response.ok) {
-        throw Error(`Wrong response status: ${response.statusText}`)
-    }
-
-    return response.json()
+    return HttpClientApi.get<Event[]>("/api/events");
 }
 
 export const EventApi = { createEvent, removeEvent, updateEvent, getEvent, getEvents }

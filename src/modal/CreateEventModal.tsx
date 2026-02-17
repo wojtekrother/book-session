@@ -1,4 +1,4 @@
-import { ComponentProps, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
 import { createPortal } from "react-dom"

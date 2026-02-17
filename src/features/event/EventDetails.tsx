@@ -1,34 +1,47 @@
-import EventItem from '../../components/ui/EventItem.tsx';
+import { useParams } from 'react-router-dom';
+
 import { useEventContext } from '../../context/EventContext.tsx';
 
-export default function EventsListPage() {
+export default function EventDetailsPage() {
+  const params = useParams<{ id: string }>();
   const eventCtx = useEventContext();
+
+  const eventId = params.id;
+  const loadedEvent = eventCtx.getEvent(eventId!)
+
+  if (!loadedEvent) {
+    return (
+      <main >
+        <p>No event found!</p>
+      </main>
+    );
+  }
 
 
   return (
-    <main >
-      <header>
-        <h2>Available mentoring events</h2>
-        <p>
-          From an one-on-one introduction to React's basics all the way up to a
-          deep dive into state mechanics - we got just the right event for
-          you!
-        </p>
-      </header>
-
-      <div id='content'>
-        {eventCtx.events === null && <div>Loading...</div>}
-        {eventCtx.events &&
-          <div className='grid grid-cols-2 gap-2'>
-
-            {eventCtx.events.map(s => {
-              return <EventItem mode='public' event={s}></EventItem>
-            })
-            }
-
+    <main>
+      <article>
+        <header>
+          <img
+            src={loadedEvent.image}
+            alt={loadedEvent.title}
+          />
+          <div>
+            <h2>{loadedEvent.title}</h2>
+            <time dateTime={new Date(loadedEvent.date).toISOString()}>
+              {new Date(loadedEvent.date).toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
+            </time>
+            <p>
+              {/* Todo: Add button that opens "Book Event" dialog / modal */}
+            </p>
           </div>
-        }
-      </div>
+        </header>
+        <p id="content">{loadedEvent.description}</p>
+      </article>
     </main>
   );
 }
