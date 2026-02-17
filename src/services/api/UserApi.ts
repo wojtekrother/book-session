@@ -1,34 +1,19 @@
 import { User } from "../../types/types";
 import { EventApi } from "./EventApi";
-
-
-
+import { HttpClientApi } from "./HttpClient";
 
 async function getUserById(id: string): Promise<User> {
-    const response = await fetch(`/api/users/${id}`)
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(`Get user error ${response.statusText} ${message}`)
-    }
-
-    return (await response.json()) as User;
+    return await HttpClientApi.get<User>(`/api/users/${id}`);
 }
 
 async function getUserByLogin(login: string): Promise<User> {
-    const response = await fetch(`/api/users?login=${login}`)
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(`Get user error ${response.statusText} ${message}`)
-    }
-    const users: User[] = await response.json()
+    const users: User[] = await HttpClientApi.get<User[]>(`/api/users?login=${login}`);
     if (users.length === 0) {
         throw new Error(`User not exist.`)
     }
     if (users.length > 1) {
         throw new Error(`Use login is not unique.`)
     }
-
-
     return users[0];
 }
 
@@ -46,18 +31,10 @@ async function userAddEvent(eventId: string, userId: string): Promise<void> {
         throw new Error(`User already have event with id:${eventId}`)
     }
 
-    const response = await fetch(`/api/users/${userId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-            modifiedAt: new Date(),
-            eventsIds: [...user.eventsIds, eventId]
-        })
+    return await HttpClientApi.patch<void>(`/api/users/${userId}`, {
+        modifiedAt: new Date(),
+        eventsIds: [...user.eventsIds, eventId]
     })
-
-    if (!response.ok) {
-        throw Error(`Error during adding event to user. Status ${response.statusText}`)
-    }
-    return
 }
 async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
     const event = await EventApi.getEvent(eventId);
@@ -66,18 +43,12 @@ async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
     }
     const user = await UserApi.getUserById(userId);
 
-    const response = await fetch(`/api/users/${userId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-            modifiedAt: new Date(),
-            eventsIds: [...user.eventsIds.filter(evId => evId != eventId)]
-        })
+
+    return await HttpClientApi.patch<void>(`/api/users/${userId}`, {
+        modifiedAt: new Date(),
+        eventsIds: [...user.eventsIds.filter(evId => evId != eventId)]
     })
 
-    if (!response.ok) {
-        throw Error(`Error during removing event from user. Status ${response.statusText}`)
-    }
-    return
 }
 
 
@@ -89,3 +60,7 @@ async function checkLoginAndPassword(login: string, password: string) {
 
 
 export const UserApi = { getUserById, getUserByLogin, userAddEvent, userRemoveEvent, checkLoginAndPassword }
+
+
+
+

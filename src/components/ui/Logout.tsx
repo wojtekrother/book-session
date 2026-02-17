@@ -1,12 +1,9 @@
 import { toast } from "react-toastify";
-import { logoutAction } from "../../actions/LogoutAction";
 import { useUserContext } from "../../context/UserContext";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 const Loggout = () => {
     const ctx = useUserContext();
-    const navigate = useNavigate()
 
     useEffect(() => {
         toast.info("useEffect at work")

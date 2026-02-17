@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react"
 import CreateEventModal, { CreateEventModalHandler } from "../../modal/CreateEventModal"
-import Button from "./Button"
+import Button from "../../components/ui/Button"
 import { useUserContext } from "../../context/UserContext";
 import { toast } from "react-toastify";
+import { ModalHandler } from "../../modal/Modal";
 
 
 
 const Header = () => {
     const modal = useRef<CreateEventModalHandler>(null);
+    const modal1 = useRef<ModalHandler>(null);
     const authContext = useUserContext();
 
     useEffect(() => {
@@ -41,8 +43,9 @@ const Header = () => {
                         <li><Button href="/user/login">Login</Button></li>}
                     <li><Button href="/events">Events</Button></li>
                     {authContext.isLoggedIn &&
-                        <li><Button href="/myEventss">My events</Button></li>}
+                        <li><Button href="/user/events">My events</Button></li>}
                     <li><Button textOnly onClick={() => modal.current?.open()} >Create new event</Button></li>
+                     <li><Button textOnly onClick={() => modal1.current?.open()} >TEST</Button></li>
                 </ul>
             </nav>
         </header>
