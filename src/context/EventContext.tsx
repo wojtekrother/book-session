@@ -120,7 +120,8 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
             setIdleEventStatus()
 
         }
-        loadEvents()
+        loadEvents();
+        console.log("Event providere useEffect")
     }, [])
 
     const setPendingEventStatus = useCallback(() => {

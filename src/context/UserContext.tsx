@@ -1,14 +1,14 @@
 import { createContext, ReactNode, useCallback, useContext, useMemo, useReducer, useRef,  } from "react"
 
 
-import {  User } from "../types/types";
+import {  AccessToken, User } from "../types/types";
 import { StringUtils } from "../utils/string";
 import { UserApi } from "../services/api/UserApi";
 
 
 
 type UserContextValue = {
-    login: ({ login, password }: { login: string, password: string }) => Promise<void>;
+    login: ({ email, password }: { email: string, password: string }) => Promise<void>;
     logout: () => void;
     isLoggedIn: boolean;
     userAddEvent: (eventId: string) => Promise<void>,
@@ -21,7 +21,7 @@ export const UserContext = createContext<UserContextValue | null>(null)
 export function useUserContext() {
     const context = useContext(UserContext);
     if (context == null) {
-        throw Error("UserContext is null.")
+        throw new Error("UserContext is null.")
     }
     return context;
 }
@@ -134,22 +134,18 @@ const UserContextProvider = ({ children }: UserContextProviderProps) => {
     }, [])
 
 
-    const login: UserContextValue["login"] = useCallback(async ({ login, password }) => {
+    const login: UserContextValue["login"] = useCallback(async ({ email, password }) => {
 
         if (state.user != null) {
             throw new Error("User is allready loggied in.");
         }
-        if (StringUtils.isBlank(login) || StringUtils.isBlank(password)) {
+        if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
             throw new Error("Login and password is reqiured");
         }
         setPendingUserStatus();
         try {
-            const newUser = await UserApi.getUserByLogin(login);
-
-            if (newUser == null || newUser.password !== password) {
-                throw new Error("Invalid login or password")
-            }
-
+            const token:AccessToken = await UserApi.login(email, password)
+            const newUser = await UserApi.getUserByEmail(email);
             dispatch({ type: "USER_LOGIN", payload: { user: newUser } })
         } catch (err) {
             dispatch({ type: "USER_ERROR", payload: { message: "Error during login." } });

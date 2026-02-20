@@ -1,8 +1,23 @@
+import { useEffect } from 'react';
 import EventItem from '../../components/ui/EventItem.tsx';
 import { useEventContext } from '../../context/EventContext.tsx';
+import { useUserContext } from '../../context/UserContext.tsx';
+import { UserApi } from '../../services/api/UserApi.ts';
 
 export default function EventsListPage() {
   const eventCtx = useEventContext();
+  const userCtx = useUserContext();
+
+  // useEffect(() => {
+  //   const aaa = async () => {
+  //     console.log("register")
+  //     const accessToken = await UserApi.register({ email: "test2@test.pl", password: "1234", eventsIds: [], role: 'Admin' })
+  //     console.log(`accessToken: ${accessToken}`)
+  //   }
+  //   aaa()
+  //   console.log("ddd")
+  // }, [])
+
 
 
   return (
@@ -17,7 +32,8 @@ export default function EventsListPage() {
       </header>
 
       <div id='content'>
-        {eventCtx.events === null && <div>Loading...</div>}
+        {eventCtx.status === "pending" || eventCtx.status === "init" && <div role="status">Loading...</div>}
+        {eventCtx.status === "error" && <div role="alert">{eventCtx.errorMessage}</div>}
         {eventCtx.events &&
           <div className='grid grid-cols-2 gap-2'>
 

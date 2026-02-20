@@ -16,13 +16,17 @@ export type Event = {
 
 export type User = {
     id?: string,
-    login: string,
+    email: string,
     password: string,
     eventsIds: string[],
     role: "User" | "Admin"
     deleteAt?: string,
     createdAt?: string,
     modifiedAt?: string
+}
+
+export type AccessToken = {
+    "accessToken" : string
 }
 
 // enum ApiErrorCode  {
