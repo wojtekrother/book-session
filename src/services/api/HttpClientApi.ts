@@ -1,34 +1,44 @@
-export class HttpClientApi {
-    static get = async<T>(url: string, abortSignal?: AbortSignal): Promise<T> => {
+import {AccessTokenStorage} from "../../actions/AccesTokenStorage"
+
+class HttpClientApi {
+    private accessTokenStorage = new AccessTokenStorage();
+
+
+    private getAuthHeader(): {} | { Authorization: string } {
+        const token = this.accessTokenStorage.get();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+    get = async<T>(url: string, abortSignal?: AbortSignal): Promise<T> => {
         return fetchJSON<T>(url, {
             signal: abortSignal,
+            headers: { "Content-Type": "application/json", ...this.getAuthHeader() },
             method: 'GET'
         })
     }
-    static post = async<T>(url: string, body: unknown, abortSignal?: AbortSignal) => {
+    post = async<T>(url: string, body: unknown, abortSignal?: AbortSignal) => {
 
         return fetchJSON<T>(url, {
             signal: abortSignal,
             method: 'POST',
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...this.getAuthHeader() },
             body: JSON.stringify(body)
         })
     }
-    static patch = async<T>(url: string, body: unknown, abortSignal?: AbortSignal) => {
+    patch = async<T>(url: string, body: unknown, abortSignal?: AbortSignal) => {
         return fetchJSON<T>(url, {
             signal: abortSignal,
             method: 'PATCH',
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json", ...this.getAuthHeader()
             },
             body: JSON.stringify(body)
         })
     }
-    static delete = async<T>(url: string, abortSignal?: AbortSignal) => {
+    delete = async<T>(url: string, abortSignal?: AbortSignal) => {
         return fetchJSON<T>(url, {
             signal: abortSignal,
             method: 'DELETE',
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...this.getAuthHeader() },
         })
     }
 
@@ -58,3 +68,5 @@ const fetchJSON = async <T>(input: RequestInfo | URL, init?: RequestInit): Promi
     }
     return body as T;
 }
+
+export const httpClientApi = new HttpClientApi()

@@ -1,18 +1,19 @@
-import { User } from "../../types/types";
+import {AccessTokenStorage} from "../../actions/AccesTokenStorage";
+import { AccessToken, User } from "../../types/types";
 import { EventApi } from "./EventApi";
-import { HttpClientApi } from "./HttpClient";
+import { httpClientApi } from "./HttpClientApi";
 
 async function getUserById(id: string): Promise<User> {
-    return await HttpClientApi.get<User>(`/api/users/${id}`);
+    return await httpClientApi.get<User>(`/api/users/${id}`);
 }
 
-async function getUserByLogin(login: string): Promise<User> {
-    const users: User[] = await HttpClientApi.get<User[]>(`/api/users?login=${login}`);
+async function getUserByEmail(email: string): Promise<User> {
+    const users: User[] = await httpClientApi.get<User[]>(`/api/users?email=${email}`);
     if (users.length === 0) {
         throw new Error(`User not exist.`)
     }
     if (users.length > 1) {
-        throw new Error(`Use login is not unique.`)
+        throw new Error(`User email is not unique.`)
     }
     return users[0];
 }
@@ -31,11 +32,12 @@ async function userAddEvent(eventId: string, userId: string): Promise<void> {
         throw new Error(`User already have event with id:${eventId}`)
     }
 
-    return await HttpClientApi.patch<void>(`/api/users/${userId}`, {
+    return await httpClientApi.patch<void>(`/api/users/${userId}`, {
         modifiedAt: new Date(),
         eventsIds: [...user.eventsIds, eventId]
     })
 }
+
 async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
     const event = await EventApi.getEvent(eventId);
     if (event == null) {
@@ -44,22 +46,32 @@ async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
     const user = await UserApi.getUserById(userId);
 
 
-    return await HttpClientApi.patch<void>(`/api/users/${userId}`, {
+    return await httpClientApi.patch<void>(`/api/users/${userId}`, {
         modifiedAt: new Date(),
         eventsIds: [...user.eventsIds.filter(evId => evId != eventId)]
     })
+}
 
+async function register(user: User): Promise<AccessToken> {
+    const storage = new AccessTokenStorage();
+    const token = await httpClientApi.post<AccessToken>(`/api/register`, user);
+    storage.set(token.accessToken);
+    return token
+}
+
+async function login(email: string, password: string): Promise<AccessToken>  {
+    const storage = new AccessTokenStorage();
+    const token = await httpClientApi.post<AccessToken>(`/api/login`, {email, password});
+    storage.set(token.accessToken);
+    return token;
 }
 
 
 
-//TODO verify and write correct
-async function checkLoginAndPassword(login: string, password: string) {
-    const response = await fetch(`/api/users?login=${login}`)
-}
 
 
-export const UserApi = { getUserById, getUserByLogin, userAddEvent, userRemoveEvent, checkLoginAndPassword }
+
+export const UserApi = { getUserById, getUserByEmail, userAddEvent, userRemoveEvent, register, login }
 
 
 

@@ -7,7 +7,7 @@ import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
 
 
-const LoginPage = () => {
+const RegisterPage = () => {
     const [userLogin, setUserLogin] = useState<string>("");
     const [userLoginError, setUserLoginError] = useState<string>("");
     const [password, setPassword] = useState<string>("");
