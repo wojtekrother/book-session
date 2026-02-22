@@ -109,20 +109,26 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
     const idleTimer = useRef<ReturnType<typeof setTimeout> | null>()
 
     useEffect(() => {
+        setPendingEventStatus();
         const loadEvents = async () => {
-            setPendingEventStatus();
+            console.log('status before fetch', state.status)
+            console.log('status before fetch 1', state.status)
             try {
+                console.log("Geting events")
                 dispatch({ type: "EVENT_SET", payload: { events: await EventApi.getEvents() } })
             } catch (err) {
                 dispatch({ type: "EVENT_ERROR", payload: { message: "Set Events error." } })
-                throw err;
             }
             setIdleEventStatus()
-
         }
         loadEvents();
+        console.log('status before fetch0', state.status)
         console.log("Event providere useEffect")
     }, [])
+
+    useEffect(()=> {
+console.log('new status: ', state.status)
+    }, [state.status])
 
     const setPendingEventStatus = useCallback(() => {
         dispatch({ type: "EVENT_PENDING" })

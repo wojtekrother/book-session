@@ -1,4 +1,4 @@
-import {AccessTokenStorage} from "../../actions/AccesTokenStorage";
+import { AccessTokenStorage } from "../../actions/AccesTokenStorage";
 import { AccessToken, User } from "../../types/types";
 import { EventApi } from "./EventApi";
 import { httpClientApi } from "./HttpClientApi";
@@ -59,9 +59,9 @@ async function register(user: User): Promise<AccessToken> {
     return token
 }
 
-async function login(email: string, password: string): Promise<AccessToken>  {
+async function login(email: string, password: string): Promise<AccessToken> {
     const storage = new AccessTokenStorage();
-    const token = await httpClientApi.post<AccessToken>(`/api/login`, {email, password});
+    const token = await httpClientApi.post<AccessToken>(`/api/login`, { email, password });
     storage.set(token.accessToken);
     return token;
 }
