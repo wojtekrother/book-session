@@ -38,7 +38,7 @@ const EventItem = ({ event, mode = "public" }: EventItemParams) => {
 
 
     return (
-        <div className=" bg-amber-50 p-4 box-content flex flex-col" data-test-id="eventItem">
+        <div className=" bg-amber-50 p-4 box-content flex flex-col" data-testid="eventItem">
             <div className="flex">
                 {event.imageUrl && <img src={`${event.imageUrl}`} className="h-28 " />}
                 {event.image && <img src={`.${event.image}`} className="h-28  " />}

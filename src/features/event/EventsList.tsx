@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
 import EventItem from '../../components/ui/EventItem.tsx';
 import { useEventContext } from '../../context/EventContext.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
-import { UserApi } from '../../services/api/UserApi.ts';
+
 
 export default function EventsListPage() {
   const eventCtx = useEventContext();
@@ -32,7 +31,7 @@ export default function EventsListPage() {
       </header>
 
       <div id='content'>
-        {eventCtx.status === "pending" || eventCtx.status === "init" && <div role="status">Loading...</div>}
+        {eventCtx.status === "pending" && <div role="status" aria-label='loading'>Loading...</div>}
         {eventCtx.status === "error" && <div role="alert">{eventCtx.errorMessage}</div>}
         {eventCtx.events &&
           <div className='grid grid-cols-2 gap-2'>
