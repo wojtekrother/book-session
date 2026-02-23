@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
-import { Event } from "../types/types";
+import { Event, EventSearchForm } from "../types/types";
 import { EventApi } from "../services/api/EventApi";
 
 export type EventContextValue = {
@@ -8,6 +8,7 @@ export type EventContextValue = {
     getEvent: (id: string) => Event | null,
     removeEvent: (id: string) => Promise<void>,
     updateEvent: (event: Event) => Promise<void>,
+    search: (searchForm: EventSearchForm) => void,
     events: Event[] | undefined,
     status: EventContextStatus,
     errorMessage: string | null
@@ -20,7 +21,8 @@ export type EventContextStatus = "init" | "idle" | "pending" | "error" | "succes
 type ReducerState = {
     events: Event[],
     status: EventContextStatus,
-    message: string | null
+    message: string | null,
+    searchForm: EventSearchForm,
 }
 
 type EventErrorAction = {
@@ -65,8 +67,15 @@ type EventUpdateAction = {
         event: Event
     }
 }
+
+type EventSearchAction = {
+    type: "EVENT_SEARCH",
+    payload: {
+        searchForm: EventSearchForm
+    }
+}
 type EventActions = EventAddAction | EventRemoveAction | EventSetAction | EventUpdateAction |
-    EventErrorAction | EventPendingAction | EventIdleAction
+    EventErrorAction | EventPendingAction | EventIdleAction | EventSearchAction
 
 
 function reducerFn(state: ReducerState, action: EventActions): ReducerState {
@@ -91,6 +100,9 @@ function reducerFn(state: ReducerState, action: EventActions): ReducerState {
     if (action.type === "EVENT_UPDATE") {
         return { ...state, message: null, status: "success", events: [...state.events.filter(s => s.id !== action.payload.event.id), action.payload.event] }
     }
+    if (action.type === "EVENT_SEARCH") {
+        return { ...state, message: null, searchForm: action.payload.searchForm }
+    }
     return state;
 }
 
@@ -105,14 +117,40 @@ export function useEventContext() {
 
 
 const EventProvider = ({ children }: { children: ReactNode }) => {
-    const [state, dispatch] = useReducer(reducerFn, { events: [], status: "init", message: null })
+    const [state, dispatch] = useReducer(reducerFn, {
+        events: [],
+        status: "init",
+        message: null,
+        searchForm: { title: "", description: "", date: "desc" }
+    })
     const idleTimer = useRef<ReturnType<typeof setTimeout> | null>()
+
+    useEffect(() => {
+        const abort = new AbortController();
+        setPendingEventStatus();
+        const loadEvents = async () => {
+            try {
+                console.log("Geting events search form")
+                const events = await EventApi.getEvents(state.searchForm, abort.signal)
+                dispatch({ type: "EVENT_SET", payload: { events } })
+            } catch (err) {
+                dispatch({ type: "EVENT_ERROR", payload: { message: "Set Events error." } })
+            }
+            setIdleEventStatus()
+        }
+        loadEvents();
+        return () => {
+            setIdleEventStatus();
+            console.log("event abort")
+            abort.abort();
+        }
+
+    }, [state.searchForm])
+
 
     useEffect(() => {
         setPendingEventStatus();
         const loadEvents = async () => {
-            console.log('status before fetch', state.status)
-            console.log('status before fetch 1', state.status)
             try {
                 console.log("Geting events")
                 dispatch({ type: "EVENT_SET", payload: { events: await EventApi.getEvents() } })
@@ -122,13 +160,9 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
             setIdleEventStatus()
         }
         loadEvents();
-        console.log('status before fetch0', state.status)
-        console.log("Event providere useEffect")
+
     }, [])
 
-    useEffect(()=> {
-console.log('new status: ', state.status)
-    }, [state.status])
 
     const setPendingEventStatus = useCallback(() => {
         dispatch({ type: "EVENT_PENDING" })
@@ -153,7 +187,7 @@ console.log('new status: ', state.status)
         setPendingEventStatus();
         try {
             await EventApi.createEvent(event);
-            dispatch({ type: "EVENT_ADD", payload: { event} })
+            dispatch({ type: "EVENT_ADD", payload: { event } })
         } catch (err) {
             dispatch({ type: "EVENT_ERROR", payload: { message: "Add event error" } })
             throw err;
@@ -204,6 +238,10 @@ console.log('new status: ', state.status)
         return eventIndex < 0 ? null : state.events[eventIndex];
     }, [state.events]);
 
+    const search: EventContextValue["search"] = useCallback((searchForm: EventSearchForm) => {
+        dispatch({ type: "EVENT_SEARCH", payload: { searchForm } })
+    }, []);
+
 
 
     const ctx: EventContextValue = useMemo<EventContextValue>(() => {
@@ -213,13 +251,13 @@ console.log('new status: ', state.status)
             fetchEvents: fetchEvents,
             updateEvent: updateEvent,
             getEvent: getEvent,
+            search,
             events: state.events,
             status: state.status,
             errorMessage: state.message,
-
-
+            searchForm: state.searchForm
         }
-    }, [state.events, state.status, state.message, addEvent, removeEvent, fetchEvents, updateEvent, getEvent])
+    }, [state.events, state.status, state.message, state.searchForm, search, addEvent, removeEvent, fetchEvents, updateEvent, getEvent])
 
     return (
         <EventContext.Provider value={ctx}>

@@ -22,8 +22,7 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe("", () => {
-  test('display status loading', async () => {
-
+  test('display status loading and show elements', async () => {
     server.use(
       http.get('/api/events', async () => {
         await delay(500);
@@ -47,9 +46,7 @@ describe("", () => {
       })
     )
     renderWithProviders(<EventsListPage />)
-    //expect(screen.queryByRole('status', { name: /loading/i })).not.toBeInTheDocument();
     expect(screen.queryAllByTestId('eventItem')).toHaveLength(0)
     expect(await screen.findByRole('alert')).toBeInTheDocument();
-
   })
 })

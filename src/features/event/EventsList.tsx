@@ -1,6 +1,8 @@
 import EventItem from '../../components/ui/EventItem.tsx';
+import Input from '../../components/ui/Input.tsx';
 import { useEventContext } from '../../context/EventContext.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
+import EventSearch from './EventSearch.tsx';
 
 
 export default function EventsListPage() {
@@ -19,16 +21,18 @@ export default function EventsListPage() {
 
 
 
+
+
   return (
     <main >
-      <header>
-        <h2>Available mentoring events</h2>
+      <header className='mb-4 '>
+        <h2 className='text-2xl mx-auto w-min text-nowrap'>Available Events</h2>
         <p>
-          From an one-on-one introduction to React's basics all the way up to a
-          deep dive into state mechanics - we got just the right event for
-          you!
+          Many aviable events for you. Look and choose the best.
         </p>
       </header>
+      <EventSearch/>
+      
 
       <div id='content'>
         {eventCtx.status === "pending" && <div role="status" aria-label='loading'>Loading...</div>}
@@ -40,6 +44,13 @@ export default function EventsListPage() {
               return <EventItem mode='public' event={s}></EventItem>
             })
             }
+
+          </div>
+        }
+        {eventCtx.events && eventCtx.events.length == 0 &&
+          <div >
+            <h2 className='text-xl mx-auto w-min text-nowrap'>No events found.</h2>
+           
 
           </div>
         }
