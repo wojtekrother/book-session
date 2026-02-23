@@ -12,8 +12,6 @@ export type Event = {
     modifiedAt?: string
 }
 
-
-
 export type User = {
     id?: string,
     email: string,
@@ -27,6 +25,12 @@ export type User = {
 
 export type AccessToken = {
     "accessToken" : string
+}
+
+export type EventSearchForm = {
+    title: string;
+    description: string;
+    date: "asc" | "desc";
 }
 
 // enum ApiErrorCode  {
