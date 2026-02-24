@@ -114,9 +114,19 @@ export function useEventContext() {
     return context;
 }
 
+export type EventProviderProps = { 
+    children: ReactNode,
+    searchFn?: EventContextValue["search"],
+    fetchEventsFn?: EventContextValue["fetchEvents"],
+    addEventFn?: EventContextValue["addEvent"],
+    getEventFn?: EventContextValue["getEvent"],
+    removeEventFn?: EventContextValue["removeEvent"],
+    updateEventFn?: EventContextValue["updateEvent"]
+ }
 
 
-const EventProvider = ({ children }: { children: ReactNode }) => {
+
+const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEventFn, removeEventFn, updateEventFn }: EventProviderProps) => {
     const [state, dispatch] = useReducer(reducerFn, {
         events: [],
         status: "init",
@@ -183,7 +193,7 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
     }, [])
 
 
-    const addEvent: EventContextValue["addEvent"] = useCallback(async (event) => {
+    const addEvent: EventContextValue["addEvent"] = addEventFn ?? useCallback(async (event) => {
         setPendingEventStatus();
         try {
             await EventApi.createEvent(event);
@@ -195,7 +205,7 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
         setIdleEventStatus();
 
     }, []);
-    const removeEvent: EventContextValue["removeEvent"] = useCallback(async (eventId) => {
+    const removeEvent: EventContextValue["removeEvent"] = removeEventFn ?? useCallback(async (eventId) => {
         setPendingEventStatus();
         try {
             await EventApi.removeEvent(eventId);
@@ -208,7 +218,7 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
 
-    const fetchEvents: EventContextValue["fetchEvents"] = useCallback(async () => {
+    const fetchEvents: EventContextValue["fetchEvents"] = fetchEventsFn ?? useCallback(async () => {
         setPendingEventStatus();
         try {
             const events = await EventApi.getEvents()
@@ -220,7 +230,7 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
         setIdleEventStatus();
     }, []);
 
-    const updateEvent: EventContextValue["updateEvent"] = useCallback(async (event: Event) => {
+    const updateEvent: EventContextValue["updateEvent"] = updateEventFn ?? useCallback(async (event: Event) => {
         setPendingEventStatus();
         try {
             await EventApi.updateEvent(event);
@@ -233,12 +243,12 @@ const EventProvider = ({ children }: { children: ReactNode }) => {
 
     }, []);
 
-    const getEvent: EventContextValue["getEvent"] = useCallback((id: string) => {
+    const getEvent: EventContextValue["getEvent"] = getEventFn ?? useCallback((id: string) => {
         const eventIndex = state.events.findIndex((s) => s.id === id)
         return eventIndex < 0 ? null : state.events[eventIndex];
     }, [state.events]);
 
-    const search: EventContextValue["search"] = useCallback((searchForm: EventSearchForm) => {
+    const search: EventContextValue["search"] = searchFn ?? useCallback((searchForm: EventSearchForm) => {
         dispatch({ type: "EVENT_SEARCH", payload: { searchForm } })
     }, []);
 
