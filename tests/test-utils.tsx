@@ -2,14 +2,16 @@ import { MemoryRouter } from "react-router-dom"
 import UserContextProvider from "../src/context/UserContext"
 import EventProvider from "../src/context/EventContext"
 import { render, renderHook } from "@testing-library/react"
-import { ReactElement } from "react"
+import React, { ReactElement } from "react"
 
 const providers = ({ children }: { children: React.ReactNode }) => (
-  <MemoryRouter>
-    <UserContextProvider>
-      <EventProvider>{children}</EventProvider>
-    </UserContextProvider>
-  </MemoryRouter>
+  <React.StrictMode>
+    <MemoryRouter>
+      <UserContextProvider>
+        <EventProvider>{children}</EventProvider>
+      </UserContextProvider>
+    </MemoryRouter>
+  </React.StrictMode>
 );
 
 export const renderWithProviders = (ui: ReactElement) => {

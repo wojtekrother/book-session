@@ -12,7 +12,7 @@ const eventCtx = useEventContext();
     const debouncedSearchFn = useMemo(() =>
         debounce((title, description, dateOrder) => {
             eventCtx.search({ title, description, date: dateOrder })
-        }, 1000), [eventCtx.search])
+        }, 500), [eventCtx.search])
 
     useEffect(() => {
         debouncedSearchFn(title, description, dateOrder);

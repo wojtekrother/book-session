@@ -91,11 +91,9 @@ function reducerFn(state: UserReducerState, action: UserActions): UserReducerSta
     if (action.type === "USER_IDLE") {
         return { ...state, message: null, status: "idle" }
     }
-
     if (action.type === "USER_ADD_EVENT_BY_ID") {
         return { ...state, user: { ...state.user!, eventsIds: [...state.user!.eventsIds, action.payload.eventId] } }
     }
-
     if (action.type === "USER_REMOVE_EVENT_BY_ID") {
         return { ...state, user: { ...state.user!, eventsIds: state.user!.eventsIds.filter(eventId => eventId !== action.payload.eventId) } }
     }
