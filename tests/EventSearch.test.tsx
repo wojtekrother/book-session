@@ -9,11 +9,16 @@ import React from "react"
 
 describe("Event search component test", () => {
     const searchMock = vi.fn()
+
     const providersWithMock = ({ children }: { children: React.ReactNode }) => (
         <React.StrictMode>
             <MemoryRouter>
                 <UserContextProvider>
-                    <EventProvider searchFn={searchMock} >{children}</EventProvider>
+                    <EventProvider searchFn={searchMock}
+                        fetchEventsFn={vi.fn().mockResolvedValue([])}
+                        addEventFn={vi.fn()}
+                        removeEventFn={vi.fn()}
+                        updateEventFn={vi.fn()} >{children}</EventProvider>
                 </UserContextProvider>
             </MemoryRouter>
         </React.StrictMode>
@@ -78,7 +83,7 @@ describe("Event search component test", () => {
         expect(searchMock).not.toBeCalled();
         await waitFor(() => {
             expect(searchMock).toBeCalledTimes(1)
-            expect(searchMock).toBeCalledWith({ title: "test1", description: "test2", date: "desc" })
+            expect(searchMock).toBeCalledWith({ title: "test1", description: "test2", dateOrder: "desc" })
         })
 
     })
@@ -90,50 +95,34 @@ describe("Event search component test", () => {
         await user.selectOptions(screen.getByRole("combobox", { name: /date/i }), "asc");
         await waitFor(() => {
             expect(searchMock).toBeCalledTimes(1)
-            expect(searchMock).toBeCalledWith({ title: "", description: "", date: "asc" })
+            expect(searchMock).toBeCalledWith({ title: "", description: "", dateOrder: "asc" })
         })
 
     })
 
 
     test("clear input start search", async () => {
-        vi.useFakeTimers()
-        setup()
-        const user = userEvent.setup({ delay: null})//, advanceTimers:vi.advanceTimersByTime });
-
+        const user = setup()
         const titleInput = screen.getByRole("textbox", { name: /title/i });
         expect(titleInput).toBeInTheDocument();
         expect(titleInput).toHaveValue("");
         expect(searchMock).not.toBeCalled();
-
         await user.type(titleInput, "test1");
         expect(searchMock).not.toBeCalled();
-        vi.runAllTimers();
-        //vi.advanceTimersByTime(500)
         await waitFor(() => {
-            expect(searchMock).toHaveBeenLastCalledWith({ title: "test1", description: "", date: "desc" })
-        })
+            expect(searchMock).toHaveBeenLastCalledWith({ title: "test1", description: "", dateOrder: "desc" });
+        }, {timeout:500})
         await user.clear(titleInput);
-        //expect(searchMock).toHaveBeenLastCalledWith({ title: "test1", description: "", date: "desc" })
-        vi.runAllTimers();
         await waitFor(() => {
-            expect(searchMock).toHaveBeenLastCalledWith({ title: "", description: "", date: "desc" })
+            expect(searchMock).toHaveBeenLastCalledWith({ title: "", description: "", dateOrder: "desc" });
         })
-        vi.useRealTimers()
-
-
-  
-
- 
 
     })
 
-    // test("not run search after render", async () => {
-    //     setup()
-
-    //     render(<EventSearch />, { wrapper: providersWithMock });
-
-    //     await new Promise(resolved => setTimeout(resolved, 600))
-    //     expect(searchMock).toBeCalledTimes(2);
-    // })
+    test("not run search after render", async () => {
+        setup()
+        render(<EventSearch />, { wrapper: providersWithMock });
+        await new Promise(resolved => setTimeout(resolved, 600))
+        expect(searchMock).toBeCalledTimes(2);
+    })
 })

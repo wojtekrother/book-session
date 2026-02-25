@@ -18,7 +18,7 @@ async function getEvent(id: string): Promise<Event> {
     return httpClientApi.get<Event>("/api/events/" + id);
 }
 
-async function getEvents({ title, description, date }: EventSearchForm = { title: "", description: "", date: "asc" },
+async function getEvents({ title, description, dateOrder: date }: EventSearchForm = { title: "", description: "", dateOrder: "asc" },
     abortSignal?: AbortSignal): Promise<Event[]> {
 
     let query = `?_sort=date&_order=${encodeURI(date)}&`;

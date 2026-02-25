@@ -30,7 +30,7 @@ export type AccessToken = {
 export type EventSearchForm = {
     title: string;
     description: string;
-    date: "asc" | "desc";
+    dateOrder: "asc" | "desc";
 }
 
 // enum ApiErrorCode  {

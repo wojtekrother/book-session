@@ -142,7 +142,7 @@ const UserContextProvider = ({ children }: UserContextProviderProps) => {
         }
         setPendingUserStatus();
         try {
-            const token:AccessToken = await UserApi.login(email, password)
+            await UserApi.login(email, password)
             const newUser = await UserApi.getUserByEmail(email);
             dispatch({ type: "USER_LOGIN", payload: { user: newUser } })
         } catch (err) {

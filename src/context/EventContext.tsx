@@ -128,7 +128,7 @@ export const eventReducerInitailState: ReducerState = {
     events: [],
     status: "init",
     message: null,
-    searchForm: { title: "", description: "", date: "desc" }
+    searchForm: { title: "", description: "", dateOrder: "desc" }
 }
 
 
@@ -155,22 +155,7 @@ const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEvent
             abort.abort();
         }
 
-    }, [state.searchForm])
-
-
-    useEffect(() => {
-        setPendingEventStatus();
-        const loadEvents = async () => {
-            try {
-                dispatch({ type: "EVENT_SET", payload: { events: await EventApi.getEvents() } })
-            } catch (err) {
-                dispatch({ type: "EVENT_ERROR", payload: { message: "Set Events error." } })
-            }
-            setIdleEventStatus()
-        }
-        loadEvents();
-
-    }, [])
+    }, [state.searchForm.title, state.searchForm.description, state.searchForm.dateOrder])
 
 
     const setPendingEventStatus = useCallback(() => {
