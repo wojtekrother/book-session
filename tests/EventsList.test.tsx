@@ -1,7 +1,6 @@
 
 import { delay, http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
-import { logRoles, screen,  waitForElementToBeRemoved } from '@testing-library/react'
+import { screen,  waitForElementToBeRemoved } from '@testing-library/react'
 import { EVENTS } from '../src/dummy-events'
 import EventsListPage from '../src/features/event/EventsList'
 import { renderWithProviders } from './test-utils'

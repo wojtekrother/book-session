@@ -69,9 +69,7 @@ describe("Test of Event context", () => {
 
     })
 
-    test("Get single event", ()=> {
-
-    })
+   
 
     test("Get single event (data loaded but wrong id)", ()=>{
 

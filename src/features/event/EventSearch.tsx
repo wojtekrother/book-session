@@ -1,4 +1,4 @@
-import useEventSearch from "./useEventSearch";
+import useEventSearch from "./useEventSearchInputs";
 
 
 const EventSearch = () => {

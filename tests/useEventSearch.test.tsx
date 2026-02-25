@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react"
 import { act } from "react"
 
 
-import useEventSearch from "../src/features/event/useEventSearch"
+import useEventSearch from "../src/features/event/useEventSearchInputs"
 import { MemoryRouter } from "react-router-dom"
 import UserContextProvider from "../src/context/UserContext"
 import EventProvider from "../src/context/EventContext"
@@ -40,7 +40,7 @@ describe("Test useEventSearch hook", () => {
             vi.advanceTimersByTime(250);
         })
         expect(searchMock).toBeCalledTimes(1);
-        expect(searchMock).toBeCalledWith({title:"value2", description:"value3", date:"desc"})
+        expect(searchMock).toBeCalledWith({title:"value2", description:"value3", dateOrder:"desc"})
         vi.useRealTimers();
 
     })
