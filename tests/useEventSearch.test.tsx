@@ -24,7 +24,7 @@ describe("Test useEventSearch hook", () => {
             result.current.setTitle("value1")
         })
         act(() => {
-            vi.advanceTimersByTime(500);
+            vi.advanceTimersByTime(250);
         })
 
         expect(searchMock).not.toBeCalled();
@@ -33,11 +33,11 @@ describe("Test useEventSearch hook", () => {
             result.current.setDescription("value3")
         })
         act(() => {
-            vi.advanceTimersByTime(500);
+            vi.advanceTimersByTime(250);
         })
         expect(searchMock).not.toBeCalled();
         act(() => {
-            vi.advanceTimersByTime(500);
+            vi.advanceTimersByTime(250);
         })
         expect(searchMock).toBeCalledTimes(1);
         expect(searchMock).toBeCalledWith({title:"value2", description:"value3", date:"desc"})

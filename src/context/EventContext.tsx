@@ -78,7 +78,7 @@ type EventActions = EventAddAction | EventRemoveAction | EventSetAction | EventU
     EventErrorAction | EventPendingAction | EventIdleAction | EventSearchAction
 
 
-function reducerFn(state: ReducerState, action: EventActions): ReducerState {
+export function eventReducerFn(state: ReducerState, action: EventActions): ReducerState {
     if (action.type === "EVENT_ERROR") {
         return { ...state, message: action.payload.message, status: "error" }
     }
@@ -114,7 +114,7 @@ export function useEventContext() {
     return context;
 }
 
-export type EventProviderProps = { 
+export type EventProviderProps = {
     children: ReactNode,
     searchFn?: EventContextValue["search"],
     fetchEventsFn?: EventContextValue["fetchEvents"],
@@ -122,17 +122,19 @@ export type EventProviderProps = {
     getEventFn?: EventContextValue["getEvent"],
     removeEventFn?: EventContextValue["removeEvent"],
     updateEventFn?: EventContextValue["updateEvent"]
- }
+}
+
+export const eventReducerInitailState: ReducerState = {
+    events: [],
+    status: "init",
+    message: null,
+    searchForm: { title: "", description: "", date: "desc" }
+}
 
 
 
 const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEventFn, removeEventFn, updateEventFn }: EventProviderProps) => {
-    const [state, dispatch] = useReducer(reducerFn, {
-        events: [],
-        status: "init",
-        message: null,
-        searchForm: { title: "", description: "", date: "desc" }
-    })
+    const [state, dispatch] = useReducer(eventReducerFn, eventReducerInitailState)
     const idleTimer = useRef<ReturnType<typeof setTimeout> | null>()
 
     useEffect(() => {
@@ -140,7 +142,6 @@ const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEvent
         setPendingEventStatus();
         const loadEvents = async () => {
             try {
-                console.log("Geting events search form")
                 const events = await EventApi.getEvents(state.searchForm, abort.signal)
                 dispatch({ type: "EVENT_SET", payload: { events } })
             } catch (err) {
@@ -151,7 +152,6 @@ const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEvent
         loadEvents();
         return () => {
             setIdleEventStatus();
-            console.log("event abort")
             abort.abort();
         }
 
@@ -162,7 +162,6 @@ const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEvent
         setPendingEventStatus();
         const loadEvents = async () => {
             try {
-                console.log("Geting events")
                 dispatch({ type: "EVENT_SET", payload: { events: await EventApi.getEvents() } })
             } catch (err) {
                 dispatch({ type: "EVENT_ERROR", payload: { message: "Set Events error." } })
