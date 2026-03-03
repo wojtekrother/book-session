@@ -1,5 +1,5 @@
 import EventItem from "../../components/ui/EventItem";
-import { useEventContext } from "../../context/EventContext";
+import { useEventContext } from "../../context/old/EventContext.old";
 import { useUserContext } from "../../context/UserContext";
 
 

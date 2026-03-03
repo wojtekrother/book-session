@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
@@ -7,8 +8,6 @@ import { convertFileToString } from "../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../utils/string"
 import { useEventContext } from "../context/old/EventContext.old"
-import { useCreateEvent } from "../services/api/EventApiQuery"
-import { EventDTO } from "../types/types"
 
 
 type CreateEventModalProps = {
@@ -24,9 +23,7 @@ export type CreateEventModalHandler = {
 const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: CreateEventModalProps, ref) => {
     const modal = useRef<HTMLDialogElement>(null);
     const [errors, setErrors] = useState<string[]>([]);
-    //const eventCtx = useEventContext();
-    //const [newEvent, setNewEvent] = useState<EventDTO| null>(null)
-    const createEvent = useCreateEvent()
+    const eventCtx = useEventContext();
     const [modalRootElement, setModalRootElement] = useState<HTMLElement | null>(null)
     const abortControler = new AbortController();
 
@@ -55,6 +52,10 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
         modal.current?.close();
     }
 
+    function addError(error: string): void {
+        setErrors(prevVal => [...prevVal, error])
+    }
+
     function resetErrors(): void {
         setErrors([]);
     }
@@ -63,7 +64,6 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
-        let errorsTemp:string[] = [];
         resetErrors()
 
         let data = new FormData(event.currentTarget)
@@ -80,38 +80,37 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
 
 
         if (StringUtils.isBlank(title)) {
-            errorsTemp.push("Title is required")
+            addError("Title is required")
         }
 
         if (StringUtils.isBlank(description)) {
-            errorsTemp.push("Description is required")
+            addError("Description is required")
         }
 
         if (StringUtils.isBlank(summary)) {
-            errorsTemp.push("Summary is required")
+            addError("Summary is required")
         }
 
         if (StringUtils.isBlank(durationRaw)) {
-            errorsTemp.push("Duration is required")
+            addError("Duration is required")
         } else if (Number.isNaN(durationRaw)) {
-            errorsTemp.push("Duration is not a number")
+            addError("Duration is not a number")
         }
 
         if (StringUtils.isBlank(date)) {
-            errorsTemp.push("Date is required")
+            addError("Date is required")
         }
 
         if (image != null) {
             imageUrl = await convertFileToString(image as File)
         } else {
-            errorsTemp.push("Image is required")
+            addError("Image is required")
         }
 
 
-        if (errorsTemp.length == 0) {
+        if (errors.length == 0) {
             try {
-                //await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
-                createEvent.mutate({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
+                await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
                 event.currentTarget.reset()
 
                 toast.success("New event sucesfully created")
@@ -123,8 +122,6 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
                     toast.error("Error during saving event!")
                 }
             }
-        } else{
-            setErrors(errorsTemp);
         }
 
     }
@@ -140,16 +137,16 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
                     </div>
                 }
                 <div>
-                    <Input disabled={createEvent.isPending} label="Title" name="title" />
-                    <Input disabled={createEvent.isPending} label="Description" name="description" />
-                    <Input disabled={createEvent.isPending} label="Summary" name="summary" />
-                    <Input disabled={createEvent.isPending} label="Duration in days" name="duration" type="number" />
-                    <Input disabled={createEvent.isPending} label="Start date" name="date" type="date" />
-                    <Input disabled={createEvent.isPending} label="Image" name="image" type="file" />
+                    <Input disabled={eventCtx.status === "pending"} label="Title" name="title" />
+                    <Input disabled={eventCtx.status === "pending"} label="Description" name="description" />
+                    <Input disabled={eventCtx.status === "pending"} label="Summary" name="summary" />
+                    <Input disabled={eventCtx.status === "pending"} label="Duration in days" name="duration" type="number" />
+                    <Input disabled={eventCtx.status === "pending"} label="Start date" name="date" type="date" />
+                    <Input disabled={eventCtx.status === "pending"} label="Image" name="image" type="file" />
                 </div>
                 <div className="actions">
                     <Button textOnly onClick={closeModal}>Cancel</Button>
-                    <Button disabled={createEvent.isPending}>Create</Button>
+                    <Button disabled={eventCtx.status === "pending"}>Create</Button>
                 </div>
             </form>
         </dialog>, modalRootElement) : null}</>

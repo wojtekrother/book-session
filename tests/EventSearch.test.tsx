@@ -4,7 +4,7 @@ import EventSearch from "../src/features/event/EventSearch"
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from "react-router-dom"
 import UserContextProvider from "../src/context/UserContext"
-import EventProvider from "../src/context/EventContext"
+import EventProvider from "../src/context/old/EventContext.old"
 import React from "react"
 
 describe("Event search component test", () => {

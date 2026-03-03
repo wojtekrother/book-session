@@ -2,7 +2,7 @@
 import { delay, http, HttpResponse } from 'msw'
 import { screen,  waitForElementToBeRemoved } from '@testing-library/react'
 import { EVENTS } from '../src/dummy-events'
-import EventsListPage from '../src/features/event/EventsList'
+import EventsList from '../src/features/event/EventsList'
 import { renderWithProviders } from './test-utils'
 import { server } from './setup'
 
@@ -18,7 +18,7 @@ describe("", () => {
       })
     )
 
-    renderWithProviders(<EventsListPage />)
+    renderWithProviders(<EventsList />)
     expect(screen.getByRole('status', { name: /loading/i })).toBeInTheDocument()
     await waitForElementToBeRemoved(screen.getByRole('status', { name: /loading/i }))
     expect(await screen.findAllByTestId('eventItem')).toHaveLength(3);
@@ -33,7 +33,7 @@ describe("", () => {
         return HttpResponse.error()
       })
     )
-    renderWithProviders(<EventsListPage />)
+    renderWithProviders(<EventsList />)
     expect(screen.queryAllByTestId('eventItem')).toHaveLength(0)
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   })

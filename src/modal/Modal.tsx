@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { useEventContext } from "../context/EventContext"
+import { useEventContext } from "../context/old/EventContext.old"
 
 
 type ModalProps = {

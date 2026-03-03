@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { EVENTS } from '../src/dummy-events'
-import { Event } from '../src/types/types'
+import { EventDTO } from '../src/types/types'
 
 
 export const server = setupServer(
@@ -32,7 +32,7 @@ export const server = setupServer(
 
 )
 
-export const testEvents: Event[] = [
+export const testEvents: EventDTO[] = [
     {
         id: 'e01',
         title: 'Title 1',
