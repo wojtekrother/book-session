@@ -1,9 +1,9 @@
-import useEventSearch from "./useEventSearchInputs";
+import  { useEventSearchInputsResult } from "./useEventSearchInputs";
 
+export type EventSearchParams = Omit<useEventSearchInputsResult,"searchQuery">
 
-const EventSearch = () => {
-    const { setDateOrder, setDescription, setTitle, title, description, dateOrder } = useEventSearch();
-
+const EventSearch = ({ setDateOrder, setDescription, setTitle, title, description, dateOrder }:EventSearchParams) => {
+    
     function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setTitle(e.currentTarget.value)
     }

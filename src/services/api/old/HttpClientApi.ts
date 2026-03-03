@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {AccessTokenStorage} from "../../actions/AccesTokenStorage"
 
 class HttpClientApi {

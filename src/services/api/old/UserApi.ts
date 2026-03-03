@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AccessTokenStorage } from "../../actions/AccesTokenStorage";
 import { AccessToken, User } from "../../types/types";
 import { EventApi } from "./EventApi";

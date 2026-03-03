@@ -1,14 +1,14 @@
 import { AccessTokenStorage } from "../../actions/AccesTokenStorage";
-import { AccessToken, User } from "../../types/types";
+import { AccessToken, UserDTO } from "../../types/types";
 import { EventApi } from "./EventApi";
 import { httpClientApi } from "./HttpClientApi";
 
-async function getUserById(id: string): Promise<User> {
-    return await httpClientApi.get<User>(`/api/users/${id}`);
+async function getUserById(id: string): Promise<UserDTO> {
+    return await httpClientApi.get<UserDTO>(`/api/users/${id}`);
 }
 
-async function getUserByEmail(email: string): Promise<User> {
-    const users: User[] = await httpClientApi.get<User[]>(`/api/users?email=${email}`);
+async function getUserByEmail(email: string): Promise<UserDTO> {
+    const users: UserDTO[] = await httpClientApi.get<UserDTO[]>(`/api/users?email=${email}`);
     if (users.length === 0) {
         throw new Error(`User not exist.`)
     }
@@ -52,7 +52,7 @@ async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
     })
 }
 
-async function register(user: User): Promise<AccessToken> {
+async function register(user: UserDTO): Promise<AccessToken> {
     const storage = new AccessTokenStorage();
     const token = await httpClientApi.post<AccessToken>(`/api/register`, user);
     storage.set(token.accessToken);

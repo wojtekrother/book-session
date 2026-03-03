@@ -1,4 +1,4 @@
-export type Event = {
+export type EventDTO = {
     id?: string,
     title: string,
     summary: string,
@@ -12,16 +12,34 @@ export type Event = {
     modifiedAt?: string
 }
 
-export type User = {
-    id?: string,
+export type EventCreateDTO ={
+    title: string,
+    summary: string,
+    description:string
+    duration: number,
+    date: string,
+    imageUrl?: String,
+}
+
+export type EventUpdateDTO = Partial<Omit<EventDTO, "id">> & {id:string}
+
+export type UserDTO = {
+    id: string,
     email: string,
     password: string,
     eventsIds: string[],
     role: "User" | "Admin"
     deleteAt?: string,
-    createdAt?: string,
+    createdAt: string,
     modifiedAt?: string
 }
+
+export type UserCreateDTO = {
+    email: string,
+    password: string
+}
+
+
 
 export type AccessToken = {
     "accessToken" : string

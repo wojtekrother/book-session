@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Event, EventSearchForm } from "../../types/types";
 import { StringUtils } from "../../utils/string";
 import { httpClientApi } from "./HttpClientApi";

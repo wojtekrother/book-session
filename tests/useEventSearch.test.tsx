@@ -5,7 +5,7 @@ import { act } from "react"
 import useEventSearch from "../src/features/event/useEventSearchInputs"
 import { MemoryRouter } from "react-router-dom"
 import UserContextProvider from "../src/context/UserContext"
-import EventProvider from "../src/context/EventContext"
+import EventProvider from "../src/context/old/EventContext.old"
 describe("Test useEventSearch hook", () => {
 
     test("Debounce test", () => {

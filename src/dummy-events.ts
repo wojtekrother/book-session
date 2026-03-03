@@ -8,9 +8,9 @@ import dataFetching from './assets/events/data-fetching.jpg';
 import reactTs from './assets/events/react-ts.jpg';
 import performance from './assets/events/performance.jpg';
 import dataStore from './assets/events/data-store.jpg';
-import { Event } from './types/types';
+import { EventDTO } from './types/types';
 
-export const EVENTS: Event[] = [
+export const EVENTS: EventDTO[] = [
   {
     id: 'sess01',
     title: 'Kickstart with React: Personal Intro',

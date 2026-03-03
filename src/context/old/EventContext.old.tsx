@@ -1,15 +1,16 @@
+// @ts-nocheck
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
-import { Event, EventSearchForm } from "../types/types";
-import { EventApi } from "../services/api/EventApi";
+import { EventDTO, EventSearchForm } from "../../types/types";
+import { EventApi } from "../../services/api/EventApi";
 
 export type EventContextValue = {
     fetchEvents: () => Promise<void>,
-    addEvent: (event: Event) => Promise<void>,
-    getEvent: (id: string) => Event | null,
+    addEvent: (event: EventDTO) => Promise<void>,
+    getEvent: (id: string) => EventDTO | null,
     removeEvent: (id: string) => Promise<void>,
-    updateEvent: (event: Event) => Promise<void>,
+    updateEvent: (event: EventDTO) => Promise<void>,
     search: (searchForm: EventSearchForm) => void,
-    events: Event[] | undefined,
+    events: EventDTO[] | undefined,
     status: EventContextStatus,
     errorMessage: string | null
 }
@@ -19,7 +20,7 @@ const EventContext = createContext<EventContextValue | null>(null)
 export type EventContextStatus = "init" | "idle" | "pending" | "error" | "success";
 
 type ReducerState = {
-    events: Event[],
+    events: EventDTO[],
     status: EventContextStatus,
     message: string | null,
     searchForm: EventSearchForm,
@@ -43,7 +44,7 @@ type EventIdleAction = {
 type EventAddAction = {
     type: "EVENT_ADD",
     payload: {
-        event: Event
+        event: EventDTO
     }
 }
 
@@ -57,14 +58,14 @@ type EventRemoveAction = {
 type EventSetAction = {
     type: "EVENT_SET",
     payload: {
-        events: Event[]
+        events: EventDTO[]
     }
 }
 
 type EventUpdateAction = {
     type: "EVENT_UPDATE",
     payload: {
-        event: Event
+        event: EventDTO
     }
 }
 
@@ -136,6 +137,7 @@ export const eventReducerInitailState: ReducerState = {
 const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEventFn, removeEventFn, updateEventFn }: EventProviderProps) => {
     const [state, dispatch] = useReducer(eventReducerFn, eventReducerInitailState)
     const idleTimer = useRef<ReturnType<typeof setTimeout> | null>()
+    
 
     useEffect(() => {
         const abort = new AbortController();
@@ -214,7 +216,7 @@ const EventProvider = ({ children, searchFn, fetchEventsFn, addEventFn, getEvent
         setIdleEventStatus();
     }, []);
 
-    const updateEvent: EventContextValue["updateEvent"] = updateEventFn ?? useCallback(async (event: Event) => {
+    const updateEvent: EventContextValue["updateEvent"] = updateEventFn ?? useCallback(async (event: EventDTO) => {
         setPendingEventStatus();
         try {
             await EventApi.updateEvent(event);

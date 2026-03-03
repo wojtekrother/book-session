@@ -1,29 +1,23 @@
-import { useEffect, useRef } from "react";
-import { useEventContext } from "../../context/EventContext";
+
 import { EventSearchForm } from "../../types/types";
-import useDebouncedCallback from "../../hooks/useDebouncedCallback";
+import useDebouncedValue from "../../hooks/useDebouncedValue";
+import { useGetEvents } from "../../services/api/EventApiQuery";
+import { useMemo } from "react";
 
-const useEventSearchApi = ({ title, description, dateOrder }: EventSearchForm) => {
-    const isFirst = useRef(true);
-    const eventCtx = useEventContext();
-    const debouncedSearchFn = useDebouncedCallback(
-        (title: string, description: string, dateOrder: "asc" | "desc") => {
-            eventCtx.search({ title, description, dateOrder });
-        },
-        500
-    );
+const useEventSearchApi = (eventSearchForm: EventSearchForm) => {
+    const eventSearchFormMemo = useMemo<EventSearchForm>(() => { 
+        return { title: eventSearchForm.title, 
+            description: eventSearchForm.description, 
+            dateOrder: eventSearchForm.dateOrder } 
+        }, [eventSearchForm.title, eventSearchForm.description, eventSearchForm.dateOrder]);
 
-    useEffect(() => {
-        if (isFirst.current) {
-            isFirst.current = false;
-            return;
-        }
+        //second option
+        //const debouncedTitle = useDebouncedValue<string>(eventSearchFormMemo.title, 500);
+        //const debouncedDescription = useDebouncedValue<string>(eventSearchFormMemo.description, 500);
+        //return useGetEvents({...eventSearchForm, title: debouncedTitle, description:debouncedDescription})
 
-        debouncedSearchFn(title, description, dateOrder);
-        return () => {
-            debouncedSearchFn.cancel()
-        }
-    }, [title, description, dateOrder, debouncedSearchFn])
+    const debouncedEventSearchForm = useDebouncedValue<EventSearchForm>(eventSearchFormMemo, 500);
+    return useGetEvents(debouncedEventSearchForm)
 }
 
 export default useEventSearchApi;

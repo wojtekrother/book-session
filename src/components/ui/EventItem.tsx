@@ -1,10 +1,10 @@
 import { toast } from "react-toastify"
-import { Event } from "../../types/types"
+import { EventDTO } from "../../types/types"
 import Button from "./Button"
 import { useUserContext } from "../../context/UserContext"
 
 type EventItemParams = {
-    event: Event
+    event: EventDTO
     mode: "public" | "assigned"
 }
 

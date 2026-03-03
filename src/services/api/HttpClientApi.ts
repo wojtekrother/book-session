@@ -14,6 +14,10 @@ class HttpClientApi {
             headers: { "Content-Type": "application/json", ...this.getAuthHeader() },
             method: 'GET'
         })
+
+        
+
+
     }
     post = async<T>(url: string, body: unknown, abortSignal?: AbortSignal) => {
 

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useMemo, useReducer, useRef,  } from "react"
 
 
-import {  AccessToken, User } from "../types/types";
+import {  AccessToken, UserDTO } from "../types/types";
 import { StringUtils } from "../utils/string";
 import { UserApi } from "../services/api/UserApi";
 
@@ -63,7 +63,7 @@ type UserRemoveEventAction = {
 type UserLoginAction = {
     type: "USER_LOGIN",
     payload: {
-        user: User
+        user: UserDTO
     }
 }
 
@@ -73,7 +73,7 @@ type UserLogoutinAction = {
 export type UserContextStatus = "init" | "idle" | "pending" | "error" | "success";
 
 type UserReducerState = {
-    user: User | null,
+    user: UserDTO | null,
     status: UserContextStatus,
     message: string | null
 }
