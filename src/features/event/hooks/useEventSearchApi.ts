@@ -1,7 +1,7 @@
 
-import { EventSearchForm } from "../../types/types";
-import useDebouncedValue from "../../hooks/useDebouncedValue";
-import { useGetEvents } from "../../services/api/EventApiQuery";
+import { EventSearchForm } from "../../../types/types";
+import useDebouncedValue from "../../../hooks/useDebouncedValue";
+import { useGetEvents } from "../../../services/api/EventApiQuery";
 import { useMemo } from "react";
 
 const useEventSearchApi = (eventSearchForm: EventSearchForm) => {

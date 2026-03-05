@@ -2,7 +2,7 @@
 import { delay, http, HttpResponse } from 'msw'
 import { screen,  waitForElementToBeRemoved } from '@testing-library/react'
 import { EVENTS } from '../src/dummy-events'
-import EventsList from '../src/features/event/EventsList'
+import EventsList from '../src/features/event/list/EventsList'
 import { renderWithProviders } from './test-utils'
 import { server } from './setup'
 
