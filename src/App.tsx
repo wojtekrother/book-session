@@ -8,7 +8,7 @@ import MyEventsPage from './features/user/MyEvents.tsx';
 import LoginPage from './features/user/Login.tsx';
 import EventDetailsPage from './features/event/EventDetails.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import EventsListPage from './features/event/EventsListPage.tsx';
+import EventsListPage from './features/event/list/EventsListPage.tsx';
 
 
 const Router = createBrowserRouter([

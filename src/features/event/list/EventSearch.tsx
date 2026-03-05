@@ -1,4 +1,4 @@
-import  { useEventSearchInputsResult } from "./useEventSearchInputs";
+import  { useEventSearchInputsResult } from "../hooks/useEventSearchInputs";
 
 export type EventSearchParams = Omit<useEventSearchInputsResult,"searchQuery">
 

@@ -1,7 +1,7 @@
 import { toast } from "react-toastify"
 import { EventDTO } from "../../types/types"
 import Button from "./Button"
-import { useUserContext } from "../../context/UserContext"
+import { useUpdateUserAddEvent, useUpdateUserRemoveEvent } from "../../services/api/UserApiQuery"
 
 type EventItemParams = {
     event: EventDTO
@@ -10,11 +10,12 @@ type EventItemParams = {
 
 
 const EventItem = ({ event, mode = "public" }: EventItemParams) => {
-    const ctx = useUserContext();
+    const updateUser =  useUpdateUserAddEvent();
+    const removeUser =  useUpdateUserRemoveEvent();
 
     async function handleAddToMyEvents(eventId: string): Promise<void> {
         try {
-            ctx.userAddEvent(eventId)
+            updateUser.mutate(eventId)
         } catch (e: unknown) {
             if (e instanceof Error) {
                 console.log(e.message)
@@ -25,7 +26,7 @@ const EventItem = ({ event, mode = "public" }: EventItemParams) => {
 
     async function handleRemoveFromMyEvents(eventId: string): Promise<void> {
         try {
-            ctx.userRemoveEvent(eventId)
+            removeUser.mutate(eventId)
         } catch (e: unknown) {
             if (e instanceof Error) {
                 console.log(e.message)

@@ -1,5 +1,6 @@
+import { jwtDecode } from "jwt-decode";
 import { AccessTokenStorage } from "../../actions/AccesTokenStorage";
-import { AccessToken, UserDTO } from "../../types/types";
+import { AccessToken, UserCreateDTO, UserDTO } from "../../types/types";
 import { EventApi } from "./EventApi";
 import { httpClientApi } from "./HttpClientApi";
 
@@ -18,15 +19,13 @@ async function getUserByEmail(email: string): Promise<UserDTO> {
     return users[0];
 }
 
-async function userAddEvent(eventId: string, userId: string): Promise<void> {
+async function userAddEvent(eventId: string): Promise<void> {
     const event = await EventApi.getEvent(eventId);
     if (event == null) {
         throw new Error(`Event with id:${eventId} not exist`)
     }
-    const user = await getUserById(userId);
-    if (user == null) {
-        throw new Error(`User with id:${userId} not exist`)
-    }
+    const userId = getCurrentUserId();
+    const user = await getUserById(userId!);
 
     if (user.eventsIds.indexOf(eventId) > 0) {
         throw new Error(`User already have event with id:${eventId}`)
@@ -38,12 +37,13 @@ async function userAddEvent(eventId: string, userId: string): Promise<void> {
     })
 }
 
-async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
+async function userRemoveEvent(eventId: string): Promise<void> {
     const event = await EventApi.getEvent(eventId);
     if (event == null) {
         throw new Error(`Event with id:${eventId} not exist`)
     }
-    const user = await UserApi.getUserById(userId);
+    const userId = getCurrentUserId();
+    const user = await UserApi.getUserById(userId!);
 
 
     return await httpClientApi.patch<void>(`/api/users/${userId}`, {
@@ -52,7 +52,7 @@ async function userRemoveEvent(eventId: string, userId: string): Promise<void> {
     })
 }
 
-async function register(user: UserDTO): Promise<AccessToken> {
+async function register(user: UserCreateDTO): Promise<AccessToken> {
     const storage = new AccessTokenStorage();
     const token = await httpClientApi.post<AccessToken>(`/api/register`, user);
     storage.set(token.accessToken);
@@ -68,7 +68,17 @@ async function login(email: string, password: string): Promise<AccessToken> {
 
 
 
+export function getCurrentUserId(): string | null {
+  const token = localStorage.getItem("accessToken")
+  if (!token) return null
 
+  try {
+    const decoded = jwtDecode<{ userId: string }>(token)
+    return decoded.userId
+  } catch {
+    return null
+  }
+}
 
 
 export const UserApi = { getUserById, getUserByEmail, userAddEvent, userRemoveEvent, register, login }

@@ -1,5 +1,5 @@
 import userEvent from "@testing-library/user-event"
-import EventSearch from "../src/features/event/EventSearch"
+import EventSearch from "../src/features/event/list/EventSearch"
 
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from "react-router-dom"
