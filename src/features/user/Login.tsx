@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import { useUserContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
+import { useGetLoggedInUser, useLoginUser } from "../../services/api/UserApiQuery";
 
 
 const LoginPage = () => {
-    const [userLogin, setUserLogin] = useState<string>("");
+    const [userLogin, setUserLogin] = useState<string>("test@test.pl");
     const [userLoginError, setUserLoginError] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const [password, setPassword] = useState<string>("1234");
     const [passwordError, setPasswordError] = useState<string>("");
     const [globalError, setGlobalError] = useState<string[]>([]);
-    const authContext = useUserContext();
+    const { data } = useGetLoggedInUser();
+    const loginUser = useLoginUser();
     const navigation = useNavigate()
 
 
     useEffect(() => {
-        if (authContext.isLoggedIn) {
+        if (data) {
             navigation("/user/events")
         }
-    },[authContext.isLoggedIn])
+    }, [data])
 
     function handleUserLoginChange(e: React.ChangeEvent<HTMLInputElement>) {
         let login = e.target.value;
@@ -64,14 +65,15 @@ const LoginPage = () => {
             return;
         }
 
-        try {
-            await authContext.login({ email: userLogin, password });
-        } catch (e: unknown) {
-            if (e instanceof Error) {
-                setGlobalError([e.message]);
-                return;
-            }
-        }
+        loginUser.mutate({ email: userLogin, password }, {
+            onError: (error) => {
+                setGlobalError([error.message]);
+            },
+            onSuccess: () => { navigation("/user/events") }
+        })
+
+
+
 
     }
 

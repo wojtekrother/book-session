@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
-import { AccessTokenStorage } from "../../actions/AccesTokenStorage";
-import { AccessToken, UserCreateDTO, UserDTO } from "../../types/types";
+import { TokenStorage } from "./auth/TokenStorage";
+import { Tokens, UserCreateDTO, UserDTO } from "../../types/types";
 import { EventApi } from "./EventApi";
 import { httpClientApi } from "./HttpClientApi";
 
@@ -17,6 +17,16 @@ async function getUserByEmail(email: string): Promise<UserDTO> {
         throw new Error(`User email is not unique.`)
     }
     return users[0];
+}
+
+
+async function getLoggedInUser(): Promise<UserDTO | null> {
+    const userId = getCurrentUserId();
+    if (userId === null) {
+        return null;
+    }
+    const user = await UserApi.getUserById(userId!);
+    return user;
 }
 
 async function userAddEvent(eventId: string): Promise<void> {
@@ -52,36 +62,43 @@ async function userRemoveEvent(eventId: string): Promise<void> {
     })
 }
 
-async function register(user: UserCreateDTO): Promise<AccessToken> {
-    const storage = new AccessTokenStorage();
-    const token = await httpClientApi.post<AccessToken>(`/api/register`, user);
-    storage.set(token.accessToken);
+async function register(user: UserCreateDTO): Promise<Tokens> {
+    const storage = new TokenStorage();
+    const token = await httpClientApi.post<Tokens>(`/api/register`, user);
+    storage.setAccessToken(token.accessToken);
+    storage.setRefreshToken(token.refreshToken);
     return token
 }
 
-async function login(email: string, password: string): Promise<AccessToken> {
-    const storage = new AccessTokenStorage();
-    const token = await httpClientApi.post<AccessToken>(`/api/login`, { email, password });
-    storage.set(token.accessToken);
+async function login(email: string, password: string): Promise<Tokens> {
+    const storage = new TokenStorage();
+    const token = await httpClientApi.post<Tokens>(`/api/login`, { email, password });
+    storage.setAccessToken(token.accessToken);
+    storage.setRefreshToken(token.refreshToken);
     return token;
+}
+
+async function logout(): Promise<void> {
+    const storage = new TokenStorage();
+    storage.reset();
 }
 
 
 
 export function getCurrentUserId(): string | null {
-  const token = localStorage.getItem("accessToken")
-  if (!token) return null
+    const token = localStorage.getItem("accessToken")
+    if (!token) return null
 
-  try {
-    const decoded = jwtDecode<{ userId: string }>(token)
-    return decoded.userId
-  } catch {
-    return null
-  }
+    try {
+        const decoded = jwtDecode<{ sub: string }>(token)
+        return decoded.sub
+    } catch {
+        return null
+    }
 }
 
 
-export const UserApi = { getUserById, getUserByEmail, userAddEvent, userRemoveEvent, register, login }
+export const UserApi = { getUserById, getUserByEmail, getLoggedInUser, userAddEvent, userRemoveEvent, register, login, logout }
 
 
 

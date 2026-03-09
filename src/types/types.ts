@@ -41,8 +41,9 @@ export type UserCreateDTO = {
 
 
 
-export type AccessToken = {
+export type Tokens = {
     "accessToken" : string
+    "refreshToken" : string
 }
 
 export type EventSearchForm = {

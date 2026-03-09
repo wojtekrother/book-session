@@ -1,4 +1,4 @@
-import SkeletonListItem from "./SkeletonListItem"
+import SkeletonListItem from "./SkeletonEventListItem"
 
 const SkeletonList = ({ itemsCount }: { itemsCount: number }) => {
     return <>
