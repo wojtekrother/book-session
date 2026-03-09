@@ -3,7 +3,7 @@ import EventSearch from "../src/features/event/list/EventSearch"
 
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from "react-router-dom"
-import UserContextProvider from "../src/context/UserContext"
+import UserContextProvider from "../src/context/old/UserContext.old"
 import EventProvider from "../src/context/old/EventContext.old"
 import React from "react"
 
@@ -121,7 +121,7 @@ describe("Event search component test", () => {
 
     test("not run search after render", async () => {
         setup()
-        render(<EventSearch />, { wrapper: providersWithMock });
+        render(<EventSearch  />, { wrapper: providersWithMock });
         await new Promise(resolved => setTimeout(resolved, 600))
         expect(searchMock).toBeCalledTimes(2);
     })

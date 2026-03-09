@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useGetEvent } from '../../services/api/EventApiQuery.ts';
+import { useGetEvent } from '../../../services/api/EventApiQuery.ts';
 import { Oval } from 'react-loader-spinner';
 
 export default function EventDetailsPage() {

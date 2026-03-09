@@ -2,7 +2,6 @@ import { Oval } from "react-loader-spinner";
 import EventSearch from "./EventSearch";
 import EventsList from "./EventsList";
 import useEventSearchInputs from "../hooks/useEventSearchInputs";
-import SkeletonList from "./skeleton/SkeletonEventList";
 
 export default function EventsListPage() {
     const eventSearch = useEventSearchInputs();
@@ -39,9 +38,9 @@ export default function EventsListPage() {
     </div> */}
                 {eventSearch.searchQuery.data &&
                     <>
-                        <EventsList events={eventSearch.searchQuery.data ?? []} skeleton={true}/>
+                        <EventsList events={eventSearch.searchQuery.data ?? []}/>
 
-                        {!eventSearch.searchQuery.isFetching &&
+                        {eventSearch.searchQuery.isFetching &&
                             <div className={`z-10 inset-0 absolute bg-gray-500/50 `} >
                                 <div role="status"
                                     aria-label='loading'

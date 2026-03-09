@@ -1,25 +1,26 @@
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import CreateEventModal, { CreateEventModalHandler } from "../../modal/CreateEventModal"
 import Button from "../../components/ui/Button"
-import { useUserContext } from "../../context/UserContext";
 import { toast } from "react-toastify";
 import { ModalHandler } from "../../modal/Modal";
+import { logoutUser, useGetLoggedInUser } from "../../services/api/UserApiQuery";
+import { useNavigate } from "react-router-dom";
 
 
 
 const Header = () => {
+    const {data:loggedInUser} = useGetLoggedInUser();
+    const navigate =  useNavigate();
+
     const modal = useRef<CreateEventModalHandler>(null);
     const modal1 = useRef<ModalHandler>(null);
-    const authContext = useUserContext();
 
-    useEffect(() => {
-        console.log("Header refreshed")
-    })
 
     function handleLogoutClik() {
         try {
-            authContext.logout()
-            toast.success("Logout success.")
+            logoutUser();
+            toast.success("Logout success.");
+            navigate("/");
         } catch (err: unknown) {
             if (err instanceof Error) {
                 console.log(err.message)
@@ -29,7 +30,6 @@ const Header = () => {
     }
 
 
-
     return (
         <header id="main-header" className="from-blue-50 to-blue-300 bg-linear-to-t p-3">
             <CreateEventModal ref={modal} />
@@ -37,12 +37,12 @@ const Header = () => {
             <nav >
                 <ul className="flex items-center gap-2">
                     <li className="mr-auto"><Button href="/" >Home</Button></li>
-                    {authContext.isLoggedIn &&
-                        <li><Button onClick={handleLogoutClik} textOnly>Logout</Button></li>}
-                    {!authContext.isLoggedIn &&
+                    {loggedInUser  &&
+                        <li><Button onClick={handleLogoutClik} textOnly>Logout </Button></li>}
+                    {!loggedInUser &&
                         <li><Button href="/user/login">Login</Button></li>}
                     <li><Button href="/events">Events</Button></li>
-                    {authContext.isLoggedIn &&
+                    {typeof loggedInUser === "object" &&
                         <li><Button href="/user/events">My events</Button></li>}
                     <li><Button textOnly onClick={() => modal.current?.open()} >Create new event</Button></li>
                      <li><Button textOnly onClick={() => modal1.current?.open()} >TEST</Button></li>

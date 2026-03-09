@@ -11,6 +11,10 @@ const useGetEvent = (id: string) => {
     return useQuery<EventDTO>({
         queryKey: ['events', id],
         queryFn: () => EventApi.getEvent(id),
+        initialData:()=> {
+            const events = queryClient.getQueryData<EventDTO[]>(["events"])
+            return events?.find(e => e.id === id)
+        },
         enabled: !!id
     });
 };
@@ -20,7 +24,7 @@ const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", descriptio
     return useQuery<EventDTO[]>({
         queryKey: ['events', eventSearchForm],
         queryFn: ({ signal }) => EventApi.getEvents(eventSearchForm, signal),
-        placeholderData: (prev) => prev
+        placeholderData: (prev) => prev,
     });
 }
 

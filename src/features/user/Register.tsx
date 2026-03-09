@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import { useUserContext } from "../../context/UserContext";
+import { useUserContext } from "../../context/old/UserContext.old";
 import { useNavigate } from "react-router-dom";
 import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
@@ -94,4 +94,4 @@ const RegisterPage = () => {
 
 }
 
-export default LoginPage;
+export default RegisterPage;

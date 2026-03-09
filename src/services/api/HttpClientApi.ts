@@ -1,12 +1,12 @@
-import {AccessTokenStorage} from "../../actions/AccesTokenStorage"
+import {TokenStorage} from "./auth/TokenStorage"
 
 class HttpClientApi {
-    private accessTokenStorage = new AccessTokenStorage();
+    private tokenStorage = new TokenStorage();
 
 
     private getAuthHeader(): {} | { Authorization: string } {
-        const token = this.accessTokenStorage.get();
-        return token ? { Authorization: `Bearer ${token}` } : {};
+        const accessToken = this.tokenStorage.getAccessToken();
+        return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
     }
     get = async<T>(url: string, abortSignal?: AbortSignal): Promise<T> => {
         return fetchJSON<T>(url, {

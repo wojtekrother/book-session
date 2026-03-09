@@ -1,30 +1,20 @@
-import EventItem from '../../../components/ui/EventItem.tsx';
-import SkeletonList from './skeleton/SkeletonEventList.tsx';
+import EventItem from './EventItem.tsx';
 import { EventDTO } from '../../../types/types.ts';
 
 export type EventsListParams = {
-  events: EventDTO[],
-  skeleton?: boolean
+  events: EventDTO[]
 }
 
-export default function EventsList({ events, skeleton = false }: EventsListParams) {
-
- 
+export default function EventsList({ events }: EventsListParams) {
 
   return (
     <>
 
-<div className='grid grid-cols-2 gap-2'>
-      {(events.length > 0 && !skeleton)  &&
+      <div className='grid grid-cols-2 gap-2'>
+        {(events.length > 0) &&
           events.map(s => {
-            return <EventItem mode='public' event={s}></EventItem>
+            return <EventItem mode='public' eventItem={s}></EventItem>
           })
-      }
-        
-        
-      
-      {skeleton &&
-          <SkeletonList itemsCount={5}/>
         }
       </div>
       {events.length == 0 &&

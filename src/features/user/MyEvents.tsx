@@ -1,11 +1,8 @@
-import EventItem from "../../components/ui/EventItem";
-import { useEventContext } from "../../context/old/EventContext.old";
-import { useUserContext } from "../../context/UserContext";
-
+import { useGetLoggedInUser } from "../../services/api/UserApiQuery";
+import EventItemContainer from "../event/list/EventItemContainer";
 
 const MyEventsPage = () => {
-    const userCtx = useUserContext();
-    const eventCtx = useEventContext()
+    const loggedUser = useGetLoggedInUser();
 
     return (
         <main>
@@ -13,12 +10,12 @@ const MyEventsPage = () => {
                 My events
             </header>
             <article>
-                List of my events id: {userCtx.userEventsIds}
+                List of my events id: {loggedUser.data?.eventsIds}
                 <div className='grid grid-cols-2 gap-2'>
-                    {userCtx.userEventsIds &&
-                        userCtx.userEventsIds.map(id => {
-                            const event = eventCtx.getEvent(id)
-                            return <EventItem mode="assigned" event={event!} key={id}></EventItem>
+                    {loggedUser.data?.eventsIds &&
+                        loggedUser.data?.eventsIds.map(eventId => {
+
+                            return <EventItemContainer mode="assigned" eventId={eventId} key={eventId}></EventItemContainer>
                         })}
                 </div>
             </article>

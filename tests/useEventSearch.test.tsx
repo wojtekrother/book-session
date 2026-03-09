@@ -4,7 +4,7 @@ import { act } from "react"
 
 import useEventSearch from "../src/features/event/hooks/useEventSearchInputs"
 import { MemoryRouter } from "react-router-dom"
-import UserContextProvider from "../src/context/UserContext"
+import UserContextProvider from "../src/context/old/UserContext.old"
 import EventProvider from "../src/context/old/EventContext.old"
 describe("Test useEventSearch hook", () => {
 

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserApi } from "./UserApi"
 import { queryClient } from "../../App"
-import { AccessToken, UserCreateDTO } from "../../types/types"
+import { Tokens, UserCreateDTO } from "../../types/types"
 
 const useGetUserById = (id: string) => {
     return useQuery({
@@ -35,15 +35,40 @@ const useUpdateUserRemoveEvent = () => {
 
 
 const useLoginUser = () => {
-    return useMutation<AccessToken, Error, { email: string, password: string }>({
-        mutationFn: ({ email, password }) => UserApi.login(email, password)
+    return useMutation<Tokens, Error, { email: string, password: string }>({
+        mutationFn: ({ email, password }) => UserApi.login(email, password),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey:["loggedInUser"]})
+        }
     })
 }
 
 const useRegisterUser = () => {
-    return useMutation<AccessToken, Error, UserCreateDTO>({
+    return useMutation<Tokens, Error, UserCreateDTO>({
         mutationFn: (user) => UserApi.register(user)
     })
 }
 
-export { useGetUserById, useGetUserByEmail, useUpdateUserAddEvent, useUpdateUserRemoveEvent, useLoginUser, useRegisterUser }
+const useGetLoggedInUser = () => {
+    return useQuery({
+        queryKey: ["loggedInUser"],
+        queryFn: () => UserApi.getLoggedInUser(),
+        staleTime: 60 * 1000
+    })
+}
+
+const logoutUser = () => {
+    UserApi.logout();
+    queryClient.invalidateQueries({ queryKey: ["loggedInUser"] });
+}
+
+export {
+    useGetUserById,
+    useGetUserByEmail,
+    useUpdateUserAddEvent,
+    useUpdateUserRemoveEvent,
+    useLoginUser,
+    useRegisterUser,
+    useGetLoggedInUser,
+    logoutUser
+}
