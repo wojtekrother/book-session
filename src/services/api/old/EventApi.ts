@@ -1,27 +1,21 @@
-import axios from "axios";
 import { EventCreateDTO, EventDTO, EventSearchForm, EventUpdateDTO } from "../../types/types";
 import { StringUtils } from "../../utils/string";
-import { axiosRequest, httpClientApi } from "./HttpClientApi";
-
+import { httpClientApi } from "./HttpClientApi";
 
 async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
-    const response = await axiosRequest(httpClientApi.post<EventDTO>("/api/events", { ...event, createdAt: new Date() }));
-    return response;
+    return httpClientApi.post<EventDTO>("/api/events", { ...event, createdAt: new Date() });
 }
 
 async function removeEvent(eventId: string): Promise<EventDTO> {
-    const response = await axiosRequest(httpClientApi.patch<EventDTO>(`/api/events/${eventId}`, { deleteAt: new Date() }));
-    return response;
+    return httpClientApi.patch<EventDTO>(`/api/events/${eventId}`, { deleteAt: new Date() });
 }
 
 async function updateEvent(event: EventUpdateDTO): Promise<EventDTO> {
-    const response = await axiosRequest(httpClientApi.patch<EventDTO>(`/api/events/${event.id}`, { ...event, updatedAt: new Date() }));
-    return response;
+    return httpClientApi.patch<EventDTO>(`/api/events/${event.id}`, { ...event, updatedAt: new Date() })
 }
 
 async function getEvent(id: string): Promise<EventDTO> {
-    const response = await axios.get<EventDTO>("/api/events/" + id);
-    return response.data;
+    return httpClientApi.get<EventDTO>("/api/events/" + id);
 }
 
 async function getEvents({ title, description, dateOrder: date }: EventSearchForm = { title: "", description: "", dateOrder: "asc" },
@@ -36,8 +30,7 @@ async function getEvents({ title, description, dateOrder: date }: EventSearchFor
         query += `description=${encodeURI(description)}&`;
     }
 
-    const response = await axiosRequest(httpClientApi.get<EventDTO[]>("/api/events" + query, {signal:abortSignal}));
-    return response;
+    return httpClientApi.get<EventDTO[]>("/api/events" + query, abortSignal);
 }
 
 export const EventApi = { createEvent, removeEvent, updateEvent, getEvent, getEvents }

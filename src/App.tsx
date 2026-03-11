@@ -20,7 +20,7 @@ const Router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
-      { path: 'events', element: <EventsListPage />,  },
+      { path: 'events', element: <EventsListPage />, },
       { path: 'events/:id', element: <EventDetailsPage /> },
       { path: 'user/events', element: <MyEventsPage /> },
       { path: 'user/login', element: <LoginPage /> },
@@ -30,13 +30,19 @@ const Router = createBrowserRouter([
 ]);
 
 // Create a client
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000
+    }
+  }
+});
 
 // This code is only for TypeScript
 declare global {
   interface Window {
     __TANSTACK_QUERY_CLIENT__:
-      import("@tanstack/query-core").QueryClient;
+    import("@tanstack/query-core").QueryClient;
   }
 }
 
@@ -48,7 +54,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <UserContextProvider>
         {/* <EventProvider > */}
-          <RouterProvider router={Router} />
+        <RouterProvider router={Router} />
         {/* </EventProvider> */}
       </UserContextProvider>
     </QueryClientProvider>
