@@ -12,58 +12,24 @@ import { EventDTO } from "../types/types"
 
 
 type CreateEventModalProps = {
-
-}
-
-export type CreateEventModalHandler = {
-    open: () => void,
-    close: () => void
+    closeModal: () => void
 }
 
 
-const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: CreateEventModalProps, ref) => {
-    const modal = useRef<HTMLDialogElement>(null);
+
+const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
     const [errors, setErrors] = useState<string[]>([]);
-    //const eventCtx = useEventContext();
-    //const [newEvent, setNewEvent] = useState<EventDTO| null>(null)
     const createEvent = useCreateEvent()
-    const [modalRootElement, setModalRootElement] = useState<HTMLElement | null>(null)
     const abortControler = new AbortController();
 
-    useEffect(() => {
-        setModalRootElement(document.getElementById("modal-root"))
-    }, [])
-    
-    useImperativeHandle(ref, () => {
-        return {
-            open: () => {
-                showModal();
-            },
-            close: () => {
-                closeModal()
-            }
-
-        }
-    })
-
-
-    function showModal() {
-        modal.current?.showModal();
-    }
-
-    function closeModal() {
-        modal.current?.close();
-    }
 
     function resetErrors(): void {
         setErrors([]);
     }
 
-
-
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
-        let errorsTemp:string[] = [];
+        let errorsTemp: string[] = [];
         resetErrors()
 
         let data = new FormData(event.currentTarget)
@@ -123,37 +89,38 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
                     toast.error("Error during saving event!")
                 }
             }
-        } else{
+        } else {
             setErrors(errorsTemp);
         }
 
     }
 
 
-    return <>{modalRootElement ? createPortal(
-        <dialog ref={modal} className="modal mx-auto p-5">
-            <form onSubmit={onSubmit}>
-                {errors.length > 0 &&
-                    <div className="border-2 border-red-500 bg-red-200 rounded-lg  text-amber-800 m-2 p-4">
-                        <h2 className="text-2xl">Errors: </h2>
-                        {errors.map(e => <p className="text-sm">{e}</p>)}
-                    </div>
-                }
-                <div>
-                    <Input disabled={createEvent.isPending} label="Title" name="title" />
-                    <Input disabled={createEvent.isPending} label="Description" name="description" />
-                    <Input disabled={createEvent.isPending} label="Summary" name="summary" />
-                    <Input disabled={createEvent.isPending} label="Duration in days" name="duration" type="number" />
-                    <Input disabled={createEvent.isPending} label="Start date" name="date" type="date" />
-                    <Input disabled={createEvent.isPending} label="Image" name="image" type="file" />
-                </div>
-                <div className="actions">
-                    <Button textOnly onClick={closeModal}>Cancel</Button>
-                    <Button disabled={createEvent.isPending}>Create</Button>
-                </div>
-            </form>
-        </dialog>, modalRootElement) : null}</>
+    return <>
 
-})
+        <form onSubmit={onSubmit}>
+            {errors.length > 0 &&
+                <div className="border-2 border-red-500 bg-red-200 rounded-lg  text-amber-800 m-2 p-4">
+                    <h2 className="text-2xl">Errors: </h2>
+                    {errors.map(e => <p className="text-sm">{e}</p>)}
+                </div>
+            }
+            <div>
+                <Input disabled={createEvent.isPending} label="Title" name="title" />
+                <Input disabled={createEvent.isPending} label="Description" name="description" />
+                <Input disabled={createEvent.isPending} label="Summary" name="summary" />
+                <Input disabled={createEvent.isPending} label="Duration in days" name="duration" type="number" />
+                <Input disabled={createEvent.isPending} label="Start date" name="date" type="date" />
+                <Input disabled={createEvent.isPending} label="Image" name="image" type="file" />
+            </div>
+            <div className="actions">
+                <Button textOnly onClick={closeModal}>Cancel</Button>
+                <Button disabled={createEvent.isPending}>Create</Button>
+            </div>
+        </form>
 
-export default CreateEventModal
+    </>
+
+}
+
+export default CreateEventForm

@@ -1,28 +1,40 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { useEventContext } from "../context/old/EventContext.old"
 
 
-type ModalProps = {
+
+export type ModalProps = {
     children: React.ReactNode,
 }
 
+
 export type ModalHandler = {
     open: () => void,
-    close: () => void
+    close: () => void,
+    isOpen: () => void
 }
 
 
-const CreateEventModal = forwardRef<ModalHandler, ModalProps>(({ children, ...props }: ModalProps, ref) => {
+const Modal = forwardRef<ModalHandler, ModalProps>(({ children, ...props }: ModalProps, ref) => {
     const modal = useRef<HTMLDialogElement>(null);
-    const [errors, setErrors] = useState<string[]>([]);
-    const eventCtx = useEventContext();
     const [modalRootElement, setModalRootElement] = useState<HTMLElement | null>(null)
-    const abortControler = new AbortController();
+
 
     useEffect(() => {
         setModalRootElement(document.getElementById("modal-root"))
     }, [])
+
+    useEffect(() => {
+        const closeOnEscapePressed = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                closeModal();
+            }
+        };
+        window.addEventListener("keydown", closeOnEscapePressed);
+        return () =>
+            window.removeEventListener("keydown", closeOnEscapePressed);
+    }, []);
+
 
     useImperativeHandle(ref, () => {
         return {
@@ -39,11 +51,9 @@ const CreateEventModal = forwardRef<ModalHandler, ModalProps>(({ children, ...pr
         }
     })
 
-
     function showModal() {
         modal.current?.showModal();
     }
-
     function closeModal() {
         modal.current?.close();
     }
@@ -52,18 +62,12 @@ const CreateEventModal = forwardRef<ModalHandler, ModalProps>(({ children, ...pr
     }
 
 
-
-
-
-
-
-
-
     return <>{modalRootElement ? createPortal(
-        <dialog ref={modal} className="modal mx-auto p-5">
-            <button className="close-button" aria-label="Zamknij">&times;</button>
+        <dialog ref={modal} className="modal mx-auto p-6 m-3 rounded-2xl">
+            <button className="close-button h-6 w-6  absolute -top-1 text-3xl right-2 "
+                aria-label="Close"
+                onClick={closeModal}>&times;</button>
             <div className="modal-content">
-                Tutaj jest treść
                 {children}
             </div>
 
@@ -71,4 +75,4 @@ const CreateEventModal = forwardRef<ModalHandler, ModalProps>(({ children, ...pr
 
 })
 
-export default CreateEventModal
+export default Modal

@@ -2,9 +2,10 @@ import { useRef } from "react"
 import CreateEventModal, { CreateEventModalHandler } from "../../modal/CreateEventModal"
 import Button from "../../components/ui/Button"
 import { toast } from "react-toastify";
-import { ModalHandler } from "../../modal/Modal";
+import Modal, { ModalHandler } from "../../modal/Modal";
 import { logoutUser, useGetLoggedInUser } from "../../services/api/UserApiQuery";
 import { useNavigate } from "react-router-dom";
+import CreateEventForm from "../../modal/CreateEventForm";
 
 
 
@@ -12,8 +13,7 @@ const Header = () => {
     const {data:loggedInUser} = useGetLoggedInUser();
     const navigate =  useNavigate();
 
-    const modal = useRef<CreateEventModalHandler>(null);
-    const modal1 = useRef<ModalHandler>(null);
+    const modal = useRef<ModalHandler>(null);
 
 
     function handleLogoutClik() {
@@ -32,7 +32,8 @@ const Header = () => {
 
     return (
         <header id="main-header" className="from-blue-50 to-blue-300 bg-linear-to-t p-3">
-            <CreateEventModal ref={modal} />
+            {/* <CreateEventModal ref={modal} /> */}
+            <Modal ref={modal} >{modal.current &&<CreateEventForm closeModal={modal.current.close}/>}</Modal>
             <h1 className="text-2xl ">Booking event</h1>
             <nav >
                 <ul className="flex items-center gap-2">
@@ -45,7 +46,7 @@ const Header = () => {
                     {typeof loggedInUser === "object" &&
                         <li><Button href="/user/events">My events</Button></li>}
                     <li><Button textOnly onClick={() => modal.current?.open()} >Create new event</Button></li>
-                     <li><Button textOnly onClick={() => modal1.current?.open()} >TEST</Button></li>
+                     
                 </ul>
             </nav>
         </header>
