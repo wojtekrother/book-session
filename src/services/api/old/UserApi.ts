@@ -2,19 +2,14 @@ import { jwtDecode } from "jwt-decode";
 import { TokenStorage } from "./auth/TokenStorage";
 import { Tokens, UserCreateDTO, UserDTO } from "../../types/types";
 import { EventApi } from "./EventApi";
-
-import axios from "axios";
-import { axiosRequest, httpClientApi } from "./HttpClientApi";
+import { httpClientApi } from "./HttpClientApi";
 
 async function getUserById(id: string): Promise<UserDTO> {
-    const response = await axiosRequest(httpClientApi.get<UserDTO>(`/api/users/${id}`));
-    return response;
+    return await httpClientApi.get<UserDTO>(`/api/users/${id}`);
 }
 
 async function getUserByEmail(email: string): Promise<UserDTO> {
-
-    const response = await axiosRequest(axios.get<UserDTO[]>(`/api/users?email=${email}`));
-    const users: UserDTO[] = response;
+    const users: UserDTO[] = await httpClientApi.get<UserDTO[]>(`/api/users?email=${email}`);
     if (users.length === 0) {
         throw new Error(`User not exist.`)
     }
@@ -22,8 +17,6 @@ async function getUserByEmail(email: string): Promise<UserDTO> {
         throw new Error(`User email is not unique.`)
     }
     return users[0];
-
-
 }
 
 
@@ -48,11 +41,10 @@ async function userAddEvent(eventId: string): Promise<void> {
         throw new Error(`User already have event with id:${eventId}`)
     }
 
-    const response = await axiosRequest(axios.patch<void>(`/api/users/${userId}`, {
+    return await httpClientApi.patch<void>(`/api/users/${userId}`, {
         modifiedAt: new Date(),
         eventsIds: [...user.eventsIds, eventId]
-    }))
-    return response;
+    })
 }
 
 async function userRemoveEvent(eventId: string): Promise<void> {
@@ -63,16 +55,16 @@ async function userRemoveEvent(eventId: string): Promise<void> {
     const userId = getCurrentUserId();
     const user = await UserApi.getUserById(userId!);
 
-    const response = axiosRequest(axios.patch<void>(`/api/users/${userId}`, {
+
+    return await httpClientApi.patch<void>(`/api/users/${userId}`, {
         modifiedAt: new Date(),
         eventsIds: [...user.eventsIds.filter(evId => evId != eventId)]
-    }))
-    return response;
+    })
 }
 
 async function register(user: UserCreateDTO): Promise<Tokens> {
     const storage = new TokenStorage();
-    const token = await axiosRequest(axios.post<Tokens>(`/api/register`, user));
+    const token = await httpClientApi.post<Tokens>(`/api/register`, user);
     storage.setAccessToken(token.accessToken);
     storage.setRefreshToken(token.refreshToken);
     return token
@@ -80,7 +72,7 @@ async function register(user: UserCreateDTO): Promise<Tokens> {
 
 async function login(email: string, password: string): Promise<Tokens> {
     const storage = new TokenStorage();
-    const token = await axiosRequest(axios.post<Tokens>(`/api/login`, { email, password }));
+    const token = await httpClientApi.post<Tokens>(`/api/login`, { email, password });
     storage.setAccessToken(token.accessToken);
     storage.setRefreshToken(token.refreshToken);
     return token;
