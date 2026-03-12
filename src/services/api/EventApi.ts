@@ -1,27 +1,35 @@
-import axios from "axios";
 import { EventCreateDTO, EventDTO, EventSearchForm, EventUpdateDTO } from "../../types/types";
 import { StringUtils } from "../../utils/string";
-import { axiosRequest, httpClientApi } from "./HttpClientApi";
+import { axiosRequestSafe, httpClientApi } from "./HttpClientApi";
+import { eventSchema } from "../../features/event/schema/event.shema";
 
 
 async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
-    const response = await axiosRequest(httpClientApi.post<EventDTO>("/api/events", { ...event, createdAt: new Date() }));
+    const response = await axiosRequestSafe(
+        httpClientApi.post<EventDTO>("/api/events", { ...event, createdAt: new Date() }),
+        eventSchema);
     return response;
 }
 
 async function removeEvent(eventId: string): Promise<EventDTO> {
-    const response = await axiosRequest(httpClientApi.patch<EventDTO>(`/api/events/${eventId}`, { deleteAt: new Date() }));
+    const response = await axiosRequestSafe(
+        httpClientApi.patch<EventDTO>(`/api/events/${eventId}`, { deleteAt: new Date() }),
+        eventSchema);
     return response;
 }
 
 async function updateEvent(event: EventUpdateDTO): Promise<EventDTO> {
-    const response = await axiosRequest(httpClientApi.patch<EventDTO>(`/api/events/${event.id}`, { ...event, updatedAt: new Date() }));
+    const response = await axiosRequestSafe(
+        httpClientApi.patch<EventDTO>(`/api/events/${event.id}`, { ...event, updatedAt: new Date() }),
+        eventSchema);
     return response;
 }
 
 async function getEvent(id: string): Promise<EventDTO> {
-    const response = await axios.get<EventDTO>("/api/events/" + id);
-    return response.data;
+    const response = await axiosRequestSafe(
+        httpClientApi.get<EventDTO>("/api/events/", { params: { id } }),
+        eventSchema);
+    return response;
 }
 
 async function getEvents({ title, description, dateOrder: date }: EventSearchForm = { title: "", description: "", dateOrder: "asc" },
@@ -36,7 +44,9 @@ async function getEvents({ title, description, dateOrder: date }: EventSearchFor
         query += `description=${encodeURI(description)}&`;
     }
 
-    const response = await axiosRequest(httpClientApi.get<EventDTO[]>("/api/events" + query, {signal:abortSignal}));
+    const response = await axiosRequestSafe(
+        httpClientApi.get("/api/events" + query, { signal: abortSignal }),
+        eventSchema.array());
     return response;
 }
 

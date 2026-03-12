@@ -1,5 +1,4 @@
 import { useRef } from "react"
-import CreateEventModal, { CreateEventModalHandler } from "../../modal/CreateEventModal"
 import Button from "../../components/ui/Button"
 import { toast } from "react-toastify";
 import Modal, { ModalHandler } from "../../modal/Modal";

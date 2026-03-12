@@ -1,6 +1,7 @@
 import { TokenStorage } from "./auth/TokenStorage"
 import axios, { AxiosResponse } from "axios";
 import { logoutUser } from "./UserApiQuery";
+import z, { ZodSchema } from "zod";
 
 export const httpClientApi = axios.create({
     baseURL: "",
@@ -50,6 +51,19 @@ export const axiosRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promi
     try {
         const response = await promise;
         return response.data
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(getErrorMessage(error));
+        }
+        throw error;
+    }
+}
+
+export const axiosRequestSafe = async <T extends z.ZodType>
+    (promise: Promise<AxiosResponse>, zodSchema: T): Promise<z.infer<T>> => {
+    try {
+        const response = await promise;
+        return zodSchema.parse(response.data)
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw new Error(getErrorMessage(error));
