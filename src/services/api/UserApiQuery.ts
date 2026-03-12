@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserApi } from "./UserApi"
 import { queryClient } from "../../App"
-import { Tokens, UserCreateDTO } from "../../types/types"
+import { Tokens } from "../../features/shared/schema/tokens.schema"
+import { UserCreateDTO } from "../../features/user/schema/user.schema"
 
 const useGetUserById = (id: string) => {
     return useQuery({

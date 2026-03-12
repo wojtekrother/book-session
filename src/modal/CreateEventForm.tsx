@@ -1,14 +1,11 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { useState } from "react"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
-import { createPortal } from "react-dom"
-
 import { convertFileToString } from "../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../utils/string"
-import { useEventContext } from "../context/old/EventContext.old"
 import { useCreateEvent } from "../services/api/EventApiQuery"
-import { EventDTO } from "../types/types"
+
 
 
 type CreateEventModalProps = {

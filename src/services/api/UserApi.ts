@@ -1,20 +1,22 @@
 import { jwtDecode } from "jwt-decode";
 import { TokenStorage } from "./auth/TokenStorage";
-import { Tokens, UserCreateDTO, UserDTO } from "../../types/types";
+
 import { EventApi } from "./EventApi";
 
 import axios from "axios";
-import { axiosRequest, httpClientApi } from "./HttpClientApi";
+import { axiosRequest, axiosRequestSafe, httpClientApi } from "./HttpClientApi";
+import { UserCreateDTO, UserDTO, userSchema } from "../../features/user/schema/user.schema";
+import { Tokens, tokensSchema } from "../../features/shared/schema/tokens.schema";
 
 async function getUserById(id: string): Promise<UserDTO> {
-    const response = await axiosRequest(httpClientApi.get<UserDTO>(`/api/users/${id}`));
+    const response = await axiosRequestSafe(httpClientApi.get<UserDTO>(`/api/users/${id}`), userSchema);
     return response;
 }
 
 async function getUserByEmail(email: string): Promise<UserDTO> {
 
-    const response = await axiosRequest(axios.get<UserDTO[]>(`/api/users?email=${email}`));
-    const users: UserDTO[] = response;
+    const users = await axiosRequestSafe(axios.get(`/api/users?email=${email}`), userSchema.array() );
+   
     if (users.length === 0) {
         throw new Error(`User not exist.`)
     }
@@ -72,7 +74,7 @@ async function userRemoveEvent(eventId: string): Promise<void> {
 
 async function register(user: UserCreateDTO): Promise<Tokens> {
     const storage = new TokenStorage();
-    const token = await axiosRequest(axios.post<Tokens>(`/api/register`, user));
+    const token =  await axiosRequestSafe(axios.post(`/api/register`, user), tokensSchema);
     storage.setAccessToken(token.accessToken);
     storage.setRefreshToken(token.refreshToken);
     return token
@@ -80,7 +82,7 @@ async function register(user: UserCreateDTO): Promise<Tokens> {
 
 async function login(email: string, password: string): Promise<Tokens> {
     const storage = new TokenStorage();
-    const token = await axiosRequest(axios.post<Tokens>(`/api/login`, { email, password }));
+    const token = await axiosRequestSafe(axios.post(`/api/login`, { email, password }), tokensSchema);
     storage.setAccessToken(token.accessToken);
     storage.setRefreshToken(token.refreshToken);
     return token;
