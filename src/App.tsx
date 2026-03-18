@@ -9,6 +9,7 @@ import LoginPage from './features/user/Login.tsx';
 import EventDetailsPage from './features/event/details/EventDetails.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EventsListPage from './features/event/list/EventsListPage.tsx';
+import RegisterPage from './features/user/Register.tsx';
 
 
 const Router = createBrowserRouter([
@@ -23,6 +24,7 @@ const Router = createBrowserRouter([
       { path: 'events', element: <EventsListPage />, },
       { path: 'events/:id', element: <EventDetailsPage /> },
       { path: 'user/events', element: <MyEventsPage /> },
+      { path: 'user/register', element: <RegisterPage /> },
       { path: 'user/login', element: <LoginPage /> },
       { path: 'user/logout', element: <Loggout /> },
     ],

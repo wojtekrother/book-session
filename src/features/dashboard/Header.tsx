@@ -40,7 +40,10 @@ const Header = () => {
                     {loggedInUser  &&
                         <li><Button onClick={handleLogoutClik} textOnly>Logout </Button></li>}
                     {!loggedInUser &&
-                        <li><Button href="/user/login">Login</Button></li>}
+                    <>
+                        <li><Button href="/user/login">Login</Button></li>
+                        <li><Button href="/user/register">Register</Button></li>
+                        </>}
                     <li><Button href="/events">Events</Button></li>
                     {typeof loggedInUser === "object" &&
                         <li><Button href="/user/events">My events</Button></li>}

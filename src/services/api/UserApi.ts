@@ -5,7 +5,7 @@ import { EventApi } from "./EventApi";
 
 import axios from "axios";
 import { axiosRequest, axiosRequestSafe, httpClientApi } from "./HttpClientApi";
-import { UserCreateDTO, UserDTO, userSchema } from "../../features/user/schema/user.schema";
+import { UserCreateDTO, UserDTO, UserLoginDTO, userSchema } from "../../features/user/schema/user.schema";
 import { Tokens, tokensSchema } from "../../features/shared/schema/tokens.schema";
 
 async function getUserById(id: string): Promise<UserDTO> {
@@ -80,9 +80,9 @@ async function register(user: UserCreateDTO): Promise<Tokens> {
     return token
 }
 
-async function login(email: string, password: string): Promise<Tokens> {
+async function login(credentials:UserLoginDTO): Promise<Tokens> {
     const storage = new TokenStorage();
-    const token = await axiosRequestSafe(axios.post(`/api/login`, { email, password }), tokensSchema);
+    const token = await axiosRequestSafe(axios.post(`/api/login`, credentials), tokensSchema);
     storage.setAccessToken(token.accessToken);
     storage.setRefreshToken(token.refreshToken);
     return token;

@@ -11,13 +11,21 @@ export const userSchemaBase = z.object({
     role: roleSchema
 });
 
-export const userCreateSchema = z.object({
+export const userAuthSchema =  z.object({
     email: z.email(),
     password: z.string()
+});
+
+
+export const userLoginSchema = userAuthSchema
+
+export const userRegisterSchema = userAuthSchema.extend({
+    confirmPassword: z.string()
 });
 
 export const userSchema = userSchemaBase.extend(auditSchema.shape);
 
 
 export type UserDTO = z.infer<typeof userSchema>;
-export type UserCreateDTO = z.infer<typeof userCreateSchema>;
+export type UserCreateDTO = z.infer<typeof userRegisterSchema>;
+export type UserLoginDTO = z.infer<typeof userLoginSchema>;
