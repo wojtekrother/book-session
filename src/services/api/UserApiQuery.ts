@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserApi } from "./UserApi"
 import { queryClient } from "../../App"
 import { Tokens } from "../../features/shared/schema/tokens.schema"
-import { UserCreateDTO } from "../../features/user/schema/user.schema"
+import { UserCreateDTO, UserLoginDTO } from "../../features/user/schema/user.schema"
 
 const useGetUserById = (id: string) => {
     return useQuery({
@@ -36,8 +36,8 @@ const useUpdateUserRemoveEvent = () => {
 
 
 const useLoginUser = () => {
-    return useMutation<Tokens, Error, { email: string, password: string }>({
-        mutationFn: ({ email, password }) => UserApi.login(email, password),
+    return useMutation<Tokens, Error, UserLoginDTO>({
+        mutationFn: (credentials) => UserApi.login(credentials),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey:["loggedInUser"]})
         }

@@ -5,70 +5,78 @@ import { useUserContext } from "../../context/old/UserContext.old";
 import { useNavigate } from "react-router-dom";
 import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
+import useForm from "../../hooks/useForm";
+import { UserCreateDTO, UserLoginDTO } from "./schema/user.schema";
+import { useLoginUser } from "../../services/api/UserApiQuery";
+
+
+const validateLogin = (login: string): string | null => {
+    if (StringUtils.isBlank(login)) {
+        return "Login is required"
+
+    }
+    return null
+}
+
+const validatePassword = (password: string): string | null => {
+    if (StringUtils.isBlank(password)) {
+        return "Password is required";
+    }
+    return null;
+}
 
 
 const RegisterPage = () => {
-    const [userLogin, setUserLogin] = useState<string>("");
-    const [userLoginError, setUserLoginError] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [passwordError, setPasswordError] = useState<string>("");
+    // const form = useForm<UserCreateDTO>({
+    //     email: "",
+    //     password: ""
+    // })
+
+    const form = useForm<UserLoginDTO>({
+        email: "",
+        password: ""
+    }, {
+        email: validateLogin,
+        password: validatePassword
+    })
+
+
+
     const [globalError, setGlobalError] = useState<string[]>([]);
-    const authContext = useUserContext();
+    // const authContext = useUserContext();
     const navigation = useNavigate()
+    const loginUser = useLoginUser()
 
 
-    useEffect(() => {
-        if (authContext.isLoggedIn) {
-            navigation("/user/events")
-        }
-    },[authContext.isLoggedIn])
+    // useEffect(() => {
+    //     if (authContext.isLoggedIn) {
+    //         navigation("/user/events")
+    //     }
+    // }, [authContext.isLoggedIn])
 
-    function handleUserLoginChange(e: React.ChangeEvent<HTMLInputElement>) {
-        let login = e.target.value;
-        validateLogin(login);
-        setUserLogin(login.trim());
+
+    if (form.validators?.email == undefined) {
+        form.setValidators({ email: validateLogin, password: validatePassword })
     }
 
-    const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-        let password = e.target.value;
-        validatePassword(password)
-        setPassword(password.trim())
-    }
+    async function submitForm(form: UserLoginDTO) {
 
-    const validateLogin = (login: string): boolean => {
-        setGlobalError([]);
-        setUserLoginError("")
-        if (StringUtils.isBlank(login)) {
-            setUserLoginError("Login is required")
-            return false;
-        }
-        return true
-    }
 
-    const validatePassword = (password: string): boolean => {
-        setGlobalError([]);
-        setPasswordError("")
-        if (StringUtils.isBlank(password)) {
-            setPasswordError("Password is required");
-            setGlobalError([]);
-            return false;
-        }
-        return true
-    }
-
-    async function submitForm(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        setGlobalError([]);
-        if (!validateLogin(userLogin) || !validatePassword(password)) {
-            setGlobalError(["Login and password is reqired."]);
-            return;
-        }
+        // if (!validateLogin(form.values["email"]) || !validatePassword(form.values["password"])) {
+        //     setGlobalError(["Login and password is reqired."]);
+        //     return;
+        // }
 
         try {
-            await authContext.login({ email: userLogin, password });
+            loginUser.mutate(form, {
+                onError: (error) => {
+                    setGlobalError([error.message]);
+                },
+                onSuccess: () => { navigation("/user/events") }
+            });
         } catch (e: unknown) {
             if (e instanceof Error) {
-                setGlobalError([e.message]);
+
                 return;
             }
         }
@@ -77,15 +85,15 @@ const RegisterPage = () => {
 
     return (
         <div className="bg-amber-50 p-2 max-w-2xl min-w-xl mx-auto">
-            <form onSubmit={submitForm}>
+            <form onSubmit={form.handleSubmit(submitForm)}>
                 <ErrorField errors={globalError} />
                 <div className="control">
-                    <Input name="userLogin" label="Login" value={userLogin} error={userLoginError} onChange={handleUserLoginChange}></Input>
-                    <Input name="password" label="Password" value={password} error={passwordError} onChange={handlePasswordChange}></Input>
+                    <Input label="Login" {...form.register("email")}></Input>
+                    <Input label="Password" {...form.register("password")}></Input>
                 </div>
                 <div className="actions">
                     <Button textOnly>Cancel</Button>
-                    <Button disabled={!(userLogin && password)} >Login</Button>
+                    <Button disabled={!(form.values["email"] && form.values["password"])} >Register</Button>
                 </div>
             </form>
 
