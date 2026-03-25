@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import Modal, { ModalHandler } from "../../modal/Modal";
 import { logoutUser, useGetLoggedInUser } from "../../services/api/UserApiQuery";
 import { useNavigate } from "react-router-dom";
-import CreateEventForm from "../../modal/CreateEventForm";
+import CreateEventForm from "../../modal/old/CreateEventForm";
 
 
 

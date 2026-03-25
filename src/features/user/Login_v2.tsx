@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-
 import { useNavigate } from "react-router-dom";
 import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
-import useForm, { Errors } from "../../hooks/useForm";
-import { UserCreateDTO } from "./schema/user.schema";
-import { useGetLoggedInUser, useRegisterUser } from "../../services/api/UserApiQuery";
+import useForm from "../../hooks/useForm";
+import { UserLoginDTO } from "./schema/user.schema";
+import { useGetLoggedInUser, useLoginUser } from "../../services/api/UserApiQuery";
 
-const registerValidate = (register: UserCreateDTO): Errors<UserCreateDTO> => {
-    let errors: Errors<UserCreateDTO> = {};
 
-    if (register.password !== register.confirmPassword) errors.confirmPassword = "Confirm password is not the same like password";
-    return errors
-}
 
 const validateLogin = (login: string): string | null => {
     if (StringUtils.isBlank(login)) {
@@ -40,21 +34,20 @@ const validatePassword = (password: string): string | null => {
 }
 
 
-const RegisterPage = () => {
-    const form = useForm<UserCreateDTO>({
+const LoginPage = () => {
+    const form = useForm<UserLoginDTO>({
         email: "",
-        password: "",
-        confirmPassword: "",
+        password: ""
     }, {
         email: validateLogin,
         password: validatePassword
-    }, registerValidate)
+    },)
 
 
 
     const [globalError, setGlobalError] = useState<string[]>([]);
-    const navigation = useNavigate()
-    const registerUser = useRegisterUser();
+    const navigation = useNavigate();
+    const loginUser = useLoginUser();
     const loggedInUser = useGetLoggedInUser();
 
 
@@ -67,10 +60,11 @@ const RegisterPage = () => {
 
 
 
-    async function submitForm(form: UserCreateDTO) {
+    async function submitForm(form: UserLoginDTO) {
+
 
         try {
-            registerUser.mutate(form, {
+            loginUser.mutate(form, {
                 onError: (error) => {
                     setGlobalError([error.message]);
                 },
@@ -78,7 +72,6 @@ const RegisterPage = () => {
             });
         } catch (e: unknown) {
             if (e instanceof Error) {
-
                 return;
             }
         }
@@ -92,11 +85,10 @@ const RegisterPage = () => {
                 <div className="control">
                     <Input label="Login" {...form.register("email")}></Input>
                     <Input label="Password" {...form.register("password")}></Input>
-                    <Input label="Confirm Password" {...form.register("confirmPassword")}></Input>
                 </div>
                 <div className="actions">
-                    <Button textOnly>Cancel</Button>
-                    <Button disabled={!form.isFormReady()} >Register</Button>
+                    <Button href="/">Return to home page</Button>
+                    <Button disabled={!(form.values["email"] && form.values["password"])} >Login</Button>
                 </div>
             </form>
 
@@ -105,4 +97,4 @@ const RegisterPage = () => {
 
 }
 
-export default RegisterPage;
+export default LoginPage;

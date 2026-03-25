@@ -163,7 +163,6 @@
       "imageUrl": "data:application/octet-stream;base64,",
       "createdAt": "2026-02-02T08:53:08.378Z"
     },
-
     {
       "id": "b7a6",
       "title": "test2",
@@ -190,6 +189,7 @@
       "id": "id_1",
       "email": "test@test.pl",
       "password": "$2a$10$j.Bg.ywckuSkJIOvJKd7pupySO7nKhPpWpeKSFdmr5i9masW8HZX.",
+      "role":"User",
       "modifiedAt": "2026-02-04T13:09:28.280Z",
       "eventsIds": [
         "e714",
@@ -202,6 +202,18 @@
       "eventsIds": [],
       "role": "User",
       "id": "7_ubmc8"
+    },
+    {
+      "email": "koko@kura.pl",
+      "password": "$2a$10$iKX7WlsR/7BMIx74/vEAA.LRsZJZQLY397bICAS9kwjO4vAoq2gY6",
+      "confirmPassword": "1234",
+      "id": "yKwACG-"
+    },
+    {
+      "email": "koko2@kura.pl",
+      "password": "$2a$10$Aad60gyT20KN9Z0ekdAeXeTrR5/pFmsGrLOCpIt2hw5H7dMWBzdXS",
+      "confirmPassword": "1234",
+      "id": "ysxIVbH"
     }
   ]
 }

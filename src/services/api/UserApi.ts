@@ -6,7 +6,7 @@ import { EventApi } from "./EventApi";
 import axios from "axios";
 import { axiosRequest, axiosRequestSafe, httpClientApi } from "./HttpClientApi";
 import { UserCreateDTO, UserDTO, UserLoginDTO, userSchema } from "../../features/user/schema/user.schema";
-import { Tokens, tokensSchema } from "../../features/shared/schema/tokens.schema";
+import { AuthResponse, authResponseSchema, Tokens, tokensSchema } from "../../features/shared/schema/tokens.schema";
 
 async function getUserById(id: string): Promise<UserDTO> {
     const response = await axiosRequestSafe(httpClientApi.get<UserDTO>(`/api/users/${id}`), userSchema);
@@ -72,20 +72,24 @@ async function userRemoveEvent(eventId: string): Promise<void> {
     return response;
 }
 
-async function register(user: UserCreateDTO): Promise<Tokens> {
+async function register(user: UserCreateDTO): Promise<AuthResponse> {
     const storage = new TokenStorage();
-    const token =  await axiosRequestSafe(axios.post(`/api/register`, user), tokensSchema);
+    //TODO move seting additional fields to backend
+    const token =  await axiosRequestSafe(axios.post(`/api/register`, {...user, role:"User", eventsIds:[]}), authResponseSchema);
     storage.setAccessToken(token.accessToken);
-    storage.setRefreshToken(token.refreshToken);
-    return token
+    //TODO jsonserver return only accessToken
+    //storage.setRefreshToken(token.refreshToken);
+    return token;
 }
 
-async function login(credentials:UserLoginDTO): Promise<Tokens> {
+async function login(credentials:UserLoginDTO): Promise<AuthResponse> {
     const storage = new TokenStorage();
-    const token = await axiosRequestSafe(axios.post(`/api/login`, credentials), tokensSchema);
-    storage.setAccessToken(token.accessToken);
-    storage.setRefreshToken(token.refreshToken);
-    return token;
+    //TODO move seting additional fields to backend
+    const response = await axiosRequestSafe(axios.post(`/api/login`, {...credentials, role:"User", eventsIds:[]}), authResponseSchema);
+    storage.setAccessToken(response.accessToken);
+    //TODO jsonserver return only accessToken
+    //storage.setRefreshToken(token.refreshToken);
+    return response;
 }
 
 async function logout(): Promise<void> {
