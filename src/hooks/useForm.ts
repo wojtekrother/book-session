@@ -1,8 +1,9 @@
+import { forEach } from "lodash";
 import React, { useState } from "react";
 import z, { keyof } from "zod";
 
-type Errors<T> = {
-    [K in keyof T]?: string | null
+export type Errors<T> = {
+    [K in keyof T]?: string 
 }
 
 type Touched<T> = Partial<Record<keyof T, boolean>>
@@ -20,32 +21,81 @@ export type RegisterReturnType = {
 }
 
 
-const useForm = <T extends Record<string, any>>(initialValue: T) => {
-    //values
+const useForm = <T extends Record<string, any>>(
+    initialValue: T,
+    initFieldsValidators: Validators<T>,
+    intiCrossFieldValidator?: (form: T) => Errors<T>) => {
+
     const [values, setValues] = useState<T>(initialValue);
-    //errors
     const [errors, setErrors] = useState<Errors<T>>({});
-    //touched
     const [touched, setTouched] = useState<Touched<T>>({});
-    const [validators, setValidators] = useState<Validators<T>>({})
+    const [fieldsValidators] = useState<Validators<T>>(initFieldsValidators);
+    const crossFieldValidator = intiCrossFieldValidator;
 
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const field = e.target.name as keyof T
         const value = e.target.value
+        const valuesTemp = { ...values, [field]: value }
         setValues(prevValue => {
             return { ...prevValue, [field]: value }
         });
-        // 2. Bezpieczne wywołanie walidatora
-        // Używamy 'as any', ponieważ e.target.value to zawsze string, 
-        // a T[field] może być innym typem w modelu danych.
-        const validator = validators[field];
+       
+        setErrors(prevErrors => {
+            const errorMessage = validateField(field, value)
+            const updated = addOrRemoveError({
+                errors: prevErrors,
+                field,
+                errorMessage,
+            })
 
-        if (validator) {
-            const errorMessage = validator(value as any)
-            setErrors(prev => ({ ...prev, [field]: errorMessage }));
-        } 
+            return {
+                ...updated,
+                ...getCrossFielsErrors(valuesTemp),
+            }
+        })
     }
+    function validateField(field: keyof T, value: any): string | null {
+        const validator = fieldsValidators[field];
+        if (validator) {
+            return validator(value as any)
+        }
+        return null
+    }
+
+    function addOrRemoveError({ errors, field, errorMessage }:
+        { errors: Errors<T>, field: keyof T, errorMessage: string | null }
+    ): Errors<T> {
+        let newErrors = { ...errors };
+        if (errorMessage != null) {
+            newErrors[field] = errorMessage
+        } else {
+            if (newErrors.hasOwnProperty(field)) {
+                delete newErrors[field]
+            }
+        }
+        return newErrors
+
+    }
+
+    function getCrossFielsErrors(values: T): Errors<T> {
+        if (crossFieldValidator) {
+            return crossFieldValidator(values)
+        }
+        return {};
+    }
+
+    function getAllFieldsErrors(values: T): Errors<T> {
+        let errors: Errors<T> = {};
+        (Object.keys(values) as (keyof T)[]).forEach(key => {
+            const errorMessage = validateField(key, values[key])
+            if (errorMessage != null) {
+                errors[key as keyof T] = errorMessage
+            }
+        })
+        return errors
+    }
+
 
     const onBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const field = e.target.name as keyof T
@@ -61,28 +111,15 @@ const useForm = <T extends Record<string, any>>(initialValue: T) => {
         return { name: name, value: values[field], error, onChange, onBlur } as RegisterReturnType
     }
 
-    function validate(values: T): Errors<T> {
-        let errors:Errors<T> = {}
-        Object.keys(values).forEach(key => {
-            const validator = validators[key as keyof T];
-            if (validator !== undefined) {
-                const errorMessage = validator(values[key as keyof T])
-                if (errorMessage!= null) {
-                errors[key as keyof T] = errorMessage
-                }
-                
-            }
-        })
-        setErrors(errors);
-        return errors
-    }
+
 
     const handleSubmit = (callback: (data: T) => void) =>
         (e: React.FormEvent<HTMLFormElement>) => {
 
             e.preventDefault()
 
-            const validationErrors = validate(values)
+            let validationErrors = { ...getAllFieldsErrors(values), ...getCrossFielsErrors(values) }
+
 
             if (Object.keys(validationErrors).length) {
                 setErrors(validationErrors)
@@ -92,9 +129,16 @@ const useForm = <T extends Record<string, any>>(initialValue: T) => {
             callback(values)
         }
 
+    const isAllTouched = () => {
+        return (Object.keys(values) as (keyof T)[]).every((key) => touched[key] === true)
+    }
+
+    const isFormReady = () => {
+        return (Object.keys(errors).length == 0)
+    }
 
 
-    return { register, values, errors, touched, handleSubmit, setValidators }
+    return { register, values, errors, touched, handleSubmit, validators: fieldsValidators, isFormReady }
 
 
 
