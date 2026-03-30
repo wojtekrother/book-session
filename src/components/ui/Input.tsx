@@ -7,9 +7,9 @@ type InputProps = {
     error?: string
 } & ComponentPropsWithRef<'input'>
 
-const Input = ({ label, name, error, ...props }: InputProps) => {
+const Input = ({ label, name, error,className, ...props }: InputProps) => {
     return (
-        <p className="text-gray-600 flex flex-col ">
+        <p className={`text-gray-600 flex flex-col ${className}`}>
             <label htmlFor={name} className="p-1">
                 {label}&nbsp;{error && <span className=" text-xs text-red-600">({error})</span>}
             </label>

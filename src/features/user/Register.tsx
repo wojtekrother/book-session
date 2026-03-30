@@ -8,6 +8,7 @@ import ErrorField from "../../components/ui/ErrorField";
 import useForm, { Errors } from "../../hooks/useForm";
 import { UserCreateDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useRegisterUser } from "../../services/api/UserApiQuery";
+import { validateLogin, validatePassword } from "../shared/validator/fieldValidators";
 
 const registerValidate = (register: UserCreateDTO): Errors<UserCreateDTO> => {
     let errors: Errors<UserCreateDTO> = {};
@@ -16,39 +17,18 @@ const registerValidate = (register: UserCreateDTO): Errors<UserCreateDTO> => {
     return errors
 }
 
-const validateLogin = (login: string): string | null => {
-    if (StringUtils.isBlank(login)) {
-        return "Login is required"
-    }
-    if (login.length < 3) {
-        return "Login is too short";
-    }
-    return null
-}
-
-const validatePassword = (password: string): string | null => {
-    if (StringUtils.isBlank(password)) {
-        return "Password is required";
-    }
-    if (password.length < 3) {
-        return "Password is too short";
-    }
-    if (password.length > 20) {
-        return "Password is too long";
-    }
-    return null;
-}
-
 
 const RegisterPage = () => {
     const form = useForm<UserCreateDTO>({
-        email: "",
-        password: "",
-        confirmPassword: "",
-    }, {
-        email: validateLogin,
-        password: validatePassword
-    }, registerValidate)
+        initialValue: {
+            email: "",
+            password: "",
+            confirmPassword: "",
+        }, initFieldsValidators: {
+            email: validateLogin,
+            password: validatePassword
+        }, intiCrossFieldValidator: registerValidate
+    })
 
 
 
