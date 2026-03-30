@@ -1,10 +1,12 @@
-import { useState } from "react"
+import  {  useRef, useState } from "react"
 import Input from "../../../components/ui/Input"
 import Button from "../../../components/ui/Button"
-import { convertFileToString } from "../../../utils/file"
 import { toast } from "react-toastify"
-import { StringUtils } from "../../../utils/string"
 import { useCreateEvent } from "../../../services/api/EventApiQuery"
+import useForm from "../../../hooks/useForm"
+import { EventCreateDTO } from "../schema/event.shema"
+import { validateDescription, validateDuration, validateSummary, validateTitle } from "../../shared/validator/fieldValidators"
+import ErrorField from "../../../components/ui/ErrorField"
 
 
 
@@ -14,105 +16,94 @@ type CreateEventModalProps = {
 
 
 
-const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
-    const [errors, setErrors] = useState<string[]>([]);
+const CreateEventForm_v2 = ({ closeModal, ...props }: CreateEventModalProps) => {
+    const { handleSubmit, register, isFormReady } = useForm<EventCreateDTO>({
+        initialValue: {
+            title: "",
+            date: new Date(),
+            description: "",
+            duration: 1,
+            summary: "",
+            image: "",
+            imageUrl: ""
+        }, initFieldsValidators: {
+            title: validateTitle,
+            duration: validateDuration,
+            description: validateDescription,
+            summary: validateSummary
+        }
+    });
+
+    const [globalError, setGlobalError] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const createEvent = useCreateEvent()
     const abortControler = new AbortController();
 
 
-    function resetErrors(): void {
-        setErrors([]);
-    }
+    // useEffect(() => {
+    //     if (fileInputRef.current) {
+    //         fileInputRef.current.addEventListener('change', (event) => {
+    //             if (event.target) {
+    //             event.target.value = await convertFileToString(event.target.value as File)
+    //             }
+    //             console.log("Jestem pierwszy (faza capturing)!");
+    //         }, true);
+    //     }
+    // }, [])
 
-    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        let errorsTemp: string[] = [];
-        resetErrors()
-
-        let data = new FormData(event.currentTarget)
 
 
-        let image = data.get("image") as File;
-        let title = data.get("title") as string;
-        let description = data.get("description") as string;
-        let summary = data.get("summary") as string;
-        let durationRaw = data.get("duration") as string;
-        let date = data.get("date") as string;
-
+    async function onSubmit(form: EventCreateDTO) {
         let imageUrl: String | undefined;
 
-
-        if (StringUtils.isBlank(title)) {
-            errorsTemp.push("Title is required")
-        }
-
-        if (StringUtils.isBlank(description)) {
-            errorsTemp.push("Description is required")
-        }
-
-        if (StringUtils.isBlank(summary)) {
-            errorsTemp.push("Summary is required")
-        }
-
-        if (StringUtils.isBlank(durationRaw)) {
-            errorsTemp.push("Duration is required")
-        } else if (Number.isNaN(durationRaw)) {
-            errorsTemp.push("Duration is not a number")
-        }
-
-        if (StringUtils.isBlank(date)) {
-            errorsTemp.push("Date is required")
-        }
-
-        if (image != null) {
-            imageUrl = await convertFileToString(image as File)
-        } else {
-            errorsTemp.push("Image is required")
-        }
+        // if (form.image != null) {
+        //     imageUrl = await convertFileToString(image as File)
+        // } else {
+        //     errorsTemp.push("Image is required")
+        // }
 
 
-        if (errorsTemp.length == 0) {
-            try {
-                //await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
-                createEvent.mutate({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
-                event.currentTarget.reset()
 
-                toast.success("New event sucesfully created")
+        try {
+            createEvent.mutate(form, {
+                onError: (error) => {
+                    setGlobalError([error.message]);
+                },
+                onSuccess: () => { toast.success("New event sucesfully created") }
+            })
+            //event.currentTarget.reset()
 
-            } catch (e: unknown) {
-                if (e instanceof Error) {
-                    toast.error(`Error during saving event ${e.message}`)
-                } else {
-                    toast.error("Error during saving event!")
-                }
+            toast.success("New event sucesfully created")
+
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                toast.error(`Error during saving event ${e.message}`)
+                setGlobalError([`Error during saving event ${e.message}`])
+            } else {
+                toast.error("Error during saving event!")
             }
-        } else {
-            setErrors(errorsTemp);
         }
-
     }
+
+
 
 
     return <>
 
-        <form onSubmit={onSubmit}>
-            {errors.length > 0 &&
-                <div className="border-2 border-red-500 bg-red-200 rounded-lg  text-amber-800 m-2 p-4">
-                    <h2 className="text-2xl">Errors: </h2>
-                    {errors.map(e => <p className="text-sm">{e}</p>)}
-                </div>
-            }
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <ErrorField errors={globalError} />
             <div>
-                <Input disabled={createEvent.isPending} label="Title" name="title" />
-                <Input disabled={createEvent.isPending} label="Description" name="description" />
-                <Input disabled={createEvent.isPending} label="Summary" name="summary" />
-                <Input disabled={createEvent.isPending} label="Duration in days" name="duration" type="number" />
-                <Input disabled={createEvent.isPending} label="Start date" name="date" type="date" />
-                <Input disabled={createEvent.isPending} label="Image" name="image" type="file" />
+                <Input label="Title" {...register("title")} />
+                <Input label="Description" {...register("description")} />
+                <Input label="Summary" {...register("summary")} />
+                <Input label="Duration in days" {...register("duration")} type="number" />
+                <Input label="Start date" {...register("date")} type="date" />
+                <Input label="Image"  {...register("image", {type:"file"})} type="file" className="hidden" />
+                <Input label="Image" {...register("imageUrl", {type:"file"})} type="file" />
             </div>
             <div className="actions">
                 <Button textOnly onClick={closeModal}>Cancel</Button>
-                <Button disabled={createEvent.isPending}>Create</Button>
+                <Button disabled={!isFormReady()}>Create</Button>
             </div>
         </form>
 
@@ -120,4 +111,4 @@ const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
 
 }
 
-export default CreateEventForm
+export default CreateEventForm_v2

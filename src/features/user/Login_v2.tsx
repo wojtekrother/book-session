@@ -2,46 +2,22 @@ import { useEffect, useState } from "react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import { useNavigate } from "react-router-dom";
-import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
 import useForm from "../../hooks/useForm";
 import { UserLoginDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useLoginUser } from "../../services/api/UserApiQuery";
+import { validateLogin, validatePassword } from "../shared/validator/fieldValidators";
 
-
-
-const validateLogin = (login: string): string | null => {
-    if (StringUtils.isBlank(login)) {
-        return "Login is required"
-    }
-    if (login.length < 3) {
-        return "Login is too short";
-    }
-    return null
-}
-
-const validatePassword = (password: string): string | null => {
-    if (StringUtils.isBlank(password)) {
-        return "Password is required";
-    }
-    if (password.length < 3) {
-        return "Password is too short";
-    }
-    if (password.length > 20) {
-        return "Password is too long";
-    }
-    return null;
-}
 
 
 const LoginPage = () => {
-    const form = useForm<UserLoginDTO>({
+    const form = useForm<UserLoginDTO>({initialValue:{
         email: "",
         password: ""
-    }, {
+    }, initFieldsValidators:{
         email: validateLogin,
         password: validatePassword
-    },)
+    }})
 
 
 
