@@ -1,10 +1,13 @@
-import { EventCreateDTO, EventDTO, EventSearchForm, EventUpdateDTO } from "../../types/types";
+
 import { StringUtils } from "../../utils/string";
 import { axiosRequestSafe, httpClientApi } from "./HttpClientApi";
-import { eventSchema } from "../../features/event/schema/event.shema";
+import { EventCreateDTO, EventDTO, EventUpdateDTO , eventSchema } from "../../features/event/schema/event.shema";
+import { delay } from "../../utils/dalay";
+import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
 
 
 async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
+    delay(3000)
     const response = await axiosRequestSafe(
         httpClientApi.post<EventDTO>("/api/events", { ...event, createdAt: new Date() }),
         eventSchema);
