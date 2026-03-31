@@ -19,7 +19,7 @@ type Conventers<T> = {
 
 export type RegisterReturnType<T> = {
     name: keyof T,
-    value: T[keyof T],
+    value: any,
     error?: string,
     onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
@@ -136,7 +136,13 @@ const useForm = <T extends Record<string, any>>(
         const field = name as keyof T
         const error = (touched[field] && errors[field]) ? errors[field] : undefined
 
-        return { name: name, ...(isFile ? {}: {value:values[field]}), error, onChange, onBlur } as RegisterReturnType
+        return { name: name, ...(isFile ? {}: {value:values[field]}), error, onChange, onBlur } as RegisterReturnType<T>
+    }
+
+    const reset = () => {
+        setValues(initialValue);
+        setErrors({})
+        setTouched({})
     }
 
 
@@ -166,7 +172,7 @@ const useForm = <T extends Record<string, any>>(
     }
 
 
-    return { register, values, errors, touched, handleSubmit, validators: fieldsValidators, isFormReady }
+    return { register, values, errors, touched, handleSubmit, validators: fieldsValidators, isFormReady, reset }
 
 
 

@@ -1,4 +1,4 @@
-import  {  useRef, useState } from "react"
+import { useRef, useState } from "react"
 import Input from "../../../components/ui/Input"
 import Button from "../../../components/ui/Button"
 import { toast } from "react-toastify"
@@ -7,17 +7,14 @@ import useForm from "../../../hooks/useForm"
 import { EventCreateDTO } from "../schema/event.shema"
 import { validateDescription, validateDuration, validateSummary, validateTitle } from "../../shared/validator/fieldValidators"
 import ErrorField from "../../../components/ui/ErrorField"
-
-
+import { useNavigate } from "react-router-dom"
 
 type CreateEventModalProps = {
     closeModal: () => void
 }
 
-
-
 const CreateEventForm_v2 = ({ closeModal, ...props }: CreateEventModalProps) => {
-    const { handleSubmit, register, isFormReady } = useForm<EventCreateDTO>({
+    const { handleSubmit, register, isFormReady, reset, values: formValues } = useForm<EventCreateDTO>({
         initialValue: {
             title: "",
             date: new Date(),
@@ -37,56 +34,37 @@ const CreateEventForm_v2 = ({ closeModal, ...props }: CreateEventModalProps) => 
     const [globalError, setGlobalError] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const createEvent = useCreateEvent()
-    const abortControler = new AbortController();
-
-
-    // useEffect(() => {
-    //     if (fileInputRef.current) {
-    //         fileInputRef.current.addEventListener('change', (event) => {
-    //             if (event.target) {
-    //             event.target.value = await convertFileToString(event.target.value as File)
-    //             }
-    //             console.log("Jestem pierwszy (faza capturing)!");
-    //         }, true);
-    //     }
-    // }, [])
-
-
+    const navigate = useNavigate()
 
     async function onSubmit(form: EventCreateDTO) {
-        let imageUrl: String | undefined;
-
-        // if (form.image != null) {
-        //     imageUrl = await convertFileToString(image as File)
-        // } else {
-        //     errorsTemp.push("Image is required")
-        // }
-
-
-
         try {
             createEvent.mutate(form, {
                 onError: (error) => {
-                    setGlobalError([error.message]);
+                    setGlobalError([`Error during saving event ${error.message}`]);
+                    toast.error("Failed to create event");
                 },
-                onSuccess: () => { toast.success("New event sucesfully created") }
+                onSuccess: (savedEvent) => {
+                    reset();
+                    fileInputRef.current!.value = "";
+                    closeModal();
+                    navigate("/events");
+                    toast.success("New event sucesfully created");
+                }
             })
-            //event.currentTarget.reset()
 
-            toast.success("New event sucesfully created")
 
         } catch (e: unknown) {
             if (e instanceof Error) {
-                toast.error(`Error during saving event ${e.message}`)
-                setGlobalError([`Error during saving event ${e.message}`])
+                toast.error(`Error during saving event ${e.message}`);
+                setGlobalError([`Error during saving event ${e.message}`]);
             } else {
-                toast.error("Error during saving event!")
+                toast.error("Error during saving event!");
             }
         }
     }
 
 
-
+    const imageSrc = formValues.image || formValues.imageUrl;
 
     return <>
 
@@ -98,8 +76,8 @@ const CreateEventForm_v2 = ({ closeModal, ...props }: CreateEventModalProps) => 
                 <Input label="Summary" {...register("summary")} />
                 <Input label="Duration in days" {...register("duration")} type="number" />
                 <Input label="Start date" {...register("date")} type="date" />
-                <Input label="Image"  {...register("image", {type:"file"})} type="file" className="hidden" />
-                <Input label="Image" {...register("imageUrl", {type:"file"})} type="file" />
+                {imageSrc && <img src={imageSrc} className="max-h-24 max-w-48 m-2 border" onClick={() => fileInputRef.current?.click()} />}
+                <Input label="Image" ref={fileInputRef} {...register("imageUrl", { type: "file" })} type="file" />
             </div>
             <div className="actions">
                 <Button textOnly onClick={closeModal}>Cancel</Button>
