@@ -1,7 +1,8 @@
 import { toast } from "react-toastify"
-import { EventDTO } from "../../../types/types"
+
 import Button from "../../../components/ui/Button"
-import { useUpdateUserAddEvent, useUpdateUserRemoveEvent } from "../../../services/api/UserApiQuery"
+import { useGetLoggedInUser, useUpdateUserAddEvent, useUpdateUserRemoveEvent } from "../../../services/api/UserApiQuery"
+import { EventDTO } from "../schema/event.shema"
 
 type EventItemParams = { eventItem: EventDTO, mode: "public" | "assigned" }
 
@@ -9,11 +10,15 @@ type EventItemParams = { eventItem: EventDTO, mode: "public" | "assigned" }
 const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
     const updateUser = useUpdateUserAddEvent();
     const removeUser = useUpdateUserRemoveEvent();
+    const loggedInUser = useGetLoggedInUser();
 
     async function handleAddToMyEvents(eventId: string): Promise<void> {
         updateUser.mutate(eventId, {
             onError: () => {
-                toast("Error during adding event")
+                toast.error("Error during adding event")
+            },
+            onSuccess: () => {
+                toast.success("Successfuly added event")
             }
         })
 
@@ -22,11 +27,16 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
     async function handleRemoveFromMyEvents(eventId: string): Promise<void> {
         removeUser.mutate(eventId, {
             onError: () => {
-                toast("Error during removing event")
+                toast.error("Error during removing event")
+            },
+            onSuccess: () => {
+                toast.success("Successfuly removed event")
             }
         })
 
     }
+
+    const eventAssigned: boolean = loggedInUser.data ? loggedInUser.data.eventsIds.includes(eventItem.id!) : false
 
     return (
         <div className=" bg-amber-50 p-4 box-content flex flex-col" data-testid="eventItem">
@@ -41,14 +51,19 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
                 {mode == "public" &&
                     <div className="actions">
                         <Button href={`/events/${eventItem.id}`} >Show details</Button>
-                        <Button onClick={() => handleAddToMyEvents(eventItem.id!)} >Add to my events</Button>
+                        {eventAssigned &&
+                            <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} disabled={removeUser.isPending} >Remove from my events</Button>
+                        }
+                        {!eventAssigned &&
+                            <Button onClick={() => handleAddToMyEvents(eventItem.id!)} disabled={updateUser.isPending}>Add to my events</Button>
+                        }
                     </div>
                 }
 
                 {mode == "assigned" &&
                     <div className="actions">
                         <Button href={`/events/${eventItem.id}`} >Show details</Button>
-                        <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} >Remove from my events</Button>
+                        <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} disabled={removeUser.isPending} >Remove from my events</Button>
                     </div>
                 }
             </div>

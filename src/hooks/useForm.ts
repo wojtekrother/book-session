@@ -1,6 +1,4 @@
-import { forEach } from "lodash";
 import React, { useState } from "react";
-import z, { keyof } from "zod";
 import { convertFileToString } from "../utils/file";
 
 export type Errors<T> = {
@@ -162,10 +160,6 @@ const useForm = <T extends Record<string, any>>(
 
             callback(values)
         }
-
-    const isAllTouched = () => {
-        return (Object.keys(values) as (keyof T)[]).every((key) => touched[key] === true)
-    }
 
     const isFormReady = () => {
         return (Object.keys(errors).length == 0)

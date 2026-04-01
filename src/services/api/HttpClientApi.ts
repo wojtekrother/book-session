@@ -1,7 +1,7 @@
 import { TokenStorage } from "./auth/TokenStorage"
 import axios, { AxiosResponse } from "axios";
 import { logoutUser } from "./UserApiQuery";
-import z, { ZodSchema } from "zod";
+import z from "zod";
 
 export const httpClientApi = axios.create({
     baseURL: "",

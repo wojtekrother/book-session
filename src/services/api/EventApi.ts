@@ -1,7 +1,7 @@
 
 import { StringUtils } from "../../utils/string";
 import { axiosRequestSafe, httpClientApi } from "./HttpClientApi";
-import { EventCreateDTO, EventDTO, EventUpdateDTO , eventSchema } from "../../features/event/schema/event.shema";
+import { EventCreateDTO, EventDTO, EventUpdateDTO, eventSchema } from "../../features/event/schema/event.shema";
 import { delay } from "../../utils/dalay";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
 
@@ -30,7 +30,7 @@ async function updateEvent(event: EventUpdateDTO): Promise<EventDTO> {
 
 async function getEvent(id: string): Promise<EventDTO> {
     const response = await axiosRequestSafe(
-        httpClientApi.get<EventDTO>("/api/events/", { params: { id } }),
+        httpClientApi.get<EventDTO>(`/api/events/${id}`),
         eventSchema);
     return response;
 }
@@ -38,17 +38,20 @@ async function getEvent(id: string): Promise<EventDTO> {
 async function getEvents({ title, description, dateOrder: date }: EventSearchForm = { title: "", description: "", dateOrder: "asc" },
     abortSignal?: AbortSignal): Promise<EventDTO[]> {
 
-    let query = `?_sort=date&_order=${encodeURI(date)}&`;
+    let queryParams: Record<string, string> = {
+        _sort: date,
+        _order: encodeURI(date)
+    }
 
     if (!StringUtils.isBlank(title)) {
-        query += `title=${encodeURI(title)}&`;
+        queryParams.title = encodeURI(title);
     }
     if (!StringUtils.isBlank(description)) {
-        query += `description=${encodeURI(description)}&`;
+        queryParams.description = encodeURI(description);
     }
 
     const response = await axiosRequestSafe(
-        httpClientApi.get("/api/events" + query, { signal: abortSignal }),
+        httpClientApi.get("/api/events", { signal: abortSignal, params: queryParams }),
         eventSchema.array());
     return response;
 }

@@ -1,5 +1,6 @@
+import { EventDTO } from '../schema/event.shema.ts';
 import EventItem from './EventItem.tsx';
-import { EventDTO } from '../../../types/types.ts';
+
 
 export type EventsListParams = {
   events: EventDTO[]
