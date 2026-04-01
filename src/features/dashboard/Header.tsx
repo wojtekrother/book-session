@@ -46,8 +46,8 @@ const Header = () => {
                         <li><Button href="/user/register">Register</Button></li>
                         </>}
                     <li><Button href="/events">Events</Button></li>
-                    {typeof loggedInUser === "object" &&
-                        <li><Button href="/user/events">My events</Button></li>}
+                    {loggedInUser &&
+                        <li><Button href="/user/events">My events ({loggedInUser?.eventsIds.length})</Button></li>}
                     <li><Button textOnly onClick={() => modal.current?.open()} >Create new event</Button></li>
                      
                 </ul>

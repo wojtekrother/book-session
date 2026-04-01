@@ -3,7 +3,6 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 
 import { useNavigate } from "react-router-dom";
-import { StringUtils } from "../../utils/string";
 import ErrorField from "../../components/ui/ErrorField";
 import useForm, { Errors } from "../../hooks/useForm";
 import { UserCreateDTO } from "./schema/user.schema";
@@ -37,15 +36,11 @@ const RegisterPage = () => {
     const registerUser = useRegisterUser();
     const loggedInUser = useGetLoggedInUser();
 
-
     useEffect(() => {
         if (loggedInUser.data) {
             navigation("/user/events")
         }
     }, [loggedInUser.data])
-
-
-
 
     async function submitForm(form: UserCreateDTO) {
 

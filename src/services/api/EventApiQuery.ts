@@ -3,11 +3,6 @@ import { EventApi } from "./EventApi";
 import { queryClient } from "../../App";
 import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.shema";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
-import { useId } from "react";
-
-
-
-
 
 const useGetEvent = (id: string) => {
     return useQuery<EventDTO>({

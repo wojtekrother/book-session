@@ -6,7 +6,7 @@ import { EventApi } from "./EventApi";
 import axios from "axios";
 import { axiosRequest, axiosRequestSafe, httpClientApi } from "./HttpClientApi";
 import { UserCreateDTO, UserDTO, UserLoginDTO, userSchema } from "../../features/user/schema/user.schema";
-import { AuthResponse, authResponseSchema, Tokens, tokensSchema } from "../../features/shared/schema/tokens.schema";
+import { AuthResponse, authResponseSchema } from "../../features/shared/schema/tokens.schema";
 
 async function getUserById(id: string): Promise<UserDTO> {
     const response = await axiosRequestSafe(httpClientApi.get<UserDTO>(`/api/users/${id}`), userSchema);
@@ -50,11 +50,11 @@ async function userAddEvent(eventId: string): Promise<void> {
         throw new Error(`User already have event with id:${eventId}`)
     }
 
-    const response = await axiosRequest(axios.patch<void>(`/api/users/${userId}`, {
+     await axiosRequestSafe(axios.patch<void>(`/api/users/${userId}`, {
         modifiedAt: new Date(),
         eventsIds: [...user.eventsIds, eventId]
-    }))
-    return response;
+    }), userSchema)
+    return ;
 }
 
 async function userRemoveEvent(eventId: string): Promise<void> {
