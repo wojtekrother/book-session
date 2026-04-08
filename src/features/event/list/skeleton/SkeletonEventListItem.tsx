@@ -1,6 +1,6 @@
 const SkeletonListItem = () => {
     return (
-        <><div className="mx-auto w-full max-w-sm rounded-md border border-blue-300 p-4">
+        <><div className="mx-auto w-full rounded-md border border-blue-300 p-4 flex flex-col">
             <div className="flex animate-pulse space-x-4">
                 <div className="size-10 rounded bg-gray-200"></div>
                 <div className="flex-1 space-y-6 py-1">

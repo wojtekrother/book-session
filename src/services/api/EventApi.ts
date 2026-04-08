@@ -35,23 +35,34 @@ async function getEvent(id: string): Promise<EventDTO> {
     return response;
 }
 
-async function getEvents({ title, description, dateOrder: date }: EventSearchForm = { title: "", description: "", dateOrder: "asc" },
-    abortSignal?: AbortSignal): Promise<EventDTO[]> {
+export type GetEventProps = {
+    pageParam?: number,
+    eventSearchForm: EventSearchForm,
+    signal?: AbortSignal
+}
 
+async function getEvents({ pageParam, eventSearchForm, signal:abortSignal }: GetEventProps): Promise<EventDTO[]> {
+    await delay(2000)
     let queryParams: Record<string, string> = {
-        _sort: date,
-        _order: encodeURI(date)
+        _sort: "date",
+        _order: encodeURI(eventSearchForm.dateOrder)
     }
 
-    if (!StringUtils.isBlank(title)) {
-        queryParams.title = encodeURI(title);
+    if (!StringUtils.isBlank(eventSearchForm.title)) {
+        queryParams.title = encodeURI(eventSearchForm.title);
     }
-    if (!StringUtils.isBlank(description)) {
-        queryParams.description = encodeURI(description);
+    if (!StringUtils.isBlank(eventSearchForm.description)) {
+        queryParams.description = encodeURI(eventSearchForm.description);
     }
 
     const response = await axiosRequestSafe(
-        httpClientApi.get("/api/events", { signal: abortSignal, params: queryParams }),
+        httpClientApi.get("/api/events", {
+            signal: abortSignal, params: {
+                queryParams,
+                _page: pageParam,
+                _limit: 10
+            }
+        }),
         eventSchema.array());
     return response;
 }
