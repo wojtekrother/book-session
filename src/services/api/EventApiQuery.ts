@@ -1,8 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { InfiniteData, useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import { EventApi } from "./EventApi";
 import { queryClient } from "../../App";
 import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.shema";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
+import { delay } from "../../utils/dalay";
+
 
 const useGetEvent = (id: string) => {
     return useQuery<EventDTO>({
@@ -17,11 +19,21 @@ const useGetEvent = (id: string) => {
 };
 
 
-const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", description: "", dateOrder: "asc" }) => {
+const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", description: "", dateOrder: "desc" }) => {
     return useQuery<EventDTO[]>({
         queryKey: ['events', eventSearchForm],
-        queryFn: ({ signal }) => EventApi.getEvents(eventSearchForm, signal),
+        queryFn: ({ signal }) => EventApi.getEvents({eventSearchForm, signal}),
         placeholderData: (prev) => prev,
+    });
+}
+
+const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", description: "", dateOrder: "desc" }) => {
+    
+    return useInfiniteQuery<EventDTO[], Error, InfiniteData<EventDTO[], number>, ['events', EventSearchForm], number>({
+        queryKey: ['events', eventSearchForm],
+        queryFn: ({ pageParam, signal }) => EventApi.getEvents({ pageParam, eventSearchForm, signal }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, pages) => lastPage.length ? pages.length + 1 : undefined,
     });
 }
 
@@ -68,4 +80,4 @@ const useRemoveEvent = (id: string) => {
 
 
 
-export { useGetEvent, useGetEvents, useUpdateEvent, useCreateEvent, useRemoveEvent };
+export { useGetEvent, useGetEvents, useGetEventsInfinite, useUpdateEvent, useCreateEvent, useRemoveEvent };

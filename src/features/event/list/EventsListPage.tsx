@@ -1,12 +1,24 @@
-import { Oval } from "react-loader-spinner";
 import EventSearch from "./EventSearch";
 import EventsList from "./EventsList";
-import useEventSearchInputs from "../hooks/useEventSearchInputs";
+import useEventSearchInputsInfinite from "../hooks/useEventSearchInputsInfinite";
+import SkeletonList from "./skeleton/SkeletonEventList";
 
 export default function EventsListPage() {
-    const eventSearch = useEventSearchInputs();
+    const eventSearch = useEventSearchInputsInfinite();
+    const { searchQueryInfinite: searchQuery } = eventSearch;
 
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                searchQuery.fetchNextPage();
+            }
+        });
+    });
 
+    const loadMoreSectionElement = document.getElementById('loadMoreSection');
+    if (loadMoreSectionElement) {
+        observer.observe(loadMoreSectionElement);
+    }
     return <>
         <main >
             <header className='mb-4 '>
@@ -17,54 +29,27 @@ export default function EventsListPage() {
             </header>
             <EventSearch {...eventSearch} />
 
-
             <div id='content' className="min-h-96 relative">
-
-
-                {eventSearch.searchQuery.isError && <div role="alert">{eventSearch.searchQuery.error.message}</div>}
-
-
-{/* {!eventSearch.searchQuery.data &&
-                    <EventsList events={[]} skeleton={true} />}
-
-                    <SkeletonList itemsCount={4}   />
- <div className="space-y-4">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-20 w-full animate-pulse rounded bg-gray-300"
-        />
-      ))}
-    </div> */}
-                {eventSearch.searchQuery.data &&
+                {searchQuery.isError && <div role="alert">{searchQuery.error.message}</div>}
+                {searchQuery.data &&
                     <>
-                        <EventsList events={eventSearch.searchQuery.data ?? []}/>
+                        <EventsList events={searchQuery.data.pages.flat() ?? []} />
 
-                        {eventSearch.searchQuery.isFetching &&
-                            <div className={`z-10 inset-0 absolute bg-gray-500/50 `} >
-                                <div role="status"
-                                    aria-label='loading'
-                                    className="mx-auto flex justify-center sticky top-32 mt-32 "
-                                >
-                                    <Oval
-                                        height={80}
-                                        width={80}
-                                        color="#614da9"
-                                        visible={true}
-                                        ariaLabel="oval-loading"
-                                        secondaryColor="#a3a94d"
-                                        strokeWidth={2}
-                                        strokeWidthSecondary={2}
-                                    /></div>
-                            </div>}
+                        {searchQuery.hasNextPage &&
+                            <>
+                                <div id="loadMoreSection" className="h-5"></div>
+                            </>
+                        }
                     </>
                 }
+                {searchQuery.isFetching &&
+                    <>
+                        <SkeletonList itemsCount={10}></SkeletonList>
 
-                
-
+                    </>
+                }
+                {searchQuery.status === "success" && !searchQuery.hasNextPage && <p> No more data to load </p>}
             </div>
         </main>
-
     </>
-
 }
