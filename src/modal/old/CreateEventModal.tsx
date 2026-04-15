@@ -145,7 +145,7 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
                     <Input disabled={eventCtx.status === "pending"} label="Image" name="image" type="file" />
                 </div>
                 <div className="actions">
-                    <Button textOnly onClick={closeModal}>Cancel</Button>
+                    <Button textonly={true} onClick={closeModal}>Cancel</Button>
                     <Button disabled={eventCtx.status === "pending"}>Create</Button>
                 </div>
             </form>

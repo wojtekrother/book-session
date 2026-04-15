@@ -111,7 +111,7 @@ const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
                 <Input disabled={createEvent.isPending} label="Image" name="image" type="file" />
             </div>
             <div className="actions">
-                <Button textOnly onClick={closeModal}>Cancel</Button>
+                <Button textonly={true} onClick={closeModal}>Cancel</Button>
                 <Button disabled={createEvent.isPending}>Create</Button>
             </div>
         </form>

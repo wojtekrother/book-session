@@ -39,7 +39,7 @@ const Header = () => {
                 <ul className="flex items-center gap-2">
                     <li className="mr-auto"><Button href="/" >Home</Button></li>
                     {loggedInUser  &&
-                        <li><Button onClick={handleLogoutClik} textOnly>Logout </Button></li>}
+                        <li><Button onClick={handleLogoutClik} textonly={true}>Logout </Button></li>}
                     {!loggedInUser &&
                     <>
                         <li><Button href="/user/login">Login</Button></li>
@@ -48,7 +48,7 @@ const Header = () => {
                     <li><Button href="/events">Events</Button></li>
                     {loggedInUser &&
                         <li><Button href="/user/events">My events ({loggedInUser?.eventsIds.length})</Button></li>}
-                    <li><Button textOnly onClick={() => modal.current?.open()} >Create new event</Button></li>
+                    <li><Button textonly={true} onClick={() => modal.current?.open()} >Create new event</Button></li>
                      
                 </ul>
             </nav>

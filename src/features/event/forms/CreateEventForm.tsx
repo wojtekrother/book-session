@@ -80,7 +80,7 @@ const CreateEventForm_v2 = ({ closeModal, ...props }: CreateEventModalProps) => 
                 <Input label="Image" ref={fileInputRef} {...register("imageUrl", { type: "file" })} type="file" />
             </div>
             <div className="actions">
-                <Button textOnly onClick={closeModal}>Cancel</Button>
+                <Button textonly={true} onClick={closeModal}>Cancel</Button>
                 <Button disabled={!isFormReady()}>Create</Button>
             </div>
         </form>

@@ -86,7 +86,7 @@ const LoginPage = () => {
                     <Input name="password" label="Password" value={password} error={passwordError} onChange={handlePasswordChange}></Input>
                 </div>
                 <div className="actions">
-                    <Button textOnly>Cancel</Button>
+                    <Button textonly={true}>Cancel</Button>
                     <Button disabled={!(userLogin && password)} >Login</Button>
                 </div>
             </form>

@@ -3,9 +3,10 @@ import { useState } from "react";
 import { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from "@tanstack/react-query";
 import { EventDTO } from "../schema/event.shema";
 import useEventSearchApiInfinite from "./useEventSearchApiInfinite";
+import { PaginatedListResponse } from "../../../services/api/HttpClientApi";
 
 export type useEventSearchInputsInfiniteResult = {
-    searchQueryInfinite: UseInfiniteQueryResult<InfiniteData<EventDTO[]>, Error>,
+    searchQueryInfinite: UseInfiniteQueryResult<InfiniteData<PaginatedListResponse<EventDTO>>, Error>,
     setTitle: React.Dispatch<React.SetStateAction<string>>,
     setDescription: React.Dispatch<React.SetStateAction<string>>,
     setDateOrder: React.Dispatch<React.SetStateAction<"asc" | "desc">>,
