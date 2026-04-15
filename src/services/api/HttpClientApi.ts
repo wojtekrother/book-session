@@ -59,8 +59,33 @@ export const axiosRequest = async <T>(promise: Promise<AxiosResponse<T>>): Promi
     }
 }
 
-export const axiosRequestSafe = async <T extends z.ZodType>
-    (promise: Promise<AxiosResponse>, zodSchema: T): Promise<z.infer<T>> => {
+export type PaginatedListResponse<T> = {
+    data: T[],
+    meta: {
+        totalCount: number
+    }
+}
+
+export const axiosPaginatedRequestSafe = async <T>
+    (promise: Promise<AxiosResponse>, zodSchema: z.ZodType<T>): Promise<PaginatedListResponse<T>> => {
+    try {
+        const response = await promise;
+        return {
+            data: zodSchema.array().parse(response.data),
+            meta: {
+                totalCount: parseInt(response.headers['x-total-count'], 10),
+            }
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(getErrorMessage(error));
+        }
+        throw error;
+    }
+}
+
+export const axiosRequestSafe = async <T>
+    (promise: Promise<AxiosResponse>, zodSchema: z.ZodType<T>): Promise<T> => {
     try {
         const response = await promise;
         return zodSchema.parse(response.data)

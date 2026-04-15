@@ -70,7 +70,7 @@ const RegisterPage = () => {
                     <Input label="Confirm Password" {...form.register("confirmPassword")}></Input>
                 </div>
                 <div className="actions">
-                    <Button textOnly>Cancel</Button>
+                    <Button textonly={true}>Cancel</Button>
                     <Button disabled={!form.isFormReady()} >Register</Button>
                 </div>
             </form>
