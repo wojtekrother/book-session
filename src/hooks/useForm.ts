@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { convertFileToString } from "../utils/file";
+import { keyof } from "zod";
 
 export type Errors<T> = {
     [K in keyof T]?: string
@@ -129,12 +130,24 @@ const useForm = <T extends Record<string, any>>(
         })
     }
 
-    const register = (name: keyof T,  options?: { type?: string }) => {
+    const normalizeDate = (value: string | Date) => {
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date");
+  }
+
+  return date.toISOString().split('T')[0];
+};
+
+    const register = (name: keyof T, options?: { type?: string }) => {
         const isFile = options?.type === "file";
+        const isDate = options?.type === "date";
+        
         const field = name as keyof T
         const error = (touched[field] && errors[field]) ? errors[field] : undefined
-
-        return { name: name, ...(isFile ? {}: {value:values[field]}), error, onChange, onBlur } as RegisterReturnType<T>
+        const date = isDate ? normalizeDate(values[field]) : ""
+        return { name: name, ...(isFile ? {} : isDate ?{value:date}: { value: values[field] }), error, onChange, onBlur } as RegisterReturnType<T>
     }
 
     const reset = () => {
@@ -165,8 +178,25 @@ const useForm = <T extends Record<string, any>>(
         return (Object.keys(errors).length == 0)
     }
 
+    const setAllValues = (values: T) => {
+        setValues(values);
 
-    return { register, values, errors, touched, handleSubmit, validators: fieldsValidators, isFormReady, reset }
+        const keys = Object.keys(values) as (keyof T)[];
+        let touchedTemp = {} as Record<keyof T, boolean>
+        for (const key of keys) {
+            touchedTemp[key] = true;
+        }
+        setTouched(touchedTemp)
+
+        let validationErrors = { ...getAllFieldsErrors(values), ...getCrossFielsErrors(values) }
+        if (Object.keys(validationErrors).length) {
+            setErrors(validationErrors)
+            return
+        }
+    }
+
+
+    return { register, values, setAllValues, errors, touched, handleSubmit, validators: fieldsValidators, isFormReady, reset }
 
 
 

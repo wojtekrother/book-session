@@ -6,7 +6,7 @@ import useEventSearchApiInfinite from "./useEventSearchApiInfinite";
 import { PaginatedListResponse } from "../../../services/api/HttpClientApi";
 
 export type useEventSearchInputsInfiniteResult = {
-    searchQueryInfinite: UseInfiniteQueryResult<InfiniteData<PaginatedListResponse<EventDTO>>, Error>,
+    searchQueryInfinite: UseInfiniteQueryResult<PaginatedListResponse<EventDTO>, Error>,
     setTitle: React.Dispatch<React.SetStateAction<string>>,
     setDescription: React.Dispatch<React.SetStateAction<string>>,
     setDateOrder: React.Dispatch<React.SetStateAction<"asc" | "desc">>,

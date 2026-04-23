@@ -10,7 +10,7 @@ import z from "zod";
 async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
     await delay(3000);
     const response = await axiosRequestSafe(
-        httpClientApi.post<EventDTO>("/api/events", { ...event, createdAt: new Date() }),
+        httpClientApi.post<EventDTO>("/api/event", { ...event, createdAt: new Date() }),
         eventSchema);
     return response;
 }
@@ -60,7 +60,7 @@ async function getEvents({ pageParam, eventSearchForm, signal:abortSignal }: Get
     const response = await axiosRequestSafe<EventDTO[]>(
         httpClientApi.get("/api/events", {
             signal: abortSignal, params: {
-                queryParams
+                ...queryParams
             }
         }),
         eventSchema.array());
@@ -68,7 +68,7 @@ async function getEvents({ pageParam, eventSearchForm, signal:abortSignal }: Get
 }
 
 async function getPaginatedEvents({ pageParam, eventSearchForm, signal:abortSignal }: GetEventProps): Promise<PaginatedListResponse<EventDTO>> {
-    await delay(2000)
+    await delay(500)
     let queryParams: Record<string, string> = {
         _sort: "date",
         _order: encodeURI(eventSearchForm.dateOrder)
@@ -84,7 +84,7 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal:abortSign
     const response = await axiosPaginatedRequestSafe<EventDTO>(
         httpClientApi.get("/api/events", {
             signal: abortSignal, params: {
-                queryParams,
+                ...queryParams,
                 _page: pageParam,
                 _limit: 10,
             }
