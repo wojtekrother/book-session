@@ -33,7 +33,7 @@ const Header = () => {
     return (
         <header id="main-header" className="from-blue-50 to-blue-300 bg-linear-to-t p-3">
             {/* <CreateEventModal ref={modal} /> */}
-            <Modal ref={modal} >{modal.current &&<CreateEventForm_v2 closeModal={modal.current.close}/>}</Modal>
+            <Modal ref={modal} >{modal.current &&<CreateEventForm_v2 closeModal={modal.current.close} openModal={modal.current.open}/>}</Modal>
             <h1 className="text-2xl ">Booking event</h1>
             <nav >
                 <ul className="flex items-center gap-2">
