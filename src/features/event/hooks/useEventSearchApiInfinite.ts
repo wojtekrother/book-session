@@ -1,6 +1,6 @@
 
 
-import useDebouncedValue from "../../../hooks/useDebouncedValue";
+import useDebouncedValue from "../../../shared/hooks/useDebouncedValue";
 import { useGetEventsInfinite } from "../../../services/api/EventApiQuery";
 import { useMemo } from "react";
 import { EventSearchForm } from "../schema/eventSearch.schema";

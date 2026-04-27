@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import HomePage from './features/dashboard/Home.tsx';
 import Root from './features/dashboard/Layout.tsx';
-import UserContextProvider from './context/old/UserContext.old.tsx';
+import UserContextProvider from './services/context/old/UserContext.old.tsx';
 import Loggout from './components/ui/Logout.tsx';
 import MyEventsPage from './features/user/MyEvents.tsx';
 import LoginPage from './features/user/Login_v2.tsx';

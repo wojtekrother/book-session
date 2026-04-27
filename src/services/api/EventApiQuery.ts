@@ -3,10 +3,10 @@ import { EventApi } from "./EventApi";
 import { queryClient } from "../../App";
 import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.shema";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
-import { delay } from "../../utils/dalay";
+import { delay } from "../../shared/utils/dalay";
 import { PaginatedListResponse } from "./HttpClientApi";
 import { useMemo } from "react";
-import { StringUtils } from "../../utils/string";
+import { StringUtils } from "../../shared/utils/string";
 import { meta } from "zod/v4/core";
 
 

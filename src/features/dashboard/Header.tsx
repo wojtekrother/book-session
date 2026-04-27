@@ -1,10 +1,10 @@
 import { useRef } from "react"
 import Button from "../../components/ui/Button"
 import { toast } from "react-toastify";
-import Modal, { ModalHandler } from "../../modal/Modal";
+import Modal, { ModalHandler } from "../../shared/modal/Modal";
 import { logoutUser, useGetLoggedInUser } from "../../services/api/UserApiQuery";
 import { useNavigate } from "react-router-dom";
-import CreateEventForm from "../../modal/old/CreateEventForm";
+import CreateEventForm from "../../shared/modal/old/CreateEventForm";
 import CreateEventForm_v2 from "../event/forms/CreateEventForm";
 
 

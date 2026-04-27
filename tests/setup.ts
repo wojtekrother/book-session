@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { EVENTS } from '../src/dummy-events'
-import { EventDTO } from '../src/types/types'
+import { EventDTO } from '../src/shared/types/types'
 
 
 export const server = setupServer(

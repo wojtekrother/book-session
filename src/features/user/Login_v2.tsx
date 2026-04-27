@@ -3,7 +3,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import { useNavigate } from "react-router-dom";
 import ErrorField from "../../components/ui/ErrorField";
-import useForm from "../../hooks/useForm";
+import useForm from "../../shared/hooks/useForm";
 import { UserLoginDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useLoginUser } from "../../services/api/UserApiQuery";
 import { validateLogin, validatePassword } from "../shared/validator/fieldValidators";

@@ -1,8 +1,8 @@
 
-import { StringUtils } from "../../utils/string";
+import { StringUtils } from "../../shared/utils/string";
 import { axiosPaginatedRequestSafe, axiosRequestSafe, httpClientApi, PaginatedListResponse } from "./HttpClientApi";
 import { EventCreateDTO, EventDTO, EventUpdateDTO, eventSchema } from "../../features/event/schema/event.shema";
-import { delay } from "../../utils/dalay";
+import { delay } from "../../shared/utils/dalay";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
 import z from "zod";
 

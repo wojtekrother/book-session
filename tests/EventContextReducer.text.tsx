@@ -1,4 +1,4 @@
-import { eventReducerFn, eventReducerInitailState } from "../src/context/old/EventContext.old"
+import { eventReducerFn, eventReducerInitailState } from "../src/services/context/old/EventContext.old"
 import { testEvents } from "./setup"
 
 
