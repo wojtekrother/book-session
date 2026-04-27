@@ -4,7 +4,7 @@ import Input from "../../components/ui/Input";
 
 import { useNavigate } from "react-router-dom";
 import ErrorField from "../../components/ui/ErrorField";
-import useForm, { Errors } from "../../hooks/useForm";
+import useForm, { Errors } from "../../shared/hooks/useForm";
 import { UserCreateDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useRegisterUser } from "../../services/api/UserApiQuery";
 import { validateLogin, validatePassword } from "../shared/validator/fieldValidators";

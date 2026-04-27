@@ -1,6 +1,6 @@
 import { MemoryRouter } from "react-router-dom"
-import UserContextProvider from "../src/context/old/UserContext.old"
-import EventProvider from "../src/context/old/EventContext.old"
+import UserContextProvider from "../src/services/context/old/UserContext.old"
+import EventProvider from "../src/services/context/old/EventContext.old"
 import { render, renderHook } from "@testing-library/react"
 import React, { ReactElement } from "react"
 

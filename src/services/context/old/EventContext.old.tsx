@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
-import { EventDTO, EventSearchForm } from "../../types/types";
-import { EventApi } from "../../services/api/EventApi";
+import { EventDTO, EventSearchForm } from "../../../shared/types/types";
+import { EventApi } from "../../api/EventApi";
 
 export type EventContextValue = {
     fetchEvents: () => Promise<void>,

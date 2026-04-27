@@ -8,7 +8,7 @@ import dataFetching from './assets/events/data-fetching.jpg';
 import reactTs from './assets/events/react-ts.jpg';
 import performance from './assets/events/performance.jpg';
 import dataStore from './assets/events/data-store.jpg';
-import { EventDTO } from './types/types';
+import { EventDTO } from './shared/types/types';
 
 export const EVENTS: EventDTO[] = [
   {

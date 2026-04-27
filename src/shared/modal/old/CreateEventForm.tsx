@@ -4,7 +4,7 @@ import Button from "../../components/ui/Button"
 import { convertFileToString } from "../../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../../utils/string"
-import { useCreateEvent } from "../../services/api/EventApiQuery"
+import { useCreateEvent } from "../../../services/api/EventApiQuery"
 
 
 
