@@ -1,12 +1,12 @@
 import { useRef, useState } from "react"
-import Input from "../../../components/ui/Input"
-import Button from "../../../components/ui/Button"
+import Input from "../../../shared/components/ui/Input"
+import Button from "../../../shared/components/ui/Button"
 import { toast } from "react-toastify"
 import { useCreateEvent } from "../../../services/api/EventApiQuery"
 import useForm from "../../../shared/hooks/useForm"
 import { EventCreateDTO } from "../schema/event.shema"
 import { validateDescription, validateDuration, validateSummary, validateTitle } from "../../shared/validator/fieldValidators"
-import ErrorField from "../../../components/ui/ErrorField"
+import ErrorField from "../../../shared/components/ui/ErrorField"
 import { useNavigate } from "react-router-dom"
 
 type CreateEventModalProps = {

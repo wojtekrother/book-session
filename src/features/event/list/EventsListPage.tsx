@@ -2,7 +2,7 @@ import EventSearch from "./EventSearch";
 import EventsList from "./EventsList";
 import useEventSearchInputsInfinite from "../hooks/useEventSearchInputsInfinite";
 import SkeletonList from "./skeleton/SkeletonEventList";
-import { useEffect} from "react";
+import { useEffect, useMemo} from "react";
 
 export default function EventsListPage() {
     const eventSearch = useEventSearchInputsInfinite();
@@ -36,7 +36,10 @@ export default function EventsListPage() {
     const availableElementToLoad = searchQuery?.data?.pages?.[0].meta.totalCount ?? 0
     const toLoadOnNextPage = isInitialLoading ? 10 : Math.min(availableElementToLoad - loadedPagesCount * 10, 10)
 
-
+const events = useMemo(
+  () => searchQuery.data?.pages.flatMap(page => page.data) ?? [],
+  [searchQuery.data]
+);
 
     return <>
         <main >
@@ -50,9 +53,10 @@ export default function EventsListPage() {
 
             <div id='content' className="min-h-96 relative">
                 {searchQuery.isError && <div role="alert">{searchQuery.error.message}</div>}
-                {searchQuery.data &&
+                {searchQuery.isSuccess &&
+                
                     <>
-                        <EventsList events={searchQuery.data.pages.map((item) => item.data).flat() ?? []} />
+                        <EventsList events={events} />
                         {searchQuery.hasNextPage &&
                             <div id="loadMoreSectionElement" className="h-5"></div>
                         }
@@ -61,7 +65,7 @@ export default function EventsListPage() {
                 {(isInitialLoading || searchQuery.isFetchingNextPage || searchQuery.isLoading) &&
                     <SkeletonList itemsCount={toLoadOnNextPage}></SkeletonList>
                 }
-                {(searchQuery.status === "success" && toLoadOnNextPage === 0) &&
+                {(searchQuery.isSuccess && !searchQuery.hasNextPage) &&
                     <p className="mx-auto"> No more data to load </p>
                 }
             </div>

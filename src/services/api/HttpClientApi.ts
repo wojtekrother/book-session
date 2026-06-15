@@ -84,6 +84,64 @@ export const axiosPaginatedRequestSafe = async <T>
     }
 }
 
+
+export async function paginatedSafeQuery<T>(
+    query: PromiseLike<{
+        data: unknown;
+        error: unknown;
+        count: number | null;
+    }>,
+    schema: z.ZodType<T>
+): Promise<PaginatedListResponse<T>> {
+    const { data, error, count } = await query;
+
+    if (error) {
+        throw error;
+    }
+
+    return {
+        data: schema.array().parse(data ?? []),
+        meta: {
+            totalCount: count ?? 0,
+        },
+    };
+}
+
+export async function safeQuery<T>(
+    query: PromiseLike<{
+        data: unknown;
+        error: unknown;
+    }>,
+    schema: z.ZodType<T>
+): Promise<T> {
+    const { data, error } = await query;
+
+    if (error) {
+        throw error;
+    }
+
+    console.log(data)
+    return schema.parse(data);
+}
+
+export async function safeArrayQuery<T>(
+    query: PromiseLike<{
+        data: unknown;
+        error: unknown;
+    }>,
+    schema: z.ZodType<T>
+): Promise<T[]> {
+    const { data, error } = await query;
+
+    if (error) {
+        throw error;
+    }
+
+    return schema.array().parse(data);
+}
+
+
+
 export const axiosRequestSafe = async <T>
     (promise: Promise<AxiosResponse>, zodSchema: z.ZodType<T>): Promise<T> => {
     try {

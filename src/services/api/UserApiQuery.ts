@@ -1,24 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserApi } from "./UserApi"
 import { queryClient } from "../../App"
-import { AuthResponse } from "../../features/shared/schema/tokens.schema"
+import { AuthResponseDTO } from "../../features/shared/schema/tokens.schema"
 import { UserCreateDTO, UserDTO, UserLoginDTO } from "../../features/user/schema/user.schema"
 
-const useGetUserById = (id: string) => {
-    return useQuery({
-        queryKey: ["users", id],
-        queryFn: () => UserApi.getUserById(id),
-        enabled: !!id
-    })
-}
-
-const useGetUserByEmail = (email: string) => {
-    return useQuery({
-        queryKey: ["users", email],
-        queryFn: () => UserApi.getUserByEmail(email),
-        enabled: !!email
-    })
-}
 
 type UserContext = {
     previousUser?: UserDTO;
@@ -74,7 +59,7 @@ const useUpdateUserRemoveEvent = () => {
 
 
 const useLoginUser = () => {
-    return useMutation<AuthResponse, Error, UserLoginDTO>({
+    return useMutation<AuthResponseDTO, Error, UserLoginDTO>({
         mutationFn: (credentials) => UserApi.login(credentials),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["loggedInUser"] })
@@ -83,8 +68,8 @@ const useLoginUser = () => {
 }
 
 const useRegisterUser = () => {
-    return useMutation<AuthResponse, Error, UserCreateDTO>({
-        mutationFn: (user) => UserApi.register(user)
+    return useMutation<AuthResponseDTO, Error, UserCreateDTO>({
+        mutationFn: (createUser) => UserApi.register(createUser)
     })
 }
 
@@ -102,8 +87,6 @@ const logoutUser = () => {
 }
 
 export {
-    useGetUserById,
-    useGetUserByEmail,
     useUpdateUserAddEvent,
     useUpdateUserRemoveEvent,
     useLoginUser,

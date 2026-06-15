@@ -1,34 +1,18 @@
 import { useRef } from "react"
-import Button from "../../components/ui/Button"
-import { toast } from "react-toastify";
+import Button from "../../shared/components/ui/Button";
 import Modal, { ModalHandler } from "../../shared/modal/Modal";
-import { logoutUser, useGetLoggedInUser } from "../../services/api/UserApiQuery";
-import { useNavigate } from "react-router-dom";
-import CreateEventForm from "../../shared/modal/old/CreateEventForm";
+import {  useGetLoggedInUser } from "../../services/api/UserApiQuery";
 import CreateEventForm_v2 from "../event/forms/CreateEventForm";
+
+import useLogout from "../../shared/hooks/useLogout";
 
 
 
 const Header = () => {
     const {data:loggedInUser} = useGetLoggedInUser();
-    const navigate =  useNavigate();
+    const {logout} = useLogout();
 
     const modal = useRef<ModalHandler>(null);
-
-
-    function handleLogoutClik() {
-        try {
-            logoutUser();
-            toast.success("Logout success.");
-            navigate("/");
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                console.log(err.message)
-            }
-            toast.error("Logout error.")
-        }
-    }
-
 
     return (
         <header id="main-header" className="from-blue-50 to-blue-300 bg-linear-to-t p-3">
@@ -39,7 +23,7 @@ const Header = () => {
                 <ul className="flex items-center gap-2">
                     <li className="mr-auto"><Button href="/" >Home</Button></li>
                     {loggedInUser  &&
-                        <li><Button onClick={handleLogoutClik} textonly={true}>Logout </Button></li>}
+                        <li><Button onClick={logout} textonly={true}>Logout </Button></li>}
                     {!loggedInUser &&
                     <>
                         <li><Button href="/user/login">Login</Button></li>

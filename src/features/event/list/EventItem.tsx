@@ -1,9 +1,10 @@
 import { toast } from "react-toastify"
 
-import Button from "../../../components/ui/Button"
+import Button from "../../../shared/components/ui/Button"
 import { useGetLoggedInUser, useUpdateUserAddEvent, useUpdateUserRemoveEvent } from "../../../services/api/UserApiQuery"
 import { EventDTO } from "../schema/event.shema"
 import { useRemoveEvent } from "../../../services/api/EventApiQuery"
+
 
 type EventItemParams = { eventItem: EventDTO, mode: "public" | "assigned" }
 

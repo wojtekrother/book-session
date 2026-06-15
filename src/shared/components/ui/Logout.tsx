@@ -1,23 +1,11 @@
-import { toast } from "react-toastify";
-import { useUserContext } from "../../context/old/UserContext.old";
 import { useEffect } from "react";
+import useLogout from "../../hooks/useLogout";
 
 const Loggout = () => {
-    
-
-    const ctx = useUserContext();
+    const { logout } = useLogout()
 
     useEffect(() => {
-        toast.info("useEffect at work")
-        try {
-            ctx.logout()
-            toast.success("Logout success.")
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                console.log(err.message)
-            }
-            toast.error("Logout error.")
-        }
+        logout();
     }, [])
 
     return <></>

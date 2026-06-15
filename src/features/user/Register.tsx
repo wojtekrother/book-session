@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-
+import Button from "../../shared/components/ui/Button";
+import Input from "../../shared/components/ui/Input";
 import { useNavigate } from "react-router-dom";
-import ErrorField from "../../components/ui/ErrorField";
+import ErrorField from "../../shared/components/ui/ErrorField";
 import useForm, { Errors } from "../../shared/hooks/useForm";
 import { UserCreateDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useRegisterUser } from "../../services/api/UserApiQuery";

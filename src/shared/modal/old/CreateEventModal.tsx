@@ -1,13 +1,12 @@
-// @ts-nocheck
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import Input from "../components/ui/Input"
-import Button from "../components/ui/Button"
+import Input from "../../../shared/components/ui/Input"
+import Button from "../../../shared/components/ui/Button"
 import { createPortal } from "react-dom"
 
-import { convertFileToString } from "../utils/file"
+import { convertFileToString } from "../../utils/file"
 import { toast } from "react-toastify"
-import { StringUtils } from "../utils/string"
-import { useEventContext } from "../context/old/EventContext.old"
+import { StringUtils } from "../../utils/string"
+import { useEventContext } from "../../../services/context/old/EventContext.old"
 
 
 type CreateEventModalProps = {

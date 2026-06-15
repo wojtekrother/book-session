@@ -2,14 +2,13 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import HomePage from './features/dashboard/Home.tsx';
 import Root from './features/dashboard/Layout.tsx';
-import UserContextProvider from './services/context/old/UserContext.old.tsx';
-import Loggout from './components/ui/Logout.tsx';
 import MyEventsPage from './features/user/MyEvents.tsx';
 import LoginPage from './features/user/Login_v2.tsx';
 import EventDetailsPage from './features/event/details/EventDetails.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EventsListPage from './features/event/list/EventsListPage.tsx';
 import RegisterPage from './features/user/Register.tsx';
+import Loggout from './shared/components/ui/Logout.tsx';
 
 
 const Router = createBrowserRouter([
@@ -54,11 +53,11 @@ window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <UserContextProvider>
+      {/* <UserContextProvider> */}
         {/* <EventProvider > */}
         <RouterProvider router={Router} />
         {/* </EventProvider> */}
-      </UserContextProvider>
+      {/* </UserContextProvider> */}
     </QueryClientProvider>
   );
 }

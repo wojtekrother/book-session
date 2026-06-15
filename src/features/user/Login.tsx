@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+import Button from "../../shared/components/ui/Button";
+import Input from "../../shared/components/ui/Input";
 import { useNavigate } from "react-router-dom";
 import { StringUtils } from "../../shared/utils/string";
-import ErrorField from "../../components/ui/ErrorField";
+import ErrorField from "../../shared/components/ui/ErrorField";
 import { useGetLoggedInUser, useLoginUser } from "../../services/api/UserApiQuery";
 
 

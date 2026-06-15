@@ -1,5 +1,6 @@
-import Button from "../../../components/ui/Button";
+
 import { useGetEvent } from "../../../services/api/EventApiQuery";
+import Button from "../../../shared/components/ui/Button";
 import EventItem from "./EventItem";
 
 export type EventItemContainerProps = { eventId: string, mode: "public" | "assigned" }

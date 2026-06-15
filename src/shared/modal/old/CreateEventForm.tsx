@@ -1,6 +1,6 @@
 import { useState } from "react"
-import Input from "../../components/ui/Input"
-import Button from "../../components/ui/Button"
+import Input from "../../../shared/components/ui/Input"
+import Button from "../../../shared/components/ui/Button"
 import { convertFileToString } from "../../utils/file"
 import { toast } from "react-toastify"
 import { StringUtils } from "../../utils/string"

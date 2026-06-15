@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+import Button from "../../shared/components/ui/Button";
+import Input from "../../shared/components/ui/Input";
 import { useNavigate } from "react-router-dom";
-import ErrorField from "../../components/ui/ErrorField";
+import ErrorField from "../../shared/components/ui/ErrorField";
 import useForm from "../../shared/hooks/useForm";
 import { UserLoginDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useLoginUser } from "../../services/api/UserApiQuery";
@@ -12,8 +12,8 @@ import { validateLogin, validatePassword } from "../shared/validator/fieldValida
 
 const LoginPage = () => {
     const form = useForm<UserLoginDTO>({initialValue:{
-        email: "",
-        password: ""
+        email: "test@test.pl",
+        password: "123456"
     }, initFieldsValidators:{
         email: validateLogin,
         password: validatePassword
