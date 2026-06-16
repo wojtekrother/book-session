@@ -4,10 +4,7 @@ import { axiosRequestSafe, httpClientApi, PaginatedListResponse, paginatedSafeQu
 import { EventCreateDTO, EventDTO, EventUpdateDTO, eventSchema } from "../../features/event/schema/event.shema";
 import { delay } from "../../shared/utils/dalay";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
-import z from "zod";
 import { supabase } from "./supabase";
-import { each } from "lodash";
-
 
 async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
     await delay(3000);
@@ -19,7 +16,7 @@ async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
         summary: event.summary,
         date: event.date,
         image: event.image,
-        image_url: event.imageUrl
+        image_url: event.image_url
     }).select().single();
     const createdEvent: EventDTO = await safeQuery(query, eventSchema)
     return createdEvent;
@@ -28,7 +25,7 @@ async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
 async function removeEvent(eventId: string): Promise<EventDTO> {
     await delay(3000);
     let query = supabase.from("events").update({
-        delete_at: new Date().toISOString()
+        deleted_at: new Date().toISOString()
     })
         .eq("id", eventId)
         .select()
@@ -39,10 +36,7 @@ async function removeEvent(eventId: string): Promise<EventDTO> {
 }
 
 async function updateEvent(event: EventUpdateDTO): Promise<EventDTO> {
-    let query = supabase.from("events").update({
-        ...event,
-        update_at: new Date().toISOString(),
-    })
+    let query = supabase.from("events").update(event)
         .eq("id", event.id)
         .select()
         .single();
@@ -147,10 +141,9 @@ async function copyEventsFromJSONToSupabase() {
         httpClientApi.get("/api/events" ),
         eventSchema.array());
     response.forEach(event => {
-        const {id, createdAt, modifiedAt, deleteAt, ...eventWithoutId} = event
-        const createEventDTO:EventCreateDTO = eventWithoutId;
+        const {id, ...eventWithoutId} = event;
         createEvent(
-            createEventDTO
+            eventWithoutId
         )
     });    
 

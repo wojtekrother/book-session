@@ -39,7 +39,7 @@ const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
         let durationRaw = data.get("duration") as string;
         let date = data.get("date") as string;
 
-        let imageUrl: String | undefined;
+        let image_url: string | undefined;
 
 
         if (StringUtils.isBlank(title)) {
@@ -65,7 +65,7 @@ const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
         }
 
         if (image != null) {
-            imageUrl = await convertFileToString(image as File)
+            image_url = (await convertFileToString(image as File)).toString();
         } else {
             errorsTemp.push("Image is required")
         }
@@ -73,8 +73,8 @@ const CreateEventForm = ({closeModal,  ...props }: CreateEventModalProps) => {
 
         if (errorsTemp.length == 0) {
             try {
-                //await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
-                createEvent.mutate({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
+                //await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, image_url })
+                createEvent.mutate({ title, description, duration: Number(durationRaw), summary, date, image_url })
                 event.currentTarget.reset()
 
                 toast.success("New event sucesfully created")

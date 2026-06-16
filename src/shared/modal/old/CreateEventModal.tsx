@@ -75,7 +75,7 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
         let durationRaw = data.get("duration") as string;
         let date = data.get("date") as string;
 
-        let imageUrl: String | undefined;
+        let image_url: string | undefined;
 
 
         if (StringUtils.isBlank(title)) {
@@ -101,7 +101,7 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
         }
 
         if (image != null) {
-            imageUrl = await convertFileToString(image as File)
+            image_url = (await convertFileToString(image as File)).toString()
         } else {
             addError("Image is required")
         }
@@ -109,7 +109,7 @@ const CreateEventModal = forwardRef<CreateEventModalHandler>(({ ...props }: Crea
 
         if (errors.length == 0) {
             try {
-                await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, imageUrl })
+                await eventCtx.addEvent({ title, description, duration: Number(durationRaw), summary, date, image_url })
                 event.currentTarget.reset()
 
                 toast.success("New event sucesfully created")

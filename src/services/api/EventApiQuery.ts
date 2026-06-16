@@ -58,19 +58,11 @@ const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", de
         queryKey: eventKey.infiniteList(eventSearchForm),
         queryFn: ({ pageParam, signal }) => EventApi.getPaginatedEvents({ pageParam, eventSearchForm, signal }),
         initialPageParam: 1,
-        getNextPageParam: (lastPage, pages,) => {
-            // lastPage to obiekt { data, totalCount, nextPage }
-            const { meta, data } = lastPage;
-
-
-            // Obliczamy, czy są jeszcze strony
-            const totalPages = Math.ceil(meta.totalCount / 10); // zakładając 10 elementów na stronę
-
-            if (pages.length <= totalPages) {
-                return pages.length + 1;
+        getNextPageParam: (lastPage, allPages,) => {
+            if (lastPage.data.length < 10) {
+                return undefined;
             }
-            return undefined; // Brak kolejnych stron
-
+            return allPages.length;
         }
     });
 }
@@ -96,20 +88,21 @@ const useCreateEvent = () => {
         onMutate: async (newEvent: EventCreateDTO) => {
             await queryClient.cancelQueries({ queryKey: eventKey.all });
             const previousEvents = queryClient.getQueriesData<InfiniteData<PaginatedListResponse<EventDTO>> | undefined>({ queryKey: eventKey.infiniteLists() });
-            const optimisticEvent: EventDTO = { ...newEvent, id: crypto.randomUUID() }
-
-
-
+            const optimisticEvent: EventDTO = {
+                ...newEvent, id: "optimisti-update", deleted_at: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            }
 
             previousEvents.forEach(([queryKey, data]) => {
                 const [, , title, description, dateOrder] = queryKey as ReturnType<typeof eventKey.infiniteList>;
                 if (data) {
                     //if not visible acording to description not add
-                    if (!StringUtils.isBlank(description) && newEvent.description !== description) {
+                    if (!StringUtils.isBlank(description) && !newEvent.description.includes(description)) {
                         return;
                     }
                     //if not visible acording to title not add
-                    if (!StringUtils.isBlank(title) && newEvent.title !== title) {
+                    if (!StringUtils.isBlank(title) && !newEvent.title.includes(title)) {
                         return;
                     }
                     //add on end or on the beginig acording to dateorder
@@ -119,9 +112,9 @@ const useCreateEvent = () => {
                         pages: data.pages.map((page, index) => {
                             if (dateOrder === "asc" && index === data.pages.length - 1) {
                                 // const lastPageIndex = data.pages.length;
-                                return { ...page, page: [...page.data, newEvent], meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
+                                return { ...page, page: [...page.data, optimisticEvent], meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
                             } else if (dateOrder === "desc" && index === 0) {
-                                return { ...page, data: [newEvent, ...page.data], meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
+                                return { ...page, data: [optimisticEvent, ...page.data], meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
                             } else {
                                 return { ...page, meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
                             }
@@ -161,7 +154,7 @@ const useRemoveEvent = () => {
                         return {
                             ...page, data: page.data.map(item => {
                                 if (item.id === removedEventId) {
-                                    return { ...item, deleteAt: new Date() }
+                                    return { ...item, deleted_at: new Date() }
                                 }
                                 return item
                             })

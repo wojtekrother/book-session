@@ -175,7 +175,7 @@ const useForm = <T extends Record<string, any>>(
         }
 
     const isFormReady = () => {
-        return (Object.keys(errors).length == 0)
+        return (Object.keys(errors).length == 0) &&  Object.keys(touched).length > 0
     }
 
     const setAllValues = (values: T) => {

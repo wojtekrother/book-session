@@ -56,9 +56,13 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
     return (
         <div className=" bg-amber-50 p-4 box-content flex flex-col" data-testid="eventItem" >
             <div className="flex">
-                {eventItem.imageUrl && <img src={`${eventItem.imageUrl}`} className="h-28 " />}
+                {eventItem.image_url && <img src={`${eventItem.image_url}`} className="h-28 " />}
                 {eventItem.image && <img src={`.${eventItem.image}`} className="h-28  " />}
                 <h1 className="text-xl p-2 ">{eventItem.title}</h1>
+                
+                {eventItem.id == "optimisti-update" && 
+                    <h1 className="text-red-500  ml-auto font-bold">NEW !!!</h1>
+                }
             </div>
             <div  >
 
@@ -72,7 +76,7 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
                         {!eventAssigned &&
                             <Button onClick={() => handleAddToMyEvents(eventItem.id!)} disabled={assignEventToUser.isPending}>Add to my events</Button>
                         }
-                        {!eventItem.deleteAt &&
+                        {!eventItem.deleted_at &&
                             <Button className="bg-red-500"  onClick={() => handleRemoveEvent(eventItem.id!)} disabled={removeEvent.isPending}>Remove</Button>
                         }
                     </div>

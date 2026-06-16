@@ -11,7 +11,7 @@ const eventSchemaBase = z.object({
     duration: z.number().min(1).max(365),
     date: z.coerce.date(),
     image: z.string().optional().nullable(),
-    imageUrl: z.string().optional().nullable(),
+    image_url: z.string().optional().nullable(),
 });
 
 export const eventSchema = eventSchemaBase.extend(auditSchema.shape);
