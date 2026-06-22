@@ -12,7 +12,7 @@ type UserContext = {
 const useUpdateUserAddEvent = () => {
     return useMutation<void, Error, string, UserContext>({
         mutationFn: (eventId) => UserApi.userAddEvent(eventId),
-        onMutate: async (eventId, context) => {
+        onMutate: async (eventId, _context) => {
             
             await queryClient.cancelQueries({ queryKey: ['loggedInUser'] });
             const previousUser = queryClient.getQueryData<UserDTO>(['loggedInUser']);
@@ -24,7 +24,7 @@ const useUpdateUserAddEvent = () => {
             return { previousUser };
         },
         onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["loggedInUser"] }) },
-        onError: (err, eventId, context) => {
+        onError: (err, _eventId, context) => {
             if (context?.previousUser) {
                 queryClient.setQueryData(['loggedInUser'], context.previousUser);
             }
@@ -36,7 +36,7 @@ const useUpdateUserAddEvent = () => {
 const useUpdateUserRemoveEvent = () => {
     return useMutation<void, Error, string, UserContext>({
         mutationFn: (eventId) => UserApi.userRemoveEvent(eventId),
-        onMutate: async (eventId, context) => {
+        onMutate: async (eventId, _context) => {
             
             await queryClient.cancelQueries({ queryKey: ['loggedInUser'] });
             const previousUser = queryClient.getQueryData<UserDTO>(['loggedInUser']);
@@ -48,7 +48,7 @@ const useUpdateUserRemoveEvent = () => {
             return { previousUser };
         },
         onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["users"] }) },
-        onError: (err, eventId, context) => {
+        onError: (err, _eventId, context) => {
             if (context?.previousUser) {
                 queryClient.setQueryData(['loggedInUser'], context.previousUser);
             }

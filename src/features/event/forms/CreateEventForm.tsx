@@ -88,7 +88,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
                 //
                 setFormValues(variables)
             },
-            onSuccess: (savedEvent) => {
+            onSuccess: (_savedEvent) => {
                 reset();
                 fileInputRef.current!.value = "";
                 toast.success("New event sucesfully created");

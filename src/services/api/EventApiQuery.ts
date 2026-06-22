@@ -49,7 +49,7 @@ const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", de
 
 
     return useInfiniteQuery<PaginatedListResponse<EventDTO>, Error,
-        PaginatedListResponse<EventDTO>,
+        InfiniteData<PaginatedListResponse<EventDTO>>,
         ReturnType<typeof eventKey.infiniteList>,
         number
     >({
@@ -122,7 +122,7 @@ const useCreateEvent = () => {
         },
         onSettled: () => queryClient.invalidateQueries({ queryKey: eventKey.all }),
 
-        onError: (err, newEvent, context) => {
+        onError: (err, _newEvent, context) => {
             if (context?.previousEvents) {
                 context.previousEvents.forEach(([queryKey, data]) => {
                     queryClient.setQueryData(queryKey, data);
@@ -166,7 +166,7 @@ const useRemoveEvent = () => {
             return { previousEvents };
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: eventKey.all }),
-        onError: (err, removedEventId, context) => {
+        onError: (err, _removedEventId, context) => {
             if (context?.previousEvents) {
                 context.previousEvents.forEach(([queryKey, data]) => {
                     queryClient.setQueriesData({ queryKey }, data);

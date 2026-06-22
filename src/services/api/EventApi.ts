@@ -62,7 +62,7 @@ export type GetEventProps = {
     signal?: AbortSignal
 }
 
-async function getEvents({ pageParam, eventSearchForm, signal: abortSignal }: GetEventProps): Promise<EventDTO[]> {
+async function getEvents({ eventSearchForm, signal: abortSignal }: GetEventProps): Promise<EventDTO[]> {
     await delay(2000)
 
     let query = supabase.from("events").select("*");

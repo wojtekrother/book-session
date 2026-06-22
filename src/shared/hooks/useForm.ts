@@ -33,7 +33,6 @@ export type UseFormProps<T extends Record<string, any>> = {
 
 const useForm = <T extends Record<string, any>>(
     { initialValue,
-        initialConventers,
         initFieldsValidators,
         intiCrossFieldValidator }: UseFormProps<T>) => {
 
