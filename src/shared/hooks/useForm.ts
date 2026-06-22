@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { convertFileToString } from "../utils/file";
-import { keyof } from "zod";
 
 export type Errors<T> = {
     [K in keyof T]?: string

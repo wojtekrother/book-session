@@ -13,7 +13,7 @@ export default function EventsList({ events }: EventsListParams) {
 
       <div className='grid md:grid-cols-2 sm:grid-cols-1 gap-2'>
         {(events.length > 0) &&
-          events.map((s, index) => {
+          events.map(s => {
             return <EventItem key={s.id} mode='public' eventItem={s}></EventItem>
           })
         }

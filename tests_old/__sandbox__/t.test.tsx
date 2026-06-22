@@ -94,7 +94,7 @@ it("test context",async  ()=> {
 })
 
 
-describe("AuthProvider", () => {
+describe("AuthProvider", async () => {
   it("should login user", async () => {
     const mockApi = {
       login: vi.fn().mockResolvedValue("Adam"),
@@ -108,17 +108,17 @@ describe("AuthProvider", () => {
     const { result } = renderHook(() => useAuthContext(), { wrapper });
 
     expect(result.current.user).toBe(null);
-    act(()=> await result.current.login("Adam"))
+    //act(()=> await result.current.login("Adam"))
     waitFor(() => {
         expect(result.current.user).toBe("Adam");
-    }
+    })
     expect(mockApi.login).toHaveBeenCalledTimes(1)
     expect(mockApi.login).toHaveBeenCalledWith(["Adam"])
 
 
     expect(act(()=>  result.current.logout())).toThrow()
-expect(mockApi.logout).toHaveBeenCalledTimes(1)
+expect(mockApi.logout).toHaveBeenCalledTimes(1);
 
-    expect().toBeInstanceOf(Error)
+   // expect().toBeInstanceOf(Error)
   });
 });

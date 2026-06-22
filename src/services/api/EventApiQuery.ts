@@ -1,13 +1,11 @@
-import { InfiniteData, QueryFilters, QueryKey, useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
+import { InfiniteData, QueryKey, useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import { EventApi } from "./EventApi";
 import { queryClient } from "../../App";
 import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.shema";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
-import { delay } from "../../shared/utils/dalay";
 import { PaginatedListResponse } from "./HttpClientApi";
-import { useMemo } from "react";
 import { StringUtils } from "../../shared/utils/string";
-import { meta } from "zod/v4/core";
+
 
 
 export const eventKey = {
@@ -67,16 +65,12 @@ const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", de
     });
 }
 
-const useUpdateEvent = (event: EventUpdateDTO) => {
+const useUpdateEvent = () => {
     return useMutation<EventDTO, Error, EventUpdateDTO>({
         mutationFn: (event: EventUpdateDTO) => EventApi.updateEvent(event),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: eventKey.all })
     })
 }
-
-type EventsContext_old = {
-    previousEvents?: EventDTO[];
-};
 
 type EventsContext = {
     previousEvents?: Array<[QueryKey, InfiniteData<PaginatedListResponse<EventDTO>> | undefined]>;

@@ -14,7 +14,7 @@ type CreateEventModalProps = {
     openModal: () => void
 }
 
-const CreateEventForm_v2 = ({ closeModal, openModal, ...props }: CreateEventModalProps) => {
+const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) => {
     const { handleSubmit, register, isFormReady, reset, values: formValues, setAllValues: setFormValues } = useForm<EventCreateDTO>({
         initialValue: {
             title: "",
@@ -60,7 +60,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal, ...props }: CreateEventModa
     }
 
 
-    function restoreFormAndOpenModal(form: EventCreateDTO,openModal: () => void ) {
+    function restoreFormAndOpenModal(form: EventCreateDTO, openModal: () => void) {
         setFormValues(form);
         openModal();
     }
@@ -84,7 +84,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal, ...props }: CreateEventModa
             onError: (error, variables: EventCreateDTO) => {
                 setGlobalError([`Error during saving event ${error.message}`]);
                 toast.error("Failed to create event");
-                toast(<Msg openModal={()=> restoreFormAndOpenModal(form, openModal)} ></Msg>)
+                toast(<Msg openModal={() => restoreFormAndOpenModal(form, openModal)} ></Msg>)
                 //
                 setFormValues(variables)
             },

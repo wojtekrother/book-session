@@ -31,7 +31,7 @@ export default function EventDetailsPage() {
       <article>
         <header>
           <img
-            src={loadedEvent.image}
+            src={loadedEvent.image ?? undefined}
             alt={loadedEvent.title}
           />
           <div>

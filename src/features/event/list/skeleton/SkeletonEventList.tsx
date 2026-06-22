@@ -1,4 +1,4 @@
-import { Oval } from "react-loader-spinner";
+
 import SkeletonListItem from "./SkeletonEventListItem"
 
 const SkeletonList = ({ itemsCount }: { itemsCount: number }) => {

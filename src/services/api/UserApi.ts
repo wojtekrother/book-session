@@ -27,7 +27,10 @@ async function getUserDTO(user?: User): Promise<UserDTO> {
         email: user.email!,
         id: user.id,
         role: userProfile.role,
-        eventsIds: userLikedEvents
+        eventsIds: userLikedEvents,
+        created_at:user.created_at,
+        updated_at: user.updated_at ?? null,
+        deleted_at: user.deleted_at ?? null
     }
 
     return userDTO;

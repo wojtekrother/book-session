@@ -26,8 +26,9 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
-, "tests"  ],
+    "src",
+    "tests"
+, "tests_old/__sandbox__"  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

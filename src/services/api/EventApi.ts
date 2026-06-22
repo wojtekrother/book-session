@@ -135,19 +135,4 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
         eventSchema)
 }
 
-
-async function copyEventsFromJSONToSupabase() {
-    const response = await axiosRequestSafe<EventDTO[]>(
-        httpClientApi.get("/api/events" ),
-        eventSchema.array());
-    response.forEach(event => {
-        const {id, ...eventWithoutId} = event;
-        createEvent(
-            eventWithoutId
-        )
-    });    
-
-    return response;
-}
-
 export const EventApi = { createEvent, removeEvent, updateEvent, getEvent, getEvents, getPaginatedEvents }

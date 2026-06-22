@@ -15,7 +15,7 @@ export type ModalHandler = {
 }
 
 
-const Modal = forwardRef<ModalHandler, ModalProps>(({ children, ...props }: ModalProps, ref) => {
+const Modal = forwardRef<ModalHandler, ModalProps>(({ children }: ModalProps, ref) => {
     const modal = useRef<HTMLDialogElement>(null);
     const [modalRootElement, setModalRootElement] = useState<HTMLElement | null>(null)
 

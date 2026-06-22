@@ -1,4 +1,4 @@
-import { render, renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 import { createContext, useContext, useState, ReactNode, act } from "react";
 
 interface User {

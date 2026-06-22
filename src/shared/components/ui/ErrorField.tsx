@@ -3,7 +3,7 @@ type ErrorFieldProps = {
     errors: string[] | string
 }
 
-const ErrorField = ({ errors, ...props }: ErrorFieldProps) => {
+const ErrorField = ({ errors }: ErrorFieldProps) => {
 
     if (typeof errors === "string") {
         errors = [errors];
