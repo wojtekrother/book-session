@@ -7,6 +7,8 @@ export type Errors<T> = {
 
 type Touched<T> = Partial<Record<keyof T, boolean>>
 
+type Required<T> = Partial<Record<keyof T, boolean>>
+
 type Validators<T> = {
     [K in keyof T]?: (value: T[K]) => string | null
 }
@@ -19,14 +21,15 @@ export type RegisterReturnType<T> = {
     name: keyof T,
     value: any,
     error?: string,
-    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void,
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
 }
 
 export type UseFormProps<T extends Record<string, any>> = {
     initialValue: T,
     initialConventers?: Conventers<T>
     initFieldsValidators: Validators<T>,
+    initFieldsRequired?: Required<T>,
     intiCrossFieldValidator?: (form: T) => Errors<T>
 }
 
@@ -34,16 +37,18 @@ export type UseFormProps<T extends Record<string, any>> = {
 const useForm = <T extends Record<string, any>>(
     { initialValue,
         initFieldsValidators,
+        initFieldsRequired,
         intiCrossFieldValidator }: UseFormProps<T>) => {
 
     const [values, setValues] = useState<T>(initialValue);
     const [errors, setErrors] = useState<Errors<T>>({});
     const [touched, setTouched] = useState<Touched<T>>({});
+    const [required] = useState<Required<T>>(initFieldsRequired ?? {});
     const [fieldsValidators] = useState<Validators<T>>(initFieldsValidators);
     const crossFieldValidator = intiCrossFieldValidator;
 
 
-    const onChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const onChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const field = e.target.name as keyof T;
         const type = e.target.type;
         const value = e.target.value;
@@ -129,23 +134,23 @@ const useForm = <T extends Record<string, any>>(
     }
 
     const normalizeDate = (value: string | Date) => {
-  const date = value instanceof Date ? value : new Date(value);
+        const date = value instanceof Date ? value : new Date(value);
 
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date");
-  }
+        if (isNaN(date.getTime())) {
+            throw new Error("Invalid date");
+        }
 
-  return date.toISOString().split('T')[0];
-};
+        return date.toISOString().split('T')[0];
+    };
 
     const register = (name: keyof T, options?: { type?: string }) => {
         const isFile = options?.type === "file";
         const isDate = options?.type === "date";
-        
+
         const field = name as keyof T
         const error = (touched[field] && errors[field]) ? errors[field] : undefined
         const date = isDate ? normalizeDate(values[field]) : ""
-        return { name: name, ...(isFile ? {} : isDate ?{value:date}: { value: values[field] }), error, onChange, onBlur } as RegisterReturnType<T>
+        return { name: name, ...(isFile ? {} : isDate ? { value: date } : { value: values[field] }), error, onChange, onBlur } as RegisterReturnType<T>
     }
 
     const reset = () => {
@@ -173,7 +178,17 @@ const useForm = <T extends Record<string, any>>(
         }
 
     const isFormReady = () => {
-        return (Object.keys(errors).length == 0) &&  Object.keys(touched).length > 0
+        return (Object.keys(errors).length == 0) && isRequiredFielsTouched()
+    }
+
+    const isRequiredFielsTouched = () => {
+        const keys = Object.keys(values) as (keyof T)[];
+        for (const key of keys) {
+            if (touched[key] == undefined && required[key] == true) {
+                return false;
+            };
+        }
+        return true;
     }
 
     const setAllValues = (values: T) => {

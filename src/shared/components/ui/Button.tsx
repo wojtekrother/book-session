@@ -19,15 +19,17 @@ type ButtonProps = {
 const Button = ({ className, children, ...props }: ButtonProps) => {
 
     if (props.href !== undefined) {
-        return <NavLink className={twMerge(` border-gray-100  bg-transparent py-2 px-2" + 
-            " hover:text-gray-500 text-black active:underline  ${className ?? ""} `)} to={props.href} {...props}>{children}</NavLink>
+        return <NavLink  className={({ isActive }) => twMerge(` 
+            py-1.5 px-1.5 
+             hover:text-gray-500 hover:underline text-black ${isActive ? "underline" : ""}  ${className ?? ""} `)}
+             to={props.href} {...props}>{children}</NavLink>
     }
 
     
     return (
-        <button className={twMerge(clsx("rounded-xl py-2", {
-            "px-2 bg-transparent hover:text-gray-500 cursor-pointer ": props.textonly,
-            "px-4 bg-yellow-300 active:hover:bg-yellow-400 disabled:bg-gray-400": !props.textonly
+        <button className={twMerge(clsx("rounded-xl py-1.5", {
+            "px-1.5 border-black/5  border rounded-4xl bg-black/1 hover:text-gray-500 hover:bg-black/10 cursor-pointer ": props.textonly,
+            "px-4 bg-blue-300 active:hover:bg-blue-400 disabled:bg-gray-200 disabled:text-gray-300": !props.textonly
         }),className)} {...props}>{children}</button>
     )
 }

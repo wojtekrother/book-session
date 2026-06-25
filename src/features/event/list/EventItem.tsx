@@ -4,7 +4,7 @@ import Button from "../../../shared/components/ui/Button"
 import { useGetLoggedInUser, useUpdateUserAddEvent, useUpdateUserRemoveEvent } from "../../../services/api/UserApiQuery"
 import { EventDTO } from "../schema/event.shema"
 import { useRemoveEvent } from "../../../services/api/EventApiQuery"
-
+import trash from "../../../assets/trash.svg";
 
 type EventItemParams = { eventItem: EventDTO, mode: "public" | "assigned" }
 
@@ -18,10 +18,10 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
     async function handleAddToMyEvents(eventId: string): Promise<void> {
         assignEventToUser.mutate(eventId, {
             onError: () => {
-                toast.error("Error during assignig event")
+                toast.error("Like event error. Please try again.")
             },
             onSuccess: () => {
-                toast.success("Successfuly assigned event")
+                toast.success("Like event success.")
             }
         })
 
@@ -30,63 +30,71 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
     async function handleRemoveFromMyEvents(eventId: string): Promise<void> {
         unassignEventFromUser.mutate(eventId, {
             onError: () => {
-                toast.error("Error during unassigning event")
+                toast.error("Dislike event error. Please try again.")
             },
             onSuccess: () => {
-                toast.success("Successfuly unassigned event")
+                toast.success("Dislike success.")
             }
         })
     }
 
     async function handleRemoveEvent(eventId: string): Promise<void> {
-        removeEvent.mutate(eventId, {
-            onError: () => {
-                toast.error("Error during removing event")
-            },
-            onSuccess: () => {
-                toast.success("Successfuly removed event")
-            }
-        })
+        const result = confirm("Are you sure to remove this Event?");
+        if (result) {
+            removeEvent.mutate(eventId, {
+                onError: () => {
+                    toast.error("Error during removing event")
+                },
+                onSuccess: () => {
+                    toast.success("Successfuly removed event")
+                }
+            })
+        }
+
     }
 
 
 
     const eventAssigned: boolean = loggedInUser.data ? loggedInUser.data.eventsIds.includes(eventItem.id!) : false
+    const isOptimistic: boolean = eventItem.id == "optimisti-update";
+
 
     return (
-        <div className=" bg-amber-50 p-4 box-content flex flex-col" data-testid="eventItem" >
+        <div className=" bg-gray-50 p-4 box-content flex flex-col" data-testid="eventItem" >
             <div className="flex">
-                {eventItem.image_url && <img src={`${eventItem.image_url}`} className="h-28 " />}
-                {eventItem.image && <img src={`.${eventItem.image}`} className="h-28  " />}
-                <h1 className="text-xl p-2 ">{eventItem.title}</h1>
-                
-                {eventItem.id == "optimisti-update" && 
+                {eventItem.image_url && <img src={`${eventItem.image_url}`} className="h-28 border border-black/10 " />}
+                {eventItem.image && <img src={`.${eventItem.image}`} className="h-28 border border-black/10 " />}
+                <h2 className="text-xl p-2 ">{eventItem.title}</h2>
+
+                {isOptimistic &&
                     <h1 className="text-red-500  ml-auto font-bold">NEW !!!</h1>
                 }
             </div>
             <div  >
 
-                <p>{eventItem.summary}</p>
-                {mode == "public" &&
+                <p className="text-sm">{eventItem.summary}</p>
+                {mode == "public" && !isOptimistic &&
                     <div className="actions">
-                        <Button href={`/events/${eventItem.id}`} >Show details</Button>
-                        {eventAssigned &&
-                            <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} disabled={unassignEventFromUser.isPending} >Remove from my events</Button>
+                        <Button href={`/events/${eventItem.id}`} >Details</Button>
+                        {(eventAssigned && loggedInUser.data ) &&
+                            <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} disabled={unassignEventFromUser.isPending} >Don't Like</Button>
                         }
-                        {!eventAssigned &&
-                            <Button onClick={() => handleAddToMyEvents(eventItem.id!)} disabled={assignEventToUser.isPending}>Add to my events</Button>
+                        {(!eventAssigned && loggedInUser.data ) &&
+                            <Button onClick={() => handleAddToMyEvents(eventItem.id!)} disabled={assignEventToUser.isPending}>Like</Button>
                         }
-                        {!eventItem.deleted_at &&
-                            <Button className="bg-red-500"  onClick={() => handleRemoveEvent(eventItem.id!)} disabled={removeEvent.isPending}>Remove</Button>
+                        {!eventItem.deleted_at && loggedInUser.data  &&
+                            <Button className="px-1 py-1 bg-transparent" onClick={() => handleRemoveEvent(eventItem.id!)} disabled={removeEvent.isPending}>
+                                <img src={trash} alt="trash" className="w-5" />
+                            </Button>
                         }
                     </div>
 
                 }
 
-                {mode == "assigned" &&
+                {mode == "assigned" && !isOptimistic &&
                     <div className="actions">
-                        <Button href={`/events/${eventItem.id}`} >Show details</Button>
-                        <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} disabled={unassignEventFromUser.isPending} >Remove from my events</Button>
+                        <Button href={`/events/${eventItem.id}`} >Details</Button>
+                        <Button onClick={() => handleRemoveFromMyEvents(eventItem.id!)} disabled={unassignEventFromUser.isPending} >Don't Like</Button>
                     </div>
                 }
             </div>

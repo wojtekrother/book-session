@@ -14,6 +14,7 @@ async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
         description: event.description,
         duration: event.duration,
         summary: event.summary,
+        category: event.category,
         date: event.date,
         image: event.image,
         image_url: event.image_url

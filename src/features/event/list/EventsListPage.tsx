@@ -45,7 +45,7 @@ const events = useMemo(
         <main >
             <header className='mb-4 '>
                 <h2 className='text-2xl mx-auto w-min text-nowrap'>Available Events</h2>
-                <p className="mx-auto">
+                <p className="mx-auto w-max align-middle">
                     Many aviable events for you. Look and choose the best.
                 </p>
             </header>

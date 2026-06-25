@@ -119,6 +119,7 @@ async function login(credentials: UserLoginDTO): Promise<AuthResponseDTO> {
 }
 
 async function logout(): Promise<void> {
+    supabase.auth.signOut()
     const storage = new TokenStorage();
     storage.reset();
 }

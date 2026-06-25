@@ -17,7 +17,7 @@ const EventSearch = ({ setDateOrder, setDescription, setTitle, title, descriptio
     }
 
     return <>
-        <div className='flex mb-4 bg-amber-50'>
+        <div className='flex mb-4 bg-gray-50'>
             <p className="text-gray-600 flex flex-col m-2 ">
                 <label className="p-1">
                     Title:&nbsp;

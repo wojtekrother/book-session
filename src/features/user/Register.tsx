@@ -22,6 +22,10 @@ const RegisterPage = () => {
             email: "",
             password: "",
             confirmPassword: "",
+        },initFieldsRequired:{
+            email: false,
+            password: true,
+            confirmPassword: true
         }, initFieldsValidators: {
             email: validateLogin,
             password: validatePassword

@@ -1,45 +1,22 @@
-import studentsImg from '../../assets/students.jpg';
-import listImg from '../../assets/list.jpg';
-import certificateImg from '../../assets/certificate.jpg';
+
 
 export default function HomePage() {
   return (
     <main id="home-page">
-      <h2>Our Mission: Your Success</h2>
+      <h1 className='text-2xl  mx-auto w-max'>Welcome</h1>
       <section>
-        <img src={studentsImg} alt="A group of students" />
+        
         <div>
-          <h3>What we do</h3>
-          <p>
-            ReactMentoring is a platform for React developers to find mentors
-            who can help them with their React-related questions and problems.
-            We are a community of React developers who want to help each other
-            succeed.
+          <h2 className='text-xl mt-5 mx-auto w-max'>The best event around the world.</h2>
+          <p className='mt-3'>
+            All events from the world in one place. All categories sience, cultural and for fun. Always the best just for you.
+            Select your favourites and go. 
           </p>
         </div>
       </section>
 
-      <section>
-        <img src={listImg} alt="A list of events" />
-        <div>
-          <h3>What we offer</h3>
-          <p>
-            We offer a variety of mentoring events, from one-on-one mentoring
-            to group mentoring events. Browse our available events to find
-            the one that best fits your needs.
-          </p>
-        </div>
-      </section>
-      <section>
-        <img src={certificateImg} alt="A certificate" />
-        <div>
-          <h3>What you get</h3>
-          <p>
-            No matter if you are a beginner or an experienced React developer,
-            we are here to help you level up your React skills.
-          </p>
-        </div>
-      </section>
+      
+       
     </main>
   );
 }
