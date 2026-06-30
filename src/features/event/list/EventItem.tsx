@@ -5,6 +5,7 @@ import { useGetLoggedInUser, useUpdateUserAddEvent, useUpdateUserRemoveEvent } f
 import { EventDTO } from "../schema/event.shema"
 import { useRemoveEvent } from "../../../services/api/EventApiQuery"
 import trash from "../../../assets/trash.svg";
+import { EventApi } from "../../../services/api/EventApi"
 
 type EventItemParams = { eventItem: EventDTO, mode: "public" | "assigned" }
 
@@ -53,17 +54,17 @@ const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
 
     }
 
-
+    
 
     const eventAssigned: boolean = loggedInUser.data ? loggedInUser.data.eventsIds.includes(eventItem.id!) : false
     const isOptimistic: boolean = eventItem.id == "optimisti-update";
+    const image = !isOptimistic && eventItem.id ? EventApi.getEventImageTumbnail(eventItem.id) : null
 
 
     return (
         <div className=" bg-gray-50 p-4 box-content flex flex-col" data-testid="eventItem" >
             <div className="flex">
-                {eventItem.image_url && <img src={`${eventItem.image_url}`} className="h-28 border border-black/10 " />}
-                {eventItem.image && <img src={`.${eventItem.image}`} className="h-28 border border-black/10 " />}
+                {!isOptimistic && <img src={`${image}`} className="h-28 border border-black/10 " />}
                 <h2 className="text-xl p-2 ">{eventItem.title}</h2>
 
                 {isOptimistic &&

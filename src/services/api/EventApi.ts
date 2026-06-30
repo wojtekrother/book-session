@@ -1,6 +1,6 @@
 
 import { StringUtils } from "../../shared/utils/string";
-import { axiosRequestSafe, httpClientApi, PaginatedListResponse, paginatedSafeQuery, safeArrayQuery, safeQuery } from "./HttpClientApi";
+import { PaginatedListResponse, paginatedSafeQuery, safeArrayQuery, safeQuery } from "./HttpClientApi";
 import { EventCreateDTO, EventDTO, EventUpdateDTO, eventSchema } from "../../features/event/schema/event.shema";
 import { delay } from "../../shared/utils/dalay";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
@@ -15,12 +15,62 @@ async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
         duration: event.duration,
         summary: event.summary,
         category: event.category,
-        date: event.date,
-        image: event.image,
-        image_url: event.image_url
+        date: event.date
     }).select().single();
+
+    
     const createdEvent: EventDTO = await safeQuery(query, eventSchema)
+    if (createdEvent.id !== undefined && event.image) {
+        await saveEventImage(createdEvent.id, event.image)
+    }
+    
+
     return createdEvent;
+}
+
+const createThumbnail = async (file: File): Promise<Blob> => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    await new Promise(resolve => {
+        img.onload = resolve;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 300;
+    canvas.height = 200;
+
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(img, 0, 0, 300, 200);
+
+    return await new Promise(resolve =>
+        canvas.toBlob(blob => resolve(blob!), "image/jpeg", 0.8)
+    );
+};
+
+async function saveEventImage(eventId: string, file: File): Promise<void> {
+    const { error: error_original } = await supabase.storage
+        .from("events_images")
+        .upload(`${eventId}/original`, file);
+    
+        if (error_original) {
+            throw error_original;
+        }
+
+    const { error: error_tumnail } = await supabase.storage
+        .from("events_images")
+        .upload(`${eventId}/thumb`, await createThumbnail(file));
+        if (error_tumnail) {
+            throw error_tumnail
+        }
+}
+
+function getEventImageOriginal(eventId: string): string {
+    return supabase.storage.from("events_images").getPublicUrl(`${eventId}/original`).data.publicUrl;
+}
+
+function getEventImageTumbnail(eventId: string): string {
+    return supabase.storage.from("events_images").getPublicUrl(`${eventId}/thumb`).data.publicUrl;
 }
 
 async function removeEvent(eventId: string): Promise<EventDTO> {
@@ -85,27 +135,6 @@ async function getEvents({ eventSearchForm, signal: abortSignal }: GetEventProps
     return await safeArrayQuery<EventDTO>(
         query,
         eventSchema)
-
-    let queryParams: Record<string, string> = {
-        _sort: "date",
-        _order: encodeURI(eventSearchForm.dateOrder)
-    }
-
-    if (!StringUtils.isBlank(eventSearchForm.title)) {
-        queryParams.title = encodeURI(eventSearchForm.title);
-    }
-    if (!StringUtils.isBlank(eventSearchForm.description)) {
-        queryParams.description = encodeURI(eventSearchForm.description);
-    }
-
-    const response = await axiosRequestSafe<EventDTO[]>(
-        httpClientApi.get("/api/events", {
-            signal: abortSignal, params: {
-                ...queryParams
-            }
-        }),
-        eventSchema.array());
-    return response;
 }
 
 async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSignal }: GetEventProps): Promise<PaginatedListResponse<EventDTO>> {
@@ -116,7 +145,7 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
     const from = pageParam ? (pageParam - 1) * pageSize : 0;
     const to = from + pageSize - 1;
 
-    let query = supabase.from("events").select("*", {count: "planned"});
+    let query = supabase.from("events").select("*", { count: "planned" });
     if (!StringUtils.isBlank(eventSearchForm.title)) {
         query = query.ilike("title", `%${eventSearchForm.title}%`);
     }
@@ -136,4 +165,4 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
         eventSchema)
 }
 
-export const EventApi = { createEvent, removeEvent, updateEvent, getEvent, getEvents, getPaginatedEvents }
+export const EventApi = { createEvent, removeEvent, updateEvent, getEvent, getEvents, getPaginatedEvents, getEventImageOriginal, getEventImageTumbnail }

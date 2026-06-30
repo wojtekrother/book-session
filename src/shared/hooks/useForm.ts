@@ -53,11 +53,11 @@ const useForm = <T extends Record<string, any>>(
         const type = e.target.type;
         const value = e.target.value;
 
-        let valueTemp: T[keyof T];
-        if (e.target instanceof HTMLInputElement && type === "file") {
-            const files = e.target.files
-            valueTemp = files !== null ? await convertFileToString(files?.[0]) as unknown as T[keyof T] : "" as T[keyof T];
-        } else {
+         let valueTemp: T[keyof T];
+         if (e.target instanceof HTMLInputElement && type === "file") {
+             const files = e.target.files
+             valueTemp = files !== null ? files?.[0] as T[keyof T] : null as T[keyof T];
+         } else {
             valueTemp = value as T[keyof T];
         }
 

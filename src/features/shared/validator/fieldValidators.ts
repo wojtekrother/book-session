@@ -62,6 +62,15 @@ export const validateSummary = (summary: string): string | null => {
     return null;
 }
 
+export const validateNewEventDate = (date: Date): string| null => {
+    const todayString = new Date().toISOString().split('T')[0];
+    console.log(`date: ${todayString}`)
+    if ( date.toString() < todayString) {
+        return `Add only future events.`;
+    }
+    return null
+}
+
 export const validateDuration = (duration: string | number): string | null => {
     const MAX_DURATION_LENGTH = 3;
     const MAX_DURATION = 365;
