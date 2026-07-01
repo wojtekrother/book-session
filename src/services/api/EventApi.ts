@@ -145,7 +145,7 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
     const from = pageParam ? (pageParam - 1) * pageSize : 0;
     const to = from + pageSize - 1;
 
-    let query = supabase.from("events").select("*", { count: "planned" });
+    let query = supabase.from("events").select("*", { count: "exact" });
     if (!StringUtils.isBlank(eventSearchForm.title)) {
         query = query.ilike("title", `%${eventSearchForm.title}%`);
     }

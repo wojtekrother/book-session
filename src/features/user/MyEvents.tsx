@@ -18,7 +18,7 @@ const MyEventsPage = () => {
                     {loggedUser.data?.eventsIds &&
                         loggedUser.data?.eventsIds.map(eventId => {
 
-                            return <EventItemContainer mode="assigned" eventId={eventId} key={eventId}></EventItemContainer>
+                            return <EventItemContainer eventId={eventId} key={eventId}></EventItemContainer>
                         })}
                 </div>
             </article>

@@ -45,9 +45,6 @@ const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", descriptio
 }
 
 const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", description: "", dateOrder: "desc" }) => {
-
-
-
     return useInfiniteQuery<PaginatedListResponse<EventDTO>, Error,
         InfiniteData<PaginatedListResponse<EventDTO>>,
         ReturnType<typeof eventKey.infiniteList>,
@@ -57,10 +54,11 @@ const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", de
         queryFn: ({ pageParam, signal }) => EventApi.getPaginatedEvents({ pageParam, eventSearchForm, signal }),
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages,) => {
-            if (lastPage.data.length < 10) {
-                return undefined;
-            }
-            return allPages.length;
+            const loaded = allPages.flatMap(p => p.data).length;
+
+            return loaded < lastPage.meta.totalCount
+                ? allPages.length
+                : undefined;
         }
     });
 }

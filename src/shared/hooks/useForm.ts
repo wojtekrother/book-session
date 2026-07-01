@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { convertFileToString } from "../utils/file";
 
 export type Errors<T> = {
     [K in keyof T]?: string

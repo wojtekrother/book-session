@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react"
 import Input from "../../../shared/components/ui/Input"
 import Button from "../../../shared/components/ui/Button"
 import { toast } from "react-toastify"
-import { useCreateEvent, useUpdateEvent } from "../../../services/api/EventApiQuery"
+import { useCreateEvent } from "../../../services/api/EventApiQuery"
 import useForm from "../../../shared/hooks/useForm"
-import { EventCreateDTO,  } from "../schema/event.shema"
+import { EventCreateDTO, } from "../schema/event.shema"
 import { validateDescription, validateDuration, validateNewEventDate, validateSummary, validateTitle } from "../../shared/validator/fieldValidators"
 import ErrorField from "../../../shared/components/ui/ErrorField"
 import { useNavigate } from "react-router-dom"
@@ -17,7 +17,7 @@ type CreateEventModalProps = {
 }
 
 const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) => {
-   
+
 
     const { handleSubmit, register, isFormReady, reset, values: formValues, setAllValues: setFormValues } = useForm<EventCreateDTO>({
         initialValue: {
@@ -28,7 +28,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
             summary: "",
             category: "uncategorized",
             image: null
-        } , 
+        },
         initFieldsRequired: {
             title: true,
             date: false,
@@ -89,7 +89,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
     }
 
 
-    function restoreFormAndOpenModal(form: EventCreateDTO , openModal: () => void) {
+    function restoreFormAndOpenModal(form: EventCreateDTO, openModal: () => void) {
         setFormValues(form);
         openModal();
     }
@@ -105,24 +105,24 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
         );
     }
 
-   
+
     async function onSubmit(form: EventCreateDTO) {
         closeModal();
         navigate("/events");
-            createEvent.mutate(form, {
-                onError: (error, variables: EventCreateDTO) => {
-                    setGlobalError([`Error during saving event ${error.message}`]);
-                    toast.error("Failed to create event");
-                    toast(<Msg openModal={() => restoreFormAndOpenModal(form, openModal)} ></Msg>)
+        createEvent.mutate(form, {
+            onError: (error, variables: EventCreateDTO) => {
+                setGlobalError([`Error during saving event ${error.message}`]);
+                toast.error("Failed to create event");
+                toast(<Msg openModal={() => restoreFormAndOpenModal(form, openModal)} ></Msg>)
 
-                    setFormValues(variables)
-                },
-                onSuccess: (_savedEvent) => {
-                    reset();
-                    fileInputRef.current!.value = "";
-                    toast.success("New event sucesfully created");
-                },
-            })
+                setFormValues(variables)
+            },
+            onSuccess: (_savedEvent) => {
+                reset();
+                fileInputRef.current!.value = "";
+                toast.success("New event sucesfully created");
+            },
+        })
     }
 
 
@@ -130,7 +130,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl">
             <ErrorField errors={globalError} />
             <div>
-                {}
+                { }
                 <Input label="Title" {...register("title")} />
                 <TextArea label="Description" {...register("description")} />
                 <Input label="Summary" {...register("summary")} />

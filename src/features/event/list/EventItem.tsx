@@ -4,10 +4,10 @@ import { EventDTO } from "../schema/event.shema"
 import { EventApi } from "../../../services/api/EventApi"
 import LikeButton from "../../../shared/components/ui/LikeButton"
 
-type EventItemParams = { eventItem: EventDTO, mode: "public" | "assigned" }
+type EventItemParams = { eventItem: EventDTO }
 
 
-const EventItem = ({ eventItem, mode = "public" }: EventItemParams) => {
+const EventItem = ({ eventItem }: EventItemParams) => {
     const loggedInUser = useGetLoggedInUser();
 
     const eventAssigned: boolean = loggedInUser.data ? loggedInUser.data.eventsIds.includes(eventItem.id!) : false

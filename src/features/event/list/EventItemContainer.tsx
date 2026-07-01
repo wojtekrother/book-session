@@ -3,9 +3,9 @@ import { useGetEvent } from "../../../services/api/EventApiQuery";
 import Button from "../../../shared/components/ui/Button";
 import EventItem from "./EventItem";
 
-export type EventItemContainerProps = { eventId: string, mode: "public" | "assigned" }
+export type EventItemContainerProps = { eventId: string }
 
-const EventItemContainer = ({eventId, mode}:EventItemContainerProps) => {
+const EventItemContainer = ({eventId}:EventItemContainerProps) => {
     const { data, error, isPending } = useGetEvent(eventId)
 
     if (error) {
@@ -20,7 +20,7 @@ const EventItemContainer = ({eventId, mode}:EventItemContainerProps) => {
      }
 
 
-    return <EventItem eventItem={data} mode={mode}></EventItem>
+    return <EventItem eventItem={data}></EventItem>
 }
 
 export default EventItemContainer;
