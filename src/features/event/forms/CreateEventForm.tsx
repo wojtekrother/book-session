@@ -19,7 +19,7 @@ type CreateEventModalProps = {
 const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) => {
 
 
-    const { handleSubmit, register, isFormReady, reset, values: formValues, setAllValues: setFormValues } = useForm<EventCreateDTO>({
+    const { handleSubmit, register, isFormReady, reset, setAllValues: setFormValues } = useForm<EventCreateDTO>({
         initialValue: {
             title: "",
             date: new Date(),

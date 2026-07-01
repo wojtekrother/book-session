@@ -57,7 +57,7 @@ const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", de
             const loaded = allPages.flatMap(p => p.data).length;
 
             return loaded < lastPage.meta.totalCount
-                ? allPages.length
+                ? allPages.length + 1
                 : undefined;
         }
     });
