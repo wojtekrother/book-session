@@ -1,7 +1,5 @@
 import { jwtDecode } from "jwt-decode";
 import { TokenStorage } from "./auth/TokenStorage";
-
-
 import {  safeQuery } from "./HttpClientApi";
 import {  likedEventsResponseSchema, UserCreateDTO, UserDTO, userLikedEventsDTO, UserLoginDTO, userProfileSchema, likedEventResponseSchema } from "../../features/user/schema/user.schema";
 import { AuthResponseDTO,  } from "../../features/shared/schema/tokens.schema";
@@ -11,7 +9,7 @@ import {  User } from "@supabase/supabase-js";
 async function getAuthUser(): Promise<User> {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
-        throw error
+        throw error;
     }
     return data.user;
 }
@@ -43,11 +41,11 @@ async function getLoggedInUserDTO(): Promise<UserDTO | null> {
     if (userId === null) {
         return null;
     }
-    const userDTO = await getUserDTO()
+    const userDTO = await getUserDTO();
     return userDTO;
 }
 
-async function userAddEvent(eventId: string): Promise<void> {
+async function userLikeEvent(eventId: string): Promise<void> {
     if (await isUserLikedEvent(eventId)) {
         throw new Error(`User already liked this event.`)
     }
@@ -60,10 +58,10 @@ async function userAddEvent(eventId: string): Promise<void> {
     return;
 }
 
-async function userRemoveEvent(eventId: string): Promise<void> {
+async function userUnlikeEvent(eventId: string): Promise<void> {
 
     if (!await isUserLikedEvent(eventId)) {
-        throw new Error(`User already don't like this event`)
+        throw new Error(`User already don't like this event`);
     }
 
     const { error } = await supabase.from("event_likes").delete().eq("event_id", eventId);
@@ -119,7 +117,7 @@ async function login(credentials: UserLoginDTO): Promise<AuthResponseDTO> {
 }
 
 async function logout(): Promise<void> {
-    supabase.auth.signOut()
+    supabase.auth.signOut();
     const storage = new TokenStorage();
     storage.reset();
 }
@@ -148,19 +146,19 @@ async function isUserLikedEvent(eventId: string): Promise<boolean> {
 
 
 export function getCurrentUserId(): string | null {
-    const token = localStorage.getItem("accessToken")
-    if (!token) return null
+    const token = localStorage.getItem("accessToken");
+    if (!token) return null;
 
     try {
-        const decoded = jwtDecode<{ sub: string }>(token)
-        return decoded.sub
+        const decoded = jwtDecode<{ sub: string }>(token);
+        return decoded.sub;
     } catch {
-        return null
+        return null;
     }
 }
 
 
-export const UserApi = { getLoggedInUser: getLoggedInUserDTO, userAddEvent, userRemoveEvent, register, login, logout }
+export const UserApi = { getLoggedInUser: getLoggedInUserDTO, userLikeEvent, userUnlikeEvent, register, login, logout }
 
 
 

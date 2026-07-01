@@ -1,10 +1,18 @@
 import { useParams } from 'react-router-dom';
-import { useGetEvent } from '../../../services/api/EventApiQuery.ts';
+import { useGetEvent, useRemoveEvent } from '../../../services/api/EventApiQuery.ts';
 import { Oval } from 'react-loader-spinner';
+import { EventApi } from '../../../services/api/EventApi.ts';
+import Button from '../../../shared/components/ui/Button.tsx';
+import { useGetLoggedInUser } from '../../../services/api/UserApiQuery.ts';
+import LikeButton from '../../../shared/components/ui/LikeButton.tsx';
+import trash from "../../../assets/trash.svg";
+import { toast } from 'react-toastify';
 
 export default function EventDetailsPage() {
   const params = useParams<{ id: string }>();
   const { data: loadedEvent, isPending } = useGetEvent(params.id!)
+  const loggedInUser = useGetLoggedInUser();
+  const removeEvent = useRemoveEvent();
 
   let content: JSX.Element | null = null;
 
@@ -21,48 +29,73 @@ export default function EventDetailsPage() {
       strokeWidthSecondary={2}
     /></div>
   } else if (!loadedEvent) {
-    content = <p className='mx-auto mt-20'>No event found!</p>
-  }
+    content = <p className='mx-auto mt-20'>
+      <Button href="/events">No event found! Go to events.</Button>
+    </p>
+  } else {
+
+    const image = loadedEvent.id ? EventApi.getEventImageOriginal(loadedEvent.id) : "";
+    const eventAssigned: boolean = loggedInUser.data ? loggedInUser.data.eventsIds.includes(loadedEvent.id!) : false
+
+    async function handleRemoveEvent(eventId: string): Promise<void> {
+      const result = confirm("Are you sure to remove this Event?");
+      if (result) {
+        removeEvent.mutate(eventId, {
+          onError: () => {
+            toast.error("Error during removing event")
+          },
+          onSuccess: () => {
+            toast.success("Successfuly removed event")
+          }
+        })
+      }
+    }
 
 
+    return (
+      <main className=' h-max min-h-96'>
+        <header className='mb-4 '>
+          <h1 className='text-2xl text-center '>{loadedEvent.title}</h1>
+        </header>
+        <article className='bg-gray-50 p-4 box-content flex flex-col w-auto'>
+          {content && content}
+          {loadedEvent &&
+            <>
+              <header className=''>
+                <img className=' border border-black/10'
+                  src={image}
+                  alt="Event image"
+                />
 
-
-
-  return (
-    <main className=' h-max min-h-96'>
-      <header className='mb-4 '>
-        <h2 className='text-2xl mx-auto w-min text-nowrap'>Event details</h2>
-        <p className="mx-auto w-max align-middle">
-          More info about event.
-        </p>
-      </header>
-      <article className='bg-gray-50 p-4 box-content flex flex-col w-auto'>
-        {content && content}
-        {loadedEvent &&
-          <div className='flex'>
-            <header>
-              <img className='h-32 border border-black/10'
-                src={loadedEvent.image_url ?? loadedEvent.image ?? undefined}
-                alt="Event image"
-              />
-              <div>
-                <h1 className='text-2xl'>{loadedEvent.title}</h1>
-                <time dateTime={new Date(loadedEvent.date).toISOString()}>
-                  {new Date(loadedEvent.date).toLocaleDateString('en-US', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
-                </time>
-                <p>
-                  {/* Todo: Add button that opens "Book Event" dialog / modal */}
+              </header>
+              <div className='mt-4 font-bold'>
+                <p>Starts on:&nbsp;
+                  <time dateTime={new Date(loadedEvent.date).toISOString()}>
+                    {new Date(loadedEvent.date).toLocaleDateString('en-US', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </time>
                 </p>
+
               </div>
-            </header>
-            <p id="content">{loadedEvent.description}</p>
-          </div>
-        }
-      </article>
-    </main>
-  );
+              <p id="content" className='mt-4'>{loadedEvent.description}</p>
+              <div className="actions">
+                <Button href={`/events`} >Go back to events</Button>
+
+                <LikeButton eventId={loadedEvent.id!} like={!eventAssigned} disabled={!loggedInUser.data} />
+                {!loadedEvent.deleted_at && loggedInUser.data &&
+                  <Button className="px-1 py-1 bg-transparent" onClick={() => handleRemoveEvent(loadedEvent.id!)} disabled={removeEvent.isPending}>
+                    <img src={trash} alt="trash" className="w-5" />
+                  </Button>
+                }
+              </div>
+
+            </>
+          }
+        </article>
+      </main>
+    );
+  }
 }

@@ -66,7 +66,7 @@ const events = useMemo(
                     <SkeletonList itemsCount={toLoadOnNextPage}></SkeletonList>
                 }
                 {(searchQuery.isSuccess && !searchQuery.hasNextPage) &&
-                    <p className="mx-auto"> No more data to load </p>
+                    <p className="text-center"> No more data to load. </p>
                 }
             </div>
         </main>

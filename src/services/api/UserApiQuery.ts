@@ -4,53 +4,56 @@ import { queryClient } from "../../App"
 import { AuthResponseDTO } from "../../features/shared/schema/tokens.schema"
 import { UserCreateDTO, UserDTO, UserLoginDTO } from "../../features/user/schema/user.schema"
 
+export const userKey = {
+    loggedIn: ["loggedInUser"] as const,
+};
 
 type UserContext = {
     previousUser?: UserDTO;
 };
 
-const useUpdateUserAddEvent = () => {
+const useUserLikeEvent = () => {
     return useMutation<void, Error, string, UserContext>({
-        mutationFn: (eventId) => UserApi.userAddEvent(eventId),
+        mutationFn: (eventId) => UserApi.userLikeEvent(eventId),
         onMutate: async (eventId, _context) => {
-            
-            await queryClient.cancelQueries({ queryKey: ['loggedInUser'] });
-            const previousUser = queryClient.getQueryData<UserDTO>(['loggedInUser']);
 
-            queryClient.setQueryData<UserDTO>(['loggedInUser'], (old) => {
+            await queryClient.cancelQueries({ queryKey: userKey.loggedIn });
+            const previousUser = queryClient.getQueryData<UserDTO>(userKey.loggedIn);
+
+            queryClient.setQueryData<UserDTO>(userKey.loggedIn, (old) => {
                 if (!old) return old;
                 return { ...old, eventsIds: [...old.eventsIds, eventId] };
             });
             return { previousUser };
         },
-        onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["loggedInUser"] }) },
+        onSuccess: () => { queryClient.invalidateQueries({ queryKey: userKey.loggedIn }) },
         onError: (err, _eventId, context) => {
             if (context?.previousUser) {
-                queryClient.setQueryData(['loggedInUser'], context.previousUser);
+                queryClient.setQueryData(userKey.loggedIn, context.previousUser);
             }
             throw err;
         }
     })
 }
 
-const useUpdateUserRemoveEvent = () => {
+const useUserUnlikeEvent = () => {
     return useMutation<void, Error, string, UserContext>({
-        mutationFn: (eventId) => UserApi.userRemoveEvent(eventId),
+        mutationFn: (eventId) => UserApi.userUnlikeEvent(eventId),
         onMutate: async (eventId, _context) => {
-            
-            await queryClient.cancelQueries({ queryKey: ['loggedInUser'] });
-            const previousUser = queryClient.getQueryData<UserDTO>(['loggedInUser']);
 
-            queryClient.setQueryData<UserDTO>(['loggedInUser'], (old) => {
+            await queryClient.cancelQueries({ queryKey: userKey.loggedIn });
+            const previousUser = queryClient.getQueryData<UserDTO>(userKey.loggedIn);
+
+            queryClient.setQueryData<UserDTO>(userKey.loggedIn, (old) => {
                 if (!old) return old;
                 return { ...old, eventsIds: old.eventsIds.filter((item => item !== eventId)) };
             });
             return { previousUser };
         },
-        onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["users"] }) },
+        onSuccess: () => { queryClient.invalidateQueries({ queryKey: userKey.loggedIn }) },
         onError: (err, _eventId, context) => {
             if (context?.previousUser) {
-                queryClient.setQueryData(['loggedInUser'], context.previousUser);
+                queryClient.setQueryData(userKey.loggedIn, context.previousUser);
             }
             throw err;
         }
@@ -62,7 +65,7 @@ const useLoginUser = () => {
     return useMutation<AuthResponseDTO, Error, UserLoginDTO>({
         mutationFn: (credentials) => UserApi.login(credentials),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["loggedInUser"] })
+            queryClient.invalidateQueries({ queryKey: userKey.loggedIn })
         }
     })
 }
@@ -75,7 +78,7 @@ const useRegisterUser = () => {
 
 const useGetLoggedInUser = () => {
     return useQuery({
-        queryKey: ["loggedInUser"],
+        queryKey: userKey.loggedIn,
         queryFn: () => UserApi.getLoggedInUser(),
         staleTime: 60 * 1000
     })
@@ -83,12 +86,12 @@ const useGetLoggedInUser = () => {
 
 const logoutUser = () => {
     UserApi.logout();
-    queryClient.invalidateQueries({ queryKey: ["loggedInUser"] });
+    queryClient.invalidateQueries({ queryKey: userKey.loggedIn });
 }
 
 export {
-    useUpdateUserAddEvent,
-    useUpdateUserRemoveEvent,
+    useUserLikeEvent,
+    useUserUnlikeEvent,
     useLoginUser,
     useRegisterUser,
     useGetLoggedInUser,
