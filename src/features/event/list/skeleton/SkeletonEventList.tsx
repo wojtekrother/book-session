@@ -7,23 +7,6 @@ const SkeletonList = ({ itemsCount }: { itemsCount: number }) => {
             {Array.from({ length: itemsCount }).map((_, index) => {
                 return <SkeletonListItem key={index} />
             })}
-
-            {/* <div className={`z-10 inset-0 absolute bg-gray-500/50 `} >
-                <div role="status"
-                    aria-label='loading'
-                    className="mx-auto flex justify-center sticky top-32 mt-32 "
-                >
-                    <Oval
-                        height={80}
-                        width={80}
-                        color="#614da9"
-                        visible={true}
-                        ariaLabel="oval-loading"
-                        secondaryColor="#a3a94d"
-                        strokeWidth={2}
-                        strokeWidthSecondary={2}
-                    /></div>
-            </div> */}
         </div>
     </>
 }

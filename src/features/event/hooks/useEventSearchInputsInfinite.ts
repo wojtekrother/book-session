@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import {  InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
-import { EventDTO } from "../schema/event.shema";
+import { EventDTO } from "../schema/event.schema";
 import useEventSearchApiInfinite from "./useEventSearchApiInfinite";
 import { PaginatedListResponse } from "../../../services/api/HttpClientApi";
 

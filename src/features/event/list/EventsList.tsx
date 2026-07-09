@@ -1,4 +1,4 @@
-import { EventDTO } from '../schema/event.shema.ts';
+import { EventDTO } from '../schema/event.schema.ts';
 import EventItem from './EventItem.tsx';
 
 

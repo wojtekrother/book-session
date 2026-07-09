@@ -1,6 +1,6 @@
 import Button from "../../../shared/components/ui/Button"
 import { useGetLoggedInUser} from "../../../services/api/UserApiQuery"
-import { EventDTO } from "../schema/event.shema"
+import { EventDTO } from "../schema/event.schema"
 import { EventApi } from "../../../services/api/EventApi"
 import LikeButton from "../../../shared/components/ui/LikeButton"
 

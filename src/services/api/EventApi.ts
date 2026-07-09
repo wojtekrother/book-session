@@ -1,7 +1,7 @@
 
 import { StringUtils } from "../../shared/utils/string";
 import { PaginatedListResponse, paginatedSafeQuery, safeArrayQuery, safeQuery } from "./HttpClientApi";
-import { EventCreateDTO, EventDTO, EventUpdateDTO, eventSchema } from "../../features/event/schema/event.shema";
+import { EventCreateDTO, EventDTO, EventUpdateDTO, eventSchema } from "../../features/event/schema/event.schema";
 import { delay } from "../../shared/utils/dalay";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
 import { supabase } from "./supabase";
@@ -138,7 +138,7 @@ async function getEvents({ eventSearchForm, signal: abortSignal }: GetEventProps
 }
 
 async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSignal }: GetEventProps): Promise<PaginatedListResponse<EventDTO>> {
-    await delay(500)
+    //await delay(500)
 
     const pageSize = 10;
 

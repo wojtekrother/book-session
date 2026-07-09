@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import useEventSearchApi from "./useEventSearchApi";
 import { UseQueryResult } from "@tanstack/react-query";
-import { EventDTO } from "../schema/event.shema";
+import { EventDTO } from "../schema/event.schema";
 
 export type useEventSearchInputsResult = {
     searchQuery: UseQueryResult<EventDTO[], Error>,

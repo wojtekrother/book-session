@@ -1,5 +1,5 @@
 import useLikeEvent from "../../../features/event/hooks/useLikeEvent";
-import useUnlikeEvent from "../../../features/event/hooks/useUnikeEvent";
+import useUnlikeEvent from "../../../features/event/hooks/useUnlikeEvent";
 import likeIcon from "../../../assets/like.svg";
 import unlikeIcon from "../../../assets/unlike.svg";
 import Button from "./Button";

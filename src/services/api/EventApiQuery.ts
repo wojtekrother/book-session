@@ -1,7 +1,7 @@
 import { InfiniteData, QueryKey, useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import { EventApi } from "./EventApi";
 import { queryClient } from "../../App";
-import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.shema";
+import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.schema";
 import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
 import { PaginatedListResponse } from "./HttpClientApi";
 import { StringUtils } from "../../shared/utils/string";
