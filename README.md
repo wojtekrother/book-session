@@ -45,7 +45,7 @@ Authenticated users with appropriate permissions can create new events.
 
 Users can search events and change the sorting order.
 
-![Search and Filtering](./screenshots/search.jpg)
+![Search and Filtering](./screenshots/event-search.jpg)
 
 ### Authentication
 
