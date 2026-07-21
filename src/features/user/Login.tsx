@@ -78,7 +78,7 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="bg-amber-50 p-2 max-w-2xl min-w-xl mx-auto">
+        <div className="bg-gray-50 p-2 max-w-2xl min-w-xl mx-auto">
             <form onSubmit={submitForm}>
                 <ErrorField errors={globalError} />
                 <div className="control">

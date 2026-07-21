@@ -62,13 +62,24 @@ export const validateSummary = (summary: string): string | null => {
     return null;
 }
 
-export const validateNewEventDate = (date: Date): string| null => {
-    const todayString = new Date().toISOString().split('T')[0];
-    console.log(`date: ${todayString}`)
-    if ( date.toString() < todayString) {
-        return `Add only future events.`;
+export const validateNewEventDate = (date: Date | string): string | null => {
+    const eventDate = date instanceof Date ? date : new Date(date);
+
+    if (Number.isNaN(eventDate.getTime())) {
+        return "Invalid date.";
     }
-    return null
+
+    const today = new Date();
+
+    // ignorujemy godzinę
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+
+    if (eventDate < today) {
+        return "Add only future events.";
+    }
+
+    return null;
 }
 
 export const validateDuration = (duration: string | number): string | null => {

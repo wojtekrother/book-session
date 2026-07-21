@@ -6,7 +6,7 @@ describe("Zod validation", () => {
         const input: EventDTO = {
             id: "123",
             category: "entertainment",
-            date: new Date(),
+            date: '2026-06-01',
             description: "descriotion",
             duration: 1,
             summary: "sum",
@@ -24,7 +24,7 @@ describe("Zod validation", () => {
         const input: EventDTO = {
             id: "123",
             category: "entertainment",
-            date: new Date(),
+            date: '2026-06-01',
             description: "d",//too short
             duration: 1,
             summary: "s",//too short
@@ -42,7 +42,7 @@ describe("Zod validation", () => {
         const input = {
             id: "123",
             category: "entertainment",
-            date: new Date(),
+            date: '2026-06-01',
             description: "description",
             duration: 1,
             title: "1234567890",

@@ -10,6 +10,7 @@ import ErrorField from "../../../shared/components/ui/ErrorField"
 import { useNavigate } from "react-router-dom"
 import Select from "../../../shared/components/ui/Select"
 import TextArea from "../../../shared/components/ui/TextArea"
+import { getTodayDateString } from "../../../shared/utils/date"
 
 type CreateEventModalProps = {
     closeModal: () => void,
@@ -22,7 +23,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
     const { handleSubmit, register, isFormReady, reset, setAllValues: setFormValues } = useForm<EventCreateDTO>({
         initialValue: {
             title: "",
-            date: new Date(),
+            date: getTodayDateString(),
             description: "",
             duration: 1,
             summary: "",
@@ -80,7 +81,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
         setFormValues({
             title: `title ${getRandomString(3)}`,
             description: `description ${getRandomString(4)}`,
-            date: new Date(),
+            date: getTodayDateString(),
             duration: Math.ceil(Math.random() * 4),
             summary: `Summary ${getRandomString(4)}`,
             category: "uncategorized",

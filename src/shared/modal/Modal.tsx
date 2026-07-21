@@ -63,11 +63,11 @@ const Modal = forwardRef<ModalHandler, ModalProps>(({ children }: ModalProps, re
 
 
     return <>{modalRootElement ? createPortal(
-        <dialog ref={modal} className="modal mx-auto p-6 m-3 rounded-2xl">
+        <dialog ref={modal} className="modal mx-auto py-6 px-3 m-3 rounded-2xl max-h-[90vh] overflow-hidden">
             <button className="close-button h-6 w-6  absolute -top-1 text-3xl right-2 "
                 aria-label="Close"
                 onClick={closeModal}>&times;</button>
-            <div className="modal-content">
+            <div className="modal-content max-h-[calc(90vh-3rem)] overflow-y-auto px-3">
                 {children}
             </div>
 

@@ -30,6 +30,7 @@ const EventItem = ({ eventItem }: EventItemParams) => {
                 {!isOptimistic &&
                     <div className="actions mt-auto self-end ">
                         <Button href={`/events/${eventItem.id}`} >Details</Button>
+                        
                         <LikeButton eventId={eventItem.id!} like={!eventAssigned} disabled={!loggedInUser.data}/>
                     </div>
                 }

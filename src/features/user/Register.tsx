@@ -7,6 +7,7 @@ import useForm, { Errors } from "../../shared/hooks/useForm";
 import { UserCreateDTO } from "./schema/user.schema";
 import { useGetLoggedInUser, useRegisterUser } from "../../services/api/UserApiQuery";
 import { validateLogin, validatePassword } from "../shared/validator/fieldValidators";
+import { toast } from "react-toastify";
 
 const registerValidate = (register: UserCreateDTO): Errors<UserCreateDTO> => {
     let errors: Errors<UserCreateDTO> = {};
@@ -22,7 +23,7 @@ const RegisterPage = () => {
             email: "",
             password: "",
             confirmPassword: "",
-        },initFieldsRequired:{
+        }, initFieldsRequired: {
             email: false,
             password: true,
             confirmPassword: true
@@ -52,11 +53,14 @@ const RegisterPage = () => {
                 onError: (error) => {
                     setGlobalError([error.message]);
                 },
-                onSuccess: () => { navigation("/user/events") }
+                onSuccess: () => {
+                    toast.success("Thank you for registration :)")
+                    navigation("/user/events")
+                }
             });
         } catch (e: unknown) {
             if (e instanceof Error) {
-
+                setGlobalError([e.message]);
                 return;
             }
         }
@@ -64,7 +68,7 @@ const RegisterPage = () => {
     }
 
     return (
-        <div className="bg-amber-50 p-2 max-w-2xl min-w-xl mx-auto">
+        <div className="bg-gray-50 p-2 max-w-2xl min-w-xl mx-auto">
             <form onSubmit={form.handleSubmit(submitForm)}>
                 <ErrorField errors={globalError} />
                 <div className="control">

@@ -1,32 +1,36 @@
 import { jwtDecode } from "jwt-decode";
 import { TokenStorage } from "./auth/TokenStorage";
-import {  safeQuery } from "./HttpClientApi";
-import {  likedEventsResponseSchema, UserCreateDTO, UserDTO, userLikedEventsDTO, UserLoginDTO, userProfileSchema, likedEventResponseSchema } from "../../features/user/schema/user.schema";
-import { AuthResponseDTO,  } from "../../features/shared/schema/tokens.schema";
+import { safeQuery } from "./HttpClientApi";
+import { likedEventsResponseSchema, UserCreateDTO, UserDTO, userLikedEventsDTO, UserLoginDTO, userProfileSchema, likedEventResponseSchema } from "../../features/user/schema/user.schema";
+import { AuthResponseDTO, } from "../../features/shared/schema/tokens.schema";
 import { supabase } from "./supabase";
-import {  User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 
-async function getAuthUser(): Promise<User> {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-        throw error;
-    }
-    return data.user;
+async function getAuthUser(): Promise<User | null> {
+    const { data: { session }} = await supabase.auth.getSession();
+
+    return session?.user ?? null;
 }
 
-async function getUserDTO(user?: User): Promise<UserDTO> {
+async function getUserDTO(user?: User): Promise<UserDTO | null> {
+    if (user == null) {
+        const authUser = await getAuthUser();
+        if (authUser == null) {
+            return null;
+        }
+        user = authUser; 
+    }
+
     const userProfile = await getUserProfile();
     const userLikedEvents: userLikedEventsDTO = await getUserLikedEvents();
-    if (user == null) {
-        user = await getAuthUser();
-    }
+
     const userDTO: UserDTO =
     {
         email: user.email!,
         id: user.id,
         role: userProfile.role,
         eventsIds: userLikedEvents,
-        created_at:user.created_at,
+        created_at: user.created_at,
         updated_at: user.updated_at ?? null,
         deleted_at: user.deleted_at ?? null
     }
@@ -86,7 +90,7 @@ async function register(createUser: UserCreateDTO): Promise<AuthResponseDTO> {
         const userDTO = await getUserDTO(user);
         let response: AuthResponseDTO = {
             accessToken: session?.access_token,
-            user: userDTO
+            user: userDTO!
         }
         return response;
     }
@@ -109,7 +113,7 @@ async function login(credentials: UserLoginDTO): Promise<AuthResponseDTO> {
         const userDTO = await getUserDTO(user);
         let response: AuthResponseDTO = {
             accessToken: session?.access_token,
-            user: userDTO
+            user: userDTO!
         }
         return response;
     }
@@ -117,7 +121,7 @@ async function login(credentials: UserLoginDTO): Promise<AuthResponseDTO> {
 }
 
 async function logout(): Promise<void> {
-    supabase.auth.signOut();
+    await supabase.auth.signOut();
     const storage = new TokenStorage();
     storage.reset();
 }

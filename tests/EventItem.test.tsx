@@ -22,7 +22,7 @@ describe("Event Item validation", () => {
         description: "description",
         summary: "summary",
         category: "culture",
-        date: new Date("2026-07-03T10:00:00Z"),
+        date: "2026-07-03",
         duration: 3,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-02T10:00:00Z",

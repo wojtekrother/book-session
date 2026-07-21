@@ -9,6 +9,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EventsListPage from './features/event/list/EventsListPage.tsx';
 import RegisterPage from './features/user/Register.tsx';
 import Loggout from './shared/components/ui/Logout.tsx';
+import { useEffect } from 'react';
+import { supabase } from './services/api/supabase.ts';
+import { userKeys as userKeys } from './services/api/UserApiQuery.ts';
 
 
 const Router = createBrowserRouter([
@@ -51,13 +54,25 @@ declare global {
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 function App() {
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log(event, session);
+      if (!session) {
+        queryClient.setQueryData(userKeys.loggedIn, null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      {/* <UserContextProvider> */}
-        {/* <EventProvider > */}
-        <RouterProvider router={Router} />
-        {/* </EventProvider> */}
-      {/* </UserContextProvider> */}
+      <RouterProvider router={Router} />
     </QueryClientProvider>
   );
 }

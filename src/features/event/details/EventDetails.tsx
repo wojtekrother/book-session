@@ -7,12 +7,19 @@ import { useGetLoggedInUser } from '../../../services/api/UserApiQuery.ts';
 import LikeButton from '../../../shared/components/ui/LikeButton.tsx';
 import trash from "../../../assets/trash.svg";
 import { toast } from 'react-toastify';
+import Modal, { ModalHandler } from '../../../shared/modal/Modal.tsx';
+import { useRef } from 'react';
+import UpdateEventForm_RHF from '../forms/UpdateEventForm.tsx';
 
 export default function EventDetailsPage() {
   const params = useParams<{ id: string }>();
   const { data: loadedEvent, isPending } = useGetEvent(params.id!)
   const loggedInUser = useGetLoggedInUser();
   const removeEvent = useRemoveEvent();
+
+  const modal = useRef<ModalHandler>(null);
+
+
 
   let content: JSX.Element | null = null;
 
@@ -54,6 +61,11 @@ export default function EventDetailsPage() {
 
     return (
       <main className=' h-max min-h-96'>
+        <Modal ref={modal} >
+          <UpdateEventForm_RHF eventToEdit={loadedEvent!}
+            closeModal={() => modal.current?.close()}
+            openModal={() => modal.current?.open()} />
+        </Modal>
         <header className='mb-4 '>
           <h1 className='text-2xl text-center '>{loadedEvent.title}</h1>
         </header>
@@ -83,9 +95,12 @@ export default function EventDetailsPage() {
               <p id="content" className='mt-4'>{loadedEvent.description}</p>
               <div className="actions">
                 <Button href={`/events`} >Go back to events</Button>
+                {loggedInUser.data?.role == "admin" &&
+                  <Button textonly={false} onClick={() => modal.current?.open()} >Edit</Button>
+                }
 
                 <LikeButton eventId={loadedEvent.id!} like={!eventAssigned} disabled={!loggedInUser.data} />
-                {!loadedEvent.deleted_at && loggedInUser.data &&
+                {!loadedEvent.deleted_at && loggedInUser.data?.role == "admin" &&
                   <Button className="px-1 py-1 bg-transparent" onClick={() => handleRemoveEvent(loadedEvent.id!)} disabled={removeEvent.isPending}>
                     <img src={trash} alt="trash" className="w-5" />
                   </Button>

@@ -12,12 +12,12 @@ const eventSchemaBase = z.object({
     description: z.string().min(3).max(1000),
     duration: z.number().min(1).max(365),
     category: eventCategorySchema,
-    date: z.coerce.date()
+    date: z.iso.date()
 });
 
 export const eventSchema = eventSchemaBase.extend(auditSchema.shape);
 export const createEventSchema = eventSchemaBase.omit({id:true}).extend({image: z.file().nullable()});
-export const updateEventSchema = eventSchemaBase.partial().omit({id:true}).extend({ id: z.string() }).extend({image: z.file().nullable()});;
+export const updateEventSchema = eventSchemaBase.omit({id:true}).extend({ id: z.string() }).extend({image: z.file().nullable().optional()});;
 
 export type EventDTO = z.infer<typeof eventSchema>;
 export type EventUpdateDTO = z.infer<typeof updateEventSchema>;
