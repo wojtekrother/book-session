@@ -19,7 +19,8 @@ export default function EventDetailsPage() {
 
   const modal = useRef<ModalHandler>(null);
 
-
+  const isAdmin = loggedInUser.data?.role == "admin";
+  const isOwner = loggedInUser.data?.id == loadedEvent?.owner_user_id;
 
   let content: JSX.Element | null = null;
 
@@ -95,12 +96,12 @@ export default function EventDetailsPage() {
               <p id="content" className='mt-4'>{loadedEvent.description}</p>
               <div className="actions">
                 <Button href={`/events`} >Go back to events</Button>
-                {loggedInUser.data?.role == "admin" &&
+                {isAdmin || isOwner &&
                   <Button textonly={false} onClick={() => modal.current?.open()} >Edit</Button>
                 }
 
                 <LikeButton eventId={loadedEvent.id!} like={!eventAssigned} disabled={!loggedInUser.data} />
-                {!loadedEvent.deleted_at && loggedInUser.data?.role == "admin" &&
+                {!loadedEvent.deleted_at && (isAdmin || isOwner) &&
                   <Button className="px-1 py-1 bg-transparent" onClick={() => handleRemoveEvent(loadedEvent.id!)} disabled={removeEvent.isPending}>
                     <img src={trash} alt="trash" className="w-5" />
                   </Button>

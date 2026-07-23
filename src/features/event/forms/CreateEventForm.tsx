@@ -28,7 +28,8 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
             duration: 1,
             summary: "",
             category: "uncategorized",
-            image: null
+            image: null,
+            owner_user_id: null
         },
         initFieldsRequired: {
             title: true,
@@ -38,6 +39,7 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
             summary: true,
             category: true,
             image: false,
+            owner_user_id: false
         }, initFieldsValidators: {
             title: validateTitle,
             duration: validateDuration,
@@ -85,7 +87,8 @@ const CreateEventForm_v2 = ({ closeModal, openModal }: CreateEventModalProps) =>
             duration: Math.ceil(Math.random() * 4),
             summary: `Summary ${getRandomString(4)}`,
             category: "uncategorized",
-            image: null
+            image: null,
+            owner_user_id: null
         })
     }
 

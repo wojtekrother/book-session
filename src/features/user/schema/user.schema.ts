@@ -7,7 +7,9 @@ export const roleSchema = z.enum(["user", "admin"])
 
 export const userProfileSchema = z.object({
     id: z.string(),
-    role: roleSchema
+    role: roleSchema,
+    first_name: z.string(),
+    last_name: z.string()
 })
 
 export const likedEventsResponseSchema = z.array(
@@ -29,7 +31,9 @@ export const userSchemaBase = z.object({
     id: z.string(),
     email: z.email(),
     eventsIds: z.array(z.string()),
-    role: roleSchema
+    role: roleSchema,
+    firstName: z.string(),
+    lastName: z.string()
 });
 
 export const userAuthSchema = z.object({
@@ -41,7 +45,9 @@ export const userAuthSchema = z.object({
 export const userLoginSchema = userAuthSchema
 
 export const userRegisterSchema = userAuthSchema.extend({
-    confirmPassword: z.string()
+    confirmPassword: z.string(),
+    first_name: z.string(),
+    last_name: z.string()
 });
 
 export const userSchema = userSchemaBase.extend(auditSchema.shape);

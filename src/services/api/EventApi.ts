@@ -15,7 +15,8 @@ async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
         duration: event.duration,
         summary: event.summary,
         category: event.category,
-        date: event.date
+        date: event.date,
+        owner_user_id: null
     }).select().single();
 
     
@@ -87,12 +88,23 @@ async function removeEvent(eventId: string): Promise<EventDTO> {
 }
 
 async function updateEvent(event: EventUpdateDTO): Promise<EventDTO> {
-    let query = supabase.from("events").update(event)
+    let query = supabase.from("events").update({
+        title: event.title,
+        description: event.description,
+        duration: event.duration,
+        summary: event.summary,
+        category: event.category,
+        date: event.date,
+        owner_user_id:"6e20069f-43c7-4a6c-9e06-4d0065356aa6"
+    })
         .eq("id", event.id)
         .select()
         .single();
 
     const updatedEvent: EventDTO = await safeQuery(query, eventSchema)
+    if (updatedEvent.id !== undefined && event.image) {
+        await saveEventImage(updatedEvent.id, event.image)
+    }
     return updatedEvent;
 }
 
@@ -126,7 +138,7 @@ async function getEvents({ eventSearchForm, signal: abortSignal }: GetEventProps
         query = query.ilike("description", `%${eventSearchForm.description}%`);
     }
 
-
+    query = query.is("deleted_at", null);
     query = query.order("date", { ascending: eventSearchForm.dateOrder === "asc" });
     if (abortSignal) {
         query = query.abortSignal(abortSignal);
@@ -138,8 +150,6 @@ async function getEvents({ eventSearchForm, signal: abortSignal }: GetEventProps
 }
 
 async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSignal }: GetEventProps): Promise<PaginatedListResponse<EventDTO>> {
-    //await delay(500)
-
     const pageSize = 10;
 
     const from = pageParam ? (pageParam - 1) * pageSize : 0;
@@ -152,6 +162,7 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
     if (!StringUtils.isBlank(eventSearchForm.description)) {
         query = query.ilike("description", `%${eventSearchForm.description}%`);
     }
+    query = query.is("deleted_at", null);
     query = query.order("date", { ascending: eventSearchForm.dateOrder === "asc" });
     query = query.order("id", { ascending: eventSearchForm.dateOrder === "asc" })
     query = query.range(from, to);

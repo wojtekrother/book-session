@@ -11,6 +11,7 @@ export const testEvents: EventDTO[] = [
         duration: 1,
         date: '2026-08-05',
         category:'culture',
+        owner_user_id: null,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -23,6 +24,7 @@ export const testEvents: EventDTO[] = [
         duration: 2,
         date: '2026-08-07',
         category:'entertainment',
+        owner_user_id: null,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -35,6 +37,7 @@ export const testEvents: EventDTO[] = [
         duration: 3,
         date: '2026-08-09',
         category:'science',
+        owner_user_id: null,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -47,6 +50,7 @@ export const testEvents: EventDTO[] = [
         duration: 4,
         date: '2026-08-11',
         category:'culture',
+        owner_user_id: null,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null

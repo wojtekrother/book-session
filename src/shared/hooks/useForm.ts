@@ -52,11 +52,11 @@ const useForm = <T extends Record<string, any>>(
         const type = e.target.type;
         const value = e.target.value;
 
-         let valueTemp: T[keyof T];
-         if (e.target instanceof HTMLInputElement && type === "file") {
-             const files = e.target.files
-             valueTemp = files !== null ? files?.[0] as T[keyof T] : null as T[keyof T];
-         } else {
+        let valueTemp: T[keyof T];
+        if (e.target instanceof HTMLInputElement && type === "file") {
+            const files = e.target.files
+            valueTemp = files !== null ? files?.[0] as T[keyof T] : null as T[keyof T];
+        } else {
             valueTemp = value as T[keyof T];
         }
 
@@ -162,13 +162,12 @@ const useForm = <T extends Record<string, any>>(
 
     const handleSubmit = (callback: (data: T) => void) =>
         (e: React.FormEvent<HTMLFormElement>) => {
-
             e.preventDefault()
 
+            touchAllFields()
             let validationErrors = { ...getAllFieldsErrors(values), ...getCrossFielsErrors(values) }
 
-
-            if (Object.keys(validationErrors).length) {
+            if (Object.keys(validationErrors).length > 0) {
                 setErrors(validationErrors)
                 return
             }
@@ -178,6 +177,15 @@ const useForm = <T extends Record<string, any>>(
 
     const isFormReady = () => {
         return (Object.keys(errors).length == 0) && isRequiredFielsTouched()
+    }
+
+    const touchAllFields = () => {
+        const keys = Object.keys(values) as (keyof T)[];
+        let touchedTemp = {} as Record<keyof T, boolean>;
+        for (const key of keys) {
+            touchedTemp[key] = true;
+        }
+        setTouched(touchedTemp);
     }
 
     const isRequiredFielsTouched = () => {
@@ -192,13 +200,7 @@ const useForm = <T extends Record<string, any>>(
 
     const setAllValues = (values: T) => {
         setValues(values);
-
-        const keys = Object.keys(values) as (keyof T)[];
-        let touchedTemp = {} as Record<keyof T, boolean>
-        for (const key of keys) {
-            touchedTemp[key] = true;
-        }
-        setTouched(touchedTemp)
+        touchAllFields();
 
         let validationErrors = { ...getAllFieldsErrors(values), ...getCrossFielsErrors(values) }
         if (Object.keys(validationErrors).length) {

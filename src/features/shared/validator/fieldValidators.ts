@@ -56,7 +56,7 @@ export const validateSummary = (summary: string): string | null => {
         return "Summary is required";
     }
 
-    if (summary.length > 150) {
+    if (summary.length > MAX_SUMMARY_LENGTH) {
         return `Summary is too long (max ${MAX_SUMMARY_LENGTH} chars)`;
     }
     return null;
@@ -112,3 +112,27 @@ export const validateDuration = (duration: string | number): string | null => {
     return null;
 }
 
+
+export const validateFirstName = (firstName: string): string | null => {
+    const MAX_FIRST_NAME_LENGTH = 20;
+    if (StringUtils.isBlank(firstName)) {
+        return "First name is required";
+    }
+
+    if (firstName.length > MAX_FIRST_NAME_LENGTH) {
+        return `First name is too long (max ${MAX_FIRST_NAME_LENGTH} chars)`;
+    }
+    return null;
+}
+
+export const validateLastName = (lastName: string): string | null => {
+    const MAX_LAST_NAME_LENGTH = 20;
+    if (StringUtils.isBlank(lastName)) {
+        return "Last name is required";
+    }
+
+    if (lastName.length > MAX_LAST_NAME_LENGTH) {
+        return `Last name is too long (max ${MAX_LAST_NAME_LENGTH} chars)`;
+    }
+    return null;
+}

@@ -7,7 +7,7 @@ import { supabase } from "./supabase";
 import { User } from "@supabase/supabase-js";
 
 async function getAuthUser(): Promise<User | null> {
-    const { data: { session }} = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
 
     return session?.user ?? null;
 }
@@ -18,7 +18,7 @@ async function getUserDTO(user?: User): Promise<UserDTO | null> {
         if (authUser == null) {
             return null;
         }
-        user = authUser; 
+        user = authUser;
     }
 
     const userProfile = await getUserProfile();
@@ -30,6 +30,8 @@ async function getUserDTO(user?: User): Promise<UserDTO | null> {
         id: user.id,
         role: userProfile.role,
         eventsIds: userLikedEvents,
+        firstName: userProfile.first_name,
+        lastName: userProfile.last_name,
         created_at: user.created_at,
         updated_at: user.updated_at ?? null,
         deleted_at: user.deleted_at ?? null
@@ -79,7 +81,16 @@ async function userUnlikeEvent(eventId: string): Promise<void> {
 async function register(createUser: UserCreateDTO): Promise<AuthResponseDTO> {
     const storage = new TokenStorage();
     const { data: { user, session }, error } =
-        await supabase.auth.signUp({ email: createUser.email, password: createUser.password });
+        await supabase.auth.signUp({
+            email: createUser.email,
+            password: createUser.password,
+            options: {
+                data: {
+                    first_name: createUser.first_name,
+                    last_name: createUser.last_name,
+                }
+            }
+        });
 
     if (error) {
         throw error;

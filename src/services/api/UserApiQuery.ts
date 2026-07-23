@@ -22,7 +22,7 @@ const useUserLikeEvent = () => {
 
             queryClient.setQueryData<UserDTO>(userKeys.loggedIn, (old) => {
                 if (!old) return old;
-                return { ...old, eventsIds: [...old.eventsIds, eventId] };
+                return { ...old, events_ids: [...old.eventsIds, eventId] };
             });
             return { previousUser };
         },
@@ -84,8 +84,8 @@ const useGetLoggedInUser = () => {
     })
 }
 
-const logoutUser = () => {
-    UserApi.logout();
+const logoutUser = async () => {
+    await UserApi.logout();
     queryClient.invalidateQueries({ queryKey: userKeys.loggedIn });
 }
 
