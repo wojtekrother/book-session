@@ -9,8 +9,9 @@ const useEventSearchApi = (eventSearchForm: EventSearchForm) => {
     const eventSearchFormMemo = useMemo<EventSearchForm>(() => { 
         return { title: eventSearchForm.title, 
             description: eventSearchForm.description, 
+            categories: eventSearchForm.categories,
             dateOrder: eventSearchForm.dateOrder } 
-        }, [eventSearchForm.title, eventSearchForm.description, eventSearchForm.dateOrder]);
+        }, [eventSearchForm.title, eventSearchForm.description, eventSearchForm.categories, eventSearchForm.dateOrder]);
 
         //second option
         //const debouncedTitle = useDebouncedValue<string>(eventSearchFormMemo.title, 500);

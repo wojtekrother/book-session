@@ -2,7 +2,7 @@ import { InfiniteData, QueryKey, useInfiniteQuery, useMutation, useQuery } from 
 import { EventApi } from "./EventApi";
 import { queryClient } from "../../App";
 import { EventCreateDTO, EventDTO, EventUpdateDTO } from "../../features/event/schema/event.schema";
-import { EventSearchForm } from "../../features/event/schema/eventSearch.schema";
+import { eventSearchDateOrderEnum, EventSearchForm } from "../../features/event/schema/eventSearch.schema";
 import { PaginatedListResponse } from "./HttpClientApi";
 import { StringUtils } from "../../shared/utils/string";
 
@@ -11,12 +11,12 @@ import { StringUtils } from "../../shared/utils/string";
 export const eventKey = {
     all: ["events"] as const,
     lists: () => [...eventKey.all, "list"] as const,
-    list: ({ title, description, dateOrder }: EventSearchForm) =>
-        [...eventKey.lists(), title, description, dateOrder] as const,
+    list: ({ title, description, categories, dateOrder }: EventSearchForm) =>
+        [...eventKey.lists(), title, description, categories, dateOrder] as const,
 
     infiniteLists: () => [...eventKey.all, "infiniteList"] as const,
-    infiniteList: ({ title, description, dateOrder }: EventSearchForm) =>
-        [...eventKey.infiniteLists(), title, description, dateOrder] as const,
+    infiniteList: ({ title, description, categories, dateOrder }: EventSearchForm) =>
+        [...eventKey.infiniteLists(), title, description, categories, dateOrder] as const,
 
     details: () => [...eventKey.all, "details"] as const,
     detail: (id: string) => [...eventKey.details(), id] as const
@@ -36,7 +36,7 @@ const useGetEvent = (id: string) => {
 };
 
 
-const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", description: "", dateOrder: "desc" }) => {
+const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", description: "", categories: [], dateOrder: "desc" }) => {
     return useQuery<EventDTO[]>({
         queryKey: eventKey.list(eventSearchForm),
         queryFn: ({ signal }) => EventApi.getEvents({ eventSearchForm, signal }),
@@ -44,7 +44,7 @@ const useGetEvents = (eventSearchForm: EventSearchForm = { title: "", descriptio
     });
 }
 
-const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", description: "", dateOrder: "desc" }) => {
+const useGetEventsInfinite = (eventSearchForm: EventSearchForm = { title: "", description: "", categories: [], dateOrder: "desc" }) => {
     return useInfiniteQuery<PaginatedListResponse<EventDTO>, Error,
         InfiniteData<PaginatedListResponse<EventDTO>>,
         ReturnType<typeof eventKey.infiniteList>,
@@ -87,7 +87,7 @@ const useCreateEvent = () => {
             }
 
             previousEvents.forEach(([queryKey, data]) => {
-                const [, , title, description, dateOrder] = queryKey as ReturnType<typeof eventKey.infiniteList>;
+                const [, , title, description, _categories, dateOrder] = queryKey as ReturnType<typeof eventKey.infiniteList>;
                 if (data) {
                     //if not visible acording to description not add
                     if (!StringUtils.isBlank(description) && !newEvent.description.includes(description)) {
@@ -102,10 +102,10 @@ const useCreateEvent = () => {
                     let newData = {
                         ...data,
                         pages: data.pages.map((page, index) => {
-                            if (dateOrder === "asc" && index === data.pages.length - 1) {
+                            if (dateOrder === eventSearchDateOrderEnum.enum.asc && index === data.pages.length - 1) {
                                 // const lastPageIndex = data.pages.length;
                                 return { ...page, page: [...page.data, optimisticEvent], meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
-                            } else if (dateOrder === "desc" && index === 0) {
+                            } else if (dateOrder === eventSearchDateOrderEnum.enum.desc && index === 0) {
                                 return { ...page, data: [optimisticEvent, ...page.data], meta: { ...page.meta, totalCount: page.meta.totalCount++ } }
                             } else {
                                 return { ...page, meta: { ...page.meta, totalCount: page.meta.totalCount++ } }

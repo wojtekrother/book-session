@@ -10,7 +10,7 @@ const UserCard = () => {
             </div>
             <div className="flex items-center">
                 <div className=" p-0 text-sm">{loggedInUser?.firstName} {loggedInUser?.lastName}
-                    <span className="text-xs text-gray-500">({loggedInUser?.role === 'user' ? "User": "Admin"})</span>
+                    <span className="text-xs text-gray-500 px-1">({loggedInUser?.role === 'user' ? "User": "Admin"})</span>
                 </div>
             </div>
         </div>

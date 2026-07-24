@@ -162,6 +162,9 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
     if (!StringUtils.isBlank(eventSearchForm.description)) {
         query = query.ilike("description", `%${eventSearchForm.description}%`);
     }
+    if (eventSearchForm.categories.length > 0) {
+        query = query.in("category", eventSearchForm.categories);
+    }
     query = query.is("deleted_at", null);
     query = query.order("date", { ascending: eventSearchForm.dateOrder === "asc" });
     query = query.order("id", { ascending: eventSearchForm.dateOrder === "asc" })

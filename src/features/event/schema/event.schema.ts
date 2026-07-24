@@ -20,6 +20,8 @@ export const eventSchema = eventSchemaBase.extend(auditSchema.shape);
 export const createEventSchema = eventSchemaBase.omit({ id: true }).extend({ image: z.file().nullable() });
 export const updateEventSchema = eventSchemaBase.omit({ id: true }).extend({ id: z.string() }).extend({ image: z.file().nullable().optional() });;
 
+export type EventCategory = z.infer<typeof eventCategorySchema>;
+
 export type EventDTO = z.infer<typeof eventSchema>;
 export type EventUpdateDTO = z.infer<typeof updateEventSchema>;
 export type EventCreateDTO = z.infer<typeof createEventSchema>;

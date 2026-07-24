@@ -12,6 +12,7 @@ import Loggout from './shared/components/ui/Logout.tsx';
 import { useEffect } from 'react';
 import { supabase } from './services/api/supabase.ts';
 import { userKeys as userKeys } from './services/api/UserApiQuery.ts';
+import NotFoundPage from './pages/NotFoundPage.tsx';
 
 
 const Router = createBrowserRouter([
@@ -29,6 +30,10 @@ const Router = createBrowserRouter([
       { path: 'user/register', element: <RegisterPage /> },
       { path: 'user/login', element: <LoginPage /> },
       { path: 'user/logout', element: <Loggout /> },
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
     ],
   },
 ]);

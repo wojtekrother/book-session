@@ -4,12 +4,16 @@ import { EventDTO } from "../schema/event.schema"
 import { EventApi } from "../../../services/api/EventApi"
 import LikeButton from "../../../shared/components/ui/LikeButton"
 import { Star } from "lucide-react";
+import { ImageIcon } from "lucide-react";
+import { useState } from "react"
+import CategoryInfo from "../shared/CategoryInfo"
 
 type EventItemParams = { eventItem: EventDTO }
 
 
 const EventItem = ({ eventItem }: EventItemParams) => {
     const loggedInUser = useGetLoggedInUser();
+    const [imageError, setImageError] = useState<boolean>(false);
 
     const isLiked: boolean = loggedInUser.data ? loggedInUser.data.eventsIds.includes(eventItem.id!) : false
     const isOptimistic: boolean = eventItem.id == "optimisti-update";
@@ -20,14 +24,32 @@ const EventItem = ({ eventItem }: EventItemParams) => {
     return (
         <div className=" bg-gray-50 p-4 box-content flex flex-col" data-testid="eventItem" >
             <div className="flex">
-                {!isOptimistic && <img src={`${image}`} className="h-28 border border-black/10 " />}
-                <h2 className="text-xl p-2 ">{eventItem.title}</h2>
+                <div className="flex h-28 w-42 border border-gray-400 items-center justify-center">
+                    {!imageError && image &&
+                        <img
+                            src={`${image}`}
+                            className="h-28   "
+                            onError={() => setImageError(true)} />
+                    }
+                    {imageError &&
+                        <>
+                            <ImageIcon
+                                aria-hidden="true"
+                                className="h-20 w-20 text-gray-400"
+                                strokeWidth={1.5} />
+                            <span className="sr-only">No photo to show</span>
+                        </>
+                    }
+                </div>
+                <h2 className="text-xl p-2 ">
+                    <CategoryInfo category={eventItem.category} />
+                    {eventItem.title}</h2>
 
                 {isOptimistic &&
                     <h1 className="text-red-500  ml-auto font-bold">NEW !!!</h1>
                 }
                 {isOwner &&
-                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                 }
             </div>
             <div className="flex flex-col h-full " >
