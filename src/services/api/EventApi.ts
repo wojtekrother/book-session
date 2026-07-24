@@ -19,12 +19,12 @@ async function createEvent(event: EventCreateDTO): Promise<EventDTO> {
         owner_user_id: null
     }).select().single();
 
-    
+
     const createdEvent: EventDTO = await safeQuery(query, eventSchema)
     if (createdEvent.id !== undefined && event.image) {
         await saveEventImage(createdEvent.id, event.image)
     }
-    
+
 
     return createdEvent;
 }
@@ -53,17 +53,17 @@ async function saveEventImage(eventId: string, file: File): Promise<void> {
     const { error: error_original } = await supabase.storage
         .from("events_images")
         .upload(`${eventId}/original`, file);
-    
-        if (error_original) {
-            throw error_original;
-        }
+
+    if (error_original) {
+        throw error_original;
+    }
 
     const { error: error_tumnail } = await supabase.storage
         .from("events_images")
         .upload(`${eventId}/thumb`, await createThumbnail(file));
-        if (error_tumnail) {
-            throw error_tumnail
-        }
+    if (error_tumnail) {
+        throw error_tumnail
+    }
 }
 
 function getEventImageOriginal(eventId: string): string {
@@ -95,7 +95,7 @@ async function updateEvent(event: EventUpdateDTO): Promise<EventDTO> {
         summary: event.summary,
         category: event.category,
         date: event.date,
-        owner_user_id:"6e20069f-43c7-4a6c-9e06-4d0065356aa6"
+        owner_user_id: "6e20069f-43c7-4a6c-9e06-4d0065356aa6"
     })
         .eq("id", event.id)
         .select()
@@ -155,7 +155,7 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
     const from = pageParam ? (pageParam - 1) * pageSize : 0;
     const to = from + pageSize - 1;
 
-    let query = supabase.from("events").select("*", { count: "exact" });
+    let query = supabase.from("events_extended").select("*", { count: "exact" });
     if (!StringUtils.isBlank(eventSearchForm.title)) {
         query = query.ilike("title", `%${eventSearchForm.title}%`);
     }
@@ -174,9 +174,13 @@ async function getPaginatedEvents({ pageParam, eventSearchForm, signal: abortSig
         query = query.abortSignal(abortSignal);
     }
 
-    return await paginatedSafeQuery<EventDTO>(
+    const result = await paginatedSafeQuery<EventDTO>(
         query,
         eventSchema)
+    return result
 }
+
+
+
 
 export const EventApi = { createEvent, removeEvent, updateEvent, getEvent, getEvents, getPaginatedEvents, getEventImageOriginal, getEventImageTumbnail }

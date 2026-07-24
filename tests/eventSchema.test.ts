@@ -12,6 +12,7 @@ describe("Zod validation", () => {
             summary: "sum",
             title: "title",
             owner_user_id: null,
+            likes_count: 0,
             created_at: "test",
             updated_at: "test",
             deleted_at: "2026-07-01T10:00:00Z"
@@ -31,6 +32,7 @@ describe("Zod validation", () => {
             summary: "s",//too short
             title: "1234567890_1234567890_1234567890_1234567890_1234567890_1234567890_",//too long
             owner_user_id: null,
+            likes_count: 0,
             created_at: "test",
             updated_at: "test",
             deleted_at: null

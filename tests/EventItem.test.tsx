@@ -25,6 +25,7 @@ describe("Event Item validation", () => {
         date: "2026-07-03",
         duration: 3,
         owner_user_id: null,
+        likes_count: 0,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-02T10:00:00Z",
         deleted_at: null

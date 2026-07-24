@@ -10,8 +10,9 @@ export const testEvents: EventDTO[] = [
         description: "description 1",
         duration: 1,
         date: '2026-08-05',
-        category:'culture',
+        category: 'culture',
         owner_user_id: null,
+        likes_count: 0,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -23,8 +24,9 @@ export const testEvents: EventDTO[] = [
         description: "description 2",
         duration: 2,
         date: '2026-08-07',
-        category:'entertainment',
+        category: 'entertainment',
         owner_user_id: null,
+        likes_count: 0,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -36,8 +38,9 @@ export const testEvents: EventDTO[] = [
         description: "description 3",
         duration: 3,
         date: '2026-08-09',
-        category:'science',
+        category: 'science',
         owner_user_id: null,
+        likes_count: 0,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -49,8 +52,9 @@ export const testEvents: EventDTO[] = [
         description: "description 4",
         duration: 4,
         date: '2026-08-11',
-        category:'culture',
+        category: 'culture',
         owner_user_id: null,
+        likes_count: 0,
         created_at: "2026-07-01T10:00:00Z",
         updated_at: "2026-07-01T10:00:00Z",
         deleted_at: null
@@ -62,9 +66,9 @@ vi.mock("react-loader-spinner", () => ({
 }));
 
 class IntersectionObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+    observe() { }
+    unobserve() { }
+    disconnect() { }
 }
 
 vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);

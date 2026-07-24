@@ -13,12 +13,13 @@ const eventSchemaBase = z.object({
     duration: z.number().min(1).max(365),
     category: eventCategorySchema,
     date: z.iso.date(),
-    owner_user_id: z.uuid().nullable()
+    owner_user_id: z.uuid().nullable(),
+    likes_count: z.number().min(0).default(0)
 });
 
 export const eventSchema = eventSchemaBase.extend(auditSchema.shape);
-export const createEventSchema = eventSchemaBase.omit({ id: true }).extend({ image: z.file().nullable() });
-export const updateEventSchema = eventSchemaBase.omit({ id: true }).extend({ id: z.string() }).extend({ image: z.file().nullable().optional() });;
+export const createEventSchema = eventSchemaBase.omit({ id: true, likes_count: true }).extend({ image: z.file().nullable() });
+export const updateEventSchema = eventSchemaBase.omit({ id: true, likes_count: true }).extend({ id: z.string() }).extend({ image: z.file().nullable().optional() });;
 
 export type EventCategory = z.infer<typeof eventCategorySchema>;
 

@@ -81,7 +81,10 @@ const useCreateEvent = () => {
             await queryClient.cancelQueries({ queryKey: eventKey.all });
             const previousEvents = queryClient.getQueriesData<InfiniteData<PaginatedListResponse<EventDTO>> | undefined>({ queryKey: eventKey.infiniteLists() });
             const optimisticEvent: EventDTO = {
-                ...newEvent, id: "optimisti-update", deleted_at: null,
+                ...newEvent,
+                id: "optimisti-update",
+                likes_count: 0,
+                deleted_at: null,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
             }
